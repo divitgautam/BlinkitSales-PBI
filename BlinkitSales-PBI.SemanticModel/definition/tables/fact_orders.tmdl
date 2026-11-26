@@ -1,12 +1,12 @@
 /// One row per order (5,000): order header, its single item line, delivery and customer feedback merged 1:1. Revenue = Order Total. Source: data/clean/fact_orders.csv.
 table fact_orders
-	lineageTag: 9975cad9-0e8d-46f1-9a47-e89dc10153ab
+	lineageTag: e1a65ebd-c222-42e1-a26d-fab92430913e
 
 	/// Order identifier (unique).
 	column 'Order Id'
 		dataType: int64
 		formatString: 0
-		lineageTag: 21a9abde-fc3b-4f13-848b-131284a2ce05
+		lineageTag: 52c04eb8-0f0c-4838-a177-82cea0424edc
 		summarizeBy: none
 		sourceColumn: Order Id
 
@@ -17,7 +17,7 @@ table fact_orders
 		dataType: int64
 		formatString: 0
 		isHidden
-		lineageTag: 14c8af8a-2585-4441-8c4a-c8337199cb6f
+		lineageTag: 0d07aa21-aaa7-4b1c-b556-faa9cbb4f89f
 		summarizeBy: none
 		sourceColumn: Customer Id
 
@@ -28,7 +28,7 @@ table fact_orders
 		dataType: int64
 		formatString: 0
 		isHidden
-		lineageTag: 9b10425d-07eb-4bf9-8081-8353e2e77081
+		lineageTag: bb051848-8044-41c3-bd25-e9fcd846b656
 		summarizeBy: none
 		sourceColumn: Product Id
 
@@ -39,7 +39,7 @@ table fact_orders
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
 		isHidden
-		lineageTag: 6d38fa39-e212-4f2d-9b5b-d59d4ba89e80
+		lineageTag: 57ed6a2d-d3ad-43c5-9bec-e712279d605a
 		summarizeBy: none
 		sourceColumn: Order Date
 
@@ -49,7 +49,7 @@ table fact_orders
 	column 'Order Hour'
 		dataType: int64
 		formatString: 0
-		lineageTag: c355344a-c570-483e-905a-9de09898129c
+		lineageTag: b70b9230-3a5d-45e2-927f-aa90b7c8b1e4
 		summarizeBy: none
 		sourceColumn: Order Hour
 
@@ -61,7 +61,7 @@ table fact_orders
 		formatString: ₹#,##0.00
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 5113ff26-c23b-4a23-b70b-f45cd916daa8
+		lineageTag: 17874b59-f65c-4955-ac20-33d5746dfe4f
 		summarizeBy: none
 		sourceColumn: Order Total
 
@@ -73,7 +73,7 @@ table fact_orders
 		formatString: ₹#,##0.00
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: d187014d-f6bc-4d5a-a8bc-60e9b2f1e91b
+		lineageTag: 9b08134c-58fe-41cd-935c-2a6841e2c196
 		summarizeBy: none
 		sourceColumn: Line Amount
 
@@ -85,7 +85,7 @@ table fact_orders
 		formatString: 0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 54f28558-e24f-4b89-8581-85449fb8bca4
+		lineageTag: d634539a-09cd-4321-a121-19574e253c95
 		summarizeBy: none
 		sourceColumn: Quantity
 
@@ -95,7 +95,7 @@ table fact_orders
 	column 'Unit Price'
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: accae644-6fbd-4e79-9df3-0bd2e092abb4
+		lineageTag: 29863c92-81f6-4153-bc27-d0eea9c8b654
 		summarizeBy: none
 		sourceColumn: Unit Price
 
@@ -104,7 +104,7 @@ table fact_orders
 	/// Card, Cash, UPI or Wallet.
 	column 'Payment Method'
 		dataType: string
-		lineageTag: 9ac015fd-f121-464c-92cf-b299e4c400b8
+		lineageTag: 4351e3ce-3e98-4c8b-bb08-807ceeac78ec
 		summarizeBy: none
 		sourceColumn: Payment Method
 
@@ -114,9 +114,21 @@ table fact_orders
 	column 'Delivery Status'
 		dataType: string
 		sortByColumn: 'Delivery Status Order'
-		lineageTag: 3fa78b20-58ad-4552-bb76-4d605ac1e8a8
+		lineageTag: 7524873c-803c-434d-87c1-acc497c75a45
 		summarizeBy: none
 		sourceColumn: Delivery Status
+
+		annotation SummarizationSetBy = User
+
+	/// Sort order for Delivery Status (from Power Query source, not DAX, to avoid a circular sort-by).
+	column 'Delivery Status Order'
+		dataType: int64
+		formatString: 0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 90d6605e-0814-40a5-b02e-d424a7ad5133
+		summarizeBy: none
+		sourceColumn: Delivery Status Order
 
 		annotation SummarizationSetBy = User
 
@@ -124,7 +136,7 @@ table fact_orders
 	column 'Minutes Late'
 		dataType: int64
 		formatString: 0
-		lineageTag: 1fba8511-a2b6-4c28-9b64-12b91b84ba31
+		lineageTag: 04500f9b-719c-497a-b15c-ff6a9d1375e9
 		summarizeBy: none
 		sourceColumn: Minutes Late
 
@@ -133,7 +145,7 @@ table fact_orders
 	/// TRUE when the status is not On Time (more than 5 minutes late).
 	column 'Is Late'
 		dataType: boolean
-		lineageTag: 5f4f41d3-e8f0-4fad-98d9-0d702ff24c07
+		lineageTag: 698c22c6-cac1-4453-a7a6-29867ac99851
 		summarizeBy: none
 		sourceColumn: Is Late
 
@@ -143,7 +155,7 @@ table fact_orders
 	column 'Distance Km'
 		dataType: decimal
 		formatString: 0.00
-		lineageTag: 62b4f0ef-837d-4b1f-b236-3f62666f6fa8
+		lineageTag: a3038f4c-c041-4c09-8424-8065e0622325
 		summarizeBy: none
 		sourceColumn: Distance Km
 
@@ -153,7 +165,7 @@ table fact_orders
 	column Rating
 		dataType: int64
 		formatString: 0
-		lineageTag: 8e2783e7-2d5b-45b5-9350-c7dde8b901be
+		lineageTag: 65243aeb-fe07-4ad3-bce6-d68cd5b92a0d
 		summarizeBy: none
 		sourceColumn: Rating
 
@@ -162,7 +174,7 @@ table fact_orders
 	/// Feedback sentiment: Positive, Neutral or Negative.
 	column Sentiment
 		dataType: string
-		lineageTag: 78267701-d380-4339-9e84-8908a26c09cf
+		lineageTag: 436e178c-f6f9-48c7-a5cd-fb630862ee3e
 		summarizeBy: none
 		sourceColumn: Sentiment
 
@@ -171,7 +183,7 @@ table fact_orders
 	/// Delivery, Customer Service, Product Quality or App Experience.
 	column 'Feedback Category'
 		dataType: string
-		lineageTag: 059bfc07-e510-44ad-b1e6-4d75a661f553
+		lineageTag: 2146b65c-4d5d-4b41-9045-c13edaf2e071
 		summarizeBy: none
 		sourceColumn: Feedback Category
 
@@ -180,27 +192,17 @@ table fact_orders
 	/// TRUE when the order was late or rated 1-2 stars. Basis of Revenue at Risk.
 	column 'Poor Experience'
 		dataType: boolean
-		lineageTag: 910240bd-7f04-45eb-abec-ffa3047c40f8
+		lineageTag: bfa93a5e-df6a-4df3-93a7-0e82f04061cc
 		summarizeBy: none
 		sourceColumn: Poor Experience
 
 		annotation SummarizationSetBy = User
 
-	/// Sort order for Delivery Status.
-	column 'Delivery Status Order' = SWITCH ( fact_orders[Delivery Status], "On Time", 1, "Slightly Delayed", 2, "Significantly Delayed", 3, 4 )
-		dataType: int64
-		formatString: 0
-		isHidden
-		lineageTag: 98b91cb2-8627-4335-a871-3bbfd9eb10f4
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	/// Minutes late in 5-minute bands (Early, 0 to 5, ... 26 to 30).
 	column 'Minutes Late Band' = VAR m = fact_orders[Minutes Late] RETURN SWITCH ( TRUE (), m < 0, "Early", m <= 5, "0 to 5", m <= 10, "6 to 10", m <= 15, "11 to 15", m <= 20, "16 to 20", m <= 25, "21 to 25", "26 to 30" )
 		dataType: string
 		sortByColumn: 'Minutes Late Band Order'
-		lineageTag: f2f1e35d-c15c-475f-b0be-e8ce388f22d6
+		lineageTag: 323f2008-fdd8-4aa1-9924-d107ef286bbf
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -210,7 +212,7 @@ table fact_orders
 		dataType: int64
 		formatString: 0
 		isHidden
-		lineageTag: 4d43986d-5b59-4732-a229-dede692c08ec
+		lineageTag: e77e8cb3-68c3-44b6-82ad-c5c0df414292
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -219,7 +221,7 @@ table fact_orders
 	column 'Experience Class' = SWITCH ( TRUE (), fact_orders[Is Late] && fact_orders[Rating] <= 2, "Late and low rating", fact_orders[Is Late], "Late only", fact_orders[Rating] <= 2, "Low rating only", "Good experience" )
 		dataType: string
 		sortByColumn: 'Experience Class Order'
-		lineageTag: 032bb4c7-9a5c-4151-898b-137bfc4165ea
+		lineageTag: f91f950e-0a71-4fe6-9bc4-6b7a31f6efa8
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -229,7 +231,7 @@ table fact_orders
 		dataType: int64
 		formatString: 0
 		isHidden
-		lineageTag: 94292163-f3d5-4ac9-bf66-6b6f0d0726db
+		lineageTag: 0e6a01f9-98d0-4e5a-9ade-a0fd023f6604
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -240,9 +242,9 @@ table fact_orders
 				let
 				    Source = Csv.Document(File.Contents(ProjectFolder & "\" & SourceFolder & "\fact_orders.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
-				    Selected = Table.SelectColumns(Promoted, {"order_id", "customer_id", "product_id", "order_date", "order_hour", "order_total", "line_value", "quantity", "unit_price", "payment_method", "delivery_status", "minutes_late", "is_late", "distance_km", "rating", "sentiment", "feedback_category", "poor_experience"}),
-				    Typed = Table.TransformColumnTypes(Selected, {{"order_id", Int64.Type}, {"customer_id", Int64.Type}, {"product_id", Int64.Type}, {"order_date", type date}, {"order_hour", Int64.Type}, {"order_total", Currency.Type}, {"line_value", Currency.Type}, {"quantity", Int64.Type}, {"unit_price", Currency.Type}, {"payment_method", type text}, {"delivery_status", type text}, {"minutes_late", Int64.Type}, {"is_late", type logical}, {"distance_km", Currency.Type}, {"rating", Int64.Type}, {"sentiment", type text}, {"feedback_category", type text}, {"poor_experience", type logical}}, "en-US"),
-				    Renamed = Table.RenameColumns(Typed, {{"order_id", "Order Id"}, {"customer_id", "Customer Id"}, {"product_id", "Product Id"}, {"order_date", "Order Date"}, {"order_hour", "Order Hour"}, {"order_total", "Order Total"}, {"line_value", "Line Amount"}, {"quantity", "Quantity"}, {"unit_price", "Unit Price"}, {"payment_method", "Payment Method"}, {"delivery_status", "Delivery Status"}, {"minutes_late", "Minutes Late"}, {"is_late", "Is Late"}, {"distance_km", "Distance Km"}, {"rating", "Rating"}, {"sentiment", "Sentiment"}, {"feedback_category", "Feedback Category"}, {"poor_experience", "Poor Experience"}})
+				    Selected = Table.SelectColumns(Promoted, {"order_id", "customer_id", "product_id", "order_date", "order_hour", "order_total", "line_value", "quantity", "unit_price", "payment_method", "delivery_status", "delivery_status_order", "minutes_late", "is_late", "distance_km", "rating", "sentiment", "feedback_category", "poor_experience"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"order_id", Int64.Type}, {"customer_id", Int64.Type}, {"product_id", Int64.Type}, {"order_date", type date}, {"order_hour", Int64.Type}, {"order_total", Currency.Type}, {"line_value", Currency.Type}, {"quantity", Int64.Type}, {"unit_price", Currency.Type}, {"payment_method", type text}, {"delivery_status", type text}, {"delivery_status_order", Int64.Type}, {"minutes_late", Int64.Type}, {"is_late", type logical}, {"distance_km", Currency.Type}, {"rating", Int64.Type}, {"sentiment", type text}, {"feedback_category", type text}, {"poor_experience", type logical}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"order_id", "Order Id"}, {"customer_id", "Customer Id"}, {"product_id", "Product Id"}, {"order_date", "Order Date"}, {"order_hour", "Order Hour"}, {"order_total", "Order Total"}, {"line_value", "Line Amount"}, {"quantity", "Quantity"}, {"unit_price", "Unit Price"}, {"payment_method", "Payment Method"}, {"delivery_status", "Delivery Status"}, {"delivery_status_order", "Delivery Status Order"}, {"minutes_late", "Minutes Late"}, {"is_late", "Is Late"}, {"distance_km", "Distance Km"}, {"rating", "Rating"}, {"sentiment", "Sentiment"}, {"feedback_category", "Feedback Category"}, {"poor_experience", "Poor Experience"}})
 				in
 				    Renamed
 

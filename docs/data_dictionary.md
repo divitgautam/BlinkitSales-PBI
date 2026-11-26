@@ -22,6 +22,7 @@ One row per order (5,000). Orders, one item line, delivery and feedback merged 1
 | unit_price | float64 | Item unit price. |
 | payment_method | str | Card, Cash, UPI or Wallet. |
 | delivery_status | str | On Time, Slightly Delayed or Significantly Delayed. |
+| delivery_status_order | int64 | Sort order for delivery_status: 1 On Time, 2 Slightly Delayed, 3 Significantly Delayed. |
 | minutes_late | int64 | Actual minus promised delivery time, minutes (-5 to 30; negative = early). |
 | is_late | bool | Significantly Delayed or minutes_late > 5 (equals status not On Time). |
 | distance_km | float64 | Delivery distance. |

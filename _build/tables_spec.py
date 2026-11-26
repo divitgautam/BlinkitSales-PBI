@@ -16,6 +16,7 @@ SPEC = {
         ("unit_price", "Unit Price", "decimal", f"{RUPEE}#,##0.00", False, "Item unit price in assumed INR."),
         ("payment_method", "Payment Method", "string", None, False, "Card, Cash, UPI or Wallet."),
         ("delivery_status", "Delivery Status", "string", None, False, "On Time (up to 5 minutes late), Slightly Delayed or Significantly Delayed."),
+        ("delivery_status_order", "Delivery Status Order", "int64", "0", H, "Sort order for Delivery Status (from Power Query source, not DAX, to avoid a circular sort-by)."),
         ("minutes_late", "Minutes Late", "int64", "0", False, "Actual minus promised delivery time in minutes; negative means early."),
         ("is_late", "Is Late", "boolean", None, False, "TRUE when the status is not On Time (more than 5 minutes late)."),
         ("distance_km", "Distance Km", "decimal", "0.00", False, "Delivery distance in kilometres."),
@@ -82,8 +83,6 @@ RELS = [("fact_orders_Date", "fact_orders.'Order Date'", "Date.Date"),
         ("fact_orders_Customer", "fact_orders.'Customer Id'", "dim_customer.'Customer Id'")]
 # calculated columns: (name, dtype, expression, format, hidden, sortBy, description)
 CALC = {"fact_orders": [
-    ("Delivery Status Order", "int64", 'SWITCH ( fact_orders[Delivery Status], "On Time", 1, "Slightly Delayed", 2, "Significantly Delayed", 3, 4 )', "0", H, None,
-     "Sort order for Delivery Status."),
     ("Minutes Late Band", "string",
      'VAR m = fact_orders[Minutes Late] RETURN SWITCH ( TRUE (), m < 0, "Early", m <= 5, "0 to 5", m <= 10, "6 to 10", m <= 15, "11 to 15", m <= 20, "16 to 20", m <= 25, "21 to 25", "26 to 30" )',
      None, False, "Minutes Late Band Order", "Minutes late in 5-minute bands (Early, 0 to 5, ... 26 to 30)."),

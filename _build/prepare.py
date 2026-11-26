@@ -49,12 +49,13 @@ fo["month_start"] = month_start(fo.order_date)
 fo["is_full_month"] = ~fo.month_start.isin(PARTIAL)
 fo["minutes_late"] = fo.minutes_late.astype(int)
 fo["is_late"] = (fo.delivery_status == "Significantly Delayed") | (fo.minutes_late > 5)
+fo["delivery_status_order"] = fo.delivery_status.map({"On Time": 1, "Slightly Delayed": 2, "Significantly Delayed": 3}).fillna(4).astype("int64")
 fo["poor_experience"] = fo.is_late | (fo.rating <= 2)
 fo["rating"] = fo.rating.astype(int)
 fo["delay_reason"] = fo.delay_reason.fillna("")
 fo = fo[["order_id", "customer_id", "product_id", "order_date", "order_datetime", "order_hour", "month_start",
          "is_full_month", "order_total", "line_value", "quantity", "unit_price", "payment_method",
-         "delivery_status", "minutes_late", "is_late", "distance_km", "delay_reason", "rating", "sentiment",
+         "delivery_status", "delivery_status_order", "minutes_late", "is_late", "distance_km", "delay_reason", "rating", "sentiment",
          "feedback_category", "poor_experience"]].sort_values("order_datetime", ignore_index=True)
 assert fo.product_id.isin(prod.product_id).all() and fo.customer_id.isin(cust.customer_id).all()
 
@@ -111,6 +112,7 @@ DICT = {
   ("line_value", "quantity x unit_price. Only for category/product mix; does not reconcile to order_total (total 4.97M vs 11.01M)."),
   ("quantity", "Units on the item line (1-3)."), ("unit_price", "Item unit price."), ("payment_method", "Card, Cash, UPI or Wallet."),
   ("delivery_status", "On Time, Slightly Delayed or Significantly Delayed."),
+  ("delivery_status_order", "Sort order for delivery_status: 1 On Time, 2 Slightly Delayed, 3 Significantly Delayed."),
   ("minutes_late", "Actual minus promised delivery time, minutes (-5 to 30; negative = early)."),
   ("is_late", "Significantly Delayed or minutes_late > 5 (equals status not On Time)."),
   ("distance_km", "Delivery distance."), ("delay_reason", "Stored reason; only 'Traffic' or blank (also set on some on-time rows, do not analyse)."),
