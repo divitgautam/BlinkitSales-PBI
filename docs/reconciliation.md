@@ -74,3 +74,15 @@ YoY only where the same month exists in both years (Apr to Oct); Jan to Mar 2024
 ## Inventory damage rate
 
 damaged / received (inventoryNew, product x month) = 3.85%
+
+
+## Forecast and levers (re-derived with plain Python loops from data/clean; `_build/forecast.py` output must match)
+
+Naive (last full month) model, rolling-origin backtest (train 10 to 13 months, forecast 6): MAPE 2.77%. Forecast = ₹5.38 L a month for Nov 2024 to Dec 2025; 2025 total ₹64.52 L; last 12 full months ₹66.60 L (-3.1%).
+
+| Lever (basis Nov 2023 to Oct 2024) | Annual value |
+|---|---|
+| Cut late deliveries by 5 points | ₹2.64 L (264,407) |
+| Cut 1-2 star ratings by 5 points | ₹2.31 L (230,693) |
+| Move 20% of App spend to Email | ₹67,456 (67,456) |
+| Cut stock damage by 0.5 points | ₹43,325 (43,325) |

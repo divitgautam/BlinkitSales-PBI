@@ -1,0 +1,108 @@
+/// Monthly revenue on full months (Apr 2023 to Oct 2024, Actual) and the forecast to Dec 2025 with an 80% band. Disconnected from Date by design. Source: data/clean/forecast.csv written by _build/forecast.py.
+table Forecast
+	lineageTag: 589936db-a1ff-4cc4-9dff-5d2dfd0a538c
+
+	/// First day of the month.
+	column 'Month Start'
+		dataType: dateTime
+		formatString: mmm yyyy
+		lineageTag: 53d19b00-9cde-465d-9679-5452ab7d2c7f
+		summarizeBy: none
+		sourceColumn: Month Start
+
+		annotation SummarizationSetBy = User
+
+	/// Actual or Forecast row.
+	column Kind
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 908ad9a5-2a87-4f2c-b146-1d07b564abe8
+		summarizeBy: none
+		sourceColumn: Kind
+
+		annotation SummarizationSetBy = User
+
+	/// Actual monthly revenue (full months only).
+	column Actual
+		dataType: decimal
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7f086b1f-d47a-480a-acbf-b30e47382150
+		summarizeBy: none
+		sourceColumn: Actual
+
+		annotation SummarizationSetBy = User
+
+	/// Forecast monthly revenue; the last actual month repeats here so the lines join.
+	column Forecast
+		dataType: decimal
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4ca9b638-5e8e-4f3a-bb64-ddf2a9ad5291
+		summarizeBy: none
+		sourceColumn: Forecast
+
+		annotation SummarizationSetBy = User
+
+	/// Lower end of the 80% band.
+	column 'Low 80'
+		dataType: decimal
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 96c51012-b95c-469d-9043-8001b8b6d76c
+		summarizeBy: none
+		sourceColumn: Low 80
+
+		annotation SummarizationSetBy = User
+
+	/// Upper end of the 80% band.
+	column 'High 80'
+		dataType: decimal
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: b2fb84bc-6df7-4de5-8038-87f2a0f56d6d
+		summarizeBy: none
+		sourceColumn: High 80
+
+		annotation SummarizationSetBy = User
+
+	/// Month label, e.g. Nov 24.
+	column 'Month Label' = FORMAT ( Forecast[Month Start], "MMM yy", "en-US" )
+		dataType: string
+		sortByColumn: 'Month Start'
+		lineageTag: 1b992866-2c69-48bd-8b3f-6c72d41ee225
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Calendar year of the month (used to total 2025).
+	column Year = YEAR ( Forecast[Month Start] )
+		dataType: int64
+		formatString: 0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: dd4602f3-58a7-4da3-8021-cf5a01bec5e6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Forecast = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(ProjectFolder & "\" & SourceFolder & "\Forecast.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Selected = Table.SelectColumns(Promoted, {"month_start", "kind", "actual", "forecast", "low80", "high80"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"month_start", type date}, {"kind", type text}, {"actual", Currency.Type}, {"forecast", Currency.Type}, {"low80", Currency.Type}, {"high80", Currency.Type}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"month_start", "Month Start"}, {"kind", "Kind"}, {"actual", "Actual"}, {"forecast", "Forecast"}, {"low80", "Low 80"}, {"high80", "High 80"}})
+				in
+				    Renamed
+
+	annotation PBI_ResultType = Table
+
+	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}

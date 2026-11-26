@@ -72,7 +72,7 @@ w(DEFN / "database.tmdl", "database\n\tcompatibilityLevel: 1606\n\n")
 if not (DEFN / "cultures" / "en-IN.tmdl").exists():   # keep Desktop's linguistic metadata once it has written it
     w(DEFN / "cultures" / "en-IN.tmdl", "cultureInfo en-IN\n")
 FACTS_DIMS = list(SPEC)
-TABLES = FACTS_DIMS + ["Date", "_Measures"]
+TABLES = FACTS_DIMS + ["Date", "_Measures", "Refresh Info"]
 w(DEFN / "model.tmdl",
   "model Model\n\tculture: en-IN\n\tdefaultPowerBIDataSourceVersion: powerBI_V3\n\tsourceQueryCulture: en-IN\n"
   "\tdataAccessOptions\n\t\tlegacyRedirects\n\t\treturnErrorValuesAsNull\n\n"
@@ -92,7 +92,7 @@ w(DEFN / "expressions.tmdl",
   + param("SourceFolder", "data\\clean", "Folder with the clean CSV files, relative to ProjectFolder."))
 
 # ---------------------------------------------------------------- tables from the clean CSVs
-MT = {"int64": "Int64.Type", "string": "type text", "dateTime": "type date", "decimal": "Currency.Type", "boolean": "type logical"}
+MT = {"int64": "Int64.Type", "string": "type text", "dateTime": "type date", "decimal": "Currency.Type", "double": "type number", "boolean": "type logical"}
 
 
 def column(name, dtype, fmt, hidden, desc, key=False, category=None, mdx_off=False, sort_by=None):
@@ -107,10 +107,11 @@ def column(name, dtype, fmt, hidden, desc, key=False, category=None, mdx_off=Fal
     return s
 
 
-def calc_column(name, dtype, expr, fmt, hidden, sort_by, desc):
+def calc_column(name, dtype, expr, fmt, hidden, sort_by, desc, mdx_off=False):
     s = f"{T}/// {desc}\n{T}column {q(name)} = {expr}\n{T * 2}dataType: {dtype}\n"
     if fmt: s += f"{T * 2}formatString: {fmt}\n"
     if hidden: s += f"{T * 2}isHidden\n"
+    if mdx_off: s += f"{T * 2}isAvailableInMdx: false\n"
     if sort_by: s += f"{T * 2}sortByColumn: {q(sort_by)}\n"
     s += f"{T * 2}{lt()}\n{T * 2}summarizeBy: none\n\n{T * 2}annotation SummarizationSetBy = Automatic\n\n"
     return s
@@ -132,10 +133,10 @@ for t, (tdesc, cols) in SPEC.items():
         mdx_off = hid and (t, nm) not in REL_FROM and (t, nm) not in KEYS and nm not in {v for (tt, _), v in SORT_BY.items() if tt == t}
         s += column(nm, dt, fmt, hid, desc, key=(t, nm) in KEYS, category=CATEGORY.get((t, nm)), mdx_off=mdx_off, sort_by=SORT_BY.get((t, nm)))
     for nm, dt, expr, fmt, hid, sb, desc in CALC.get(t, []):
-        s += calc_column(nm, dt, expr, fmt, hid, sb, desc)
+        s += calc_column(nm, dt, expr, fmt, hid, sb, desc, mdx_off=hid and nm not in {c[5] for c in CALC[t]} and nm not in SORT_BY.values())
     s += f"{T}partition {t} = m\n{T * 2}mode: import\n{T * 2}source =\n{ind(m, 4)}\n\n{T}annotation PBI_ResultType = Table\n"
     # table names keep the fact_/dim_ convention the project spec asks for (lowercase): documented BPA exception
-    s += "\n" + IGNORE(["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"])
+    s += "\n" + IGNORE(["ENSURE_TABLES_HAVE_RELATIONSHIPS"] if t in ("Forecast", "Levers") else ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"])
     w(DEFN / "tables" / f"{t}.tmdl", s)
 
 # ---------------------------------------------------------------- Date (calculated: whole months over orders, marketing and inventory)
@@ -177,6 +178,15 @@ ms += (f"{T}column Hidden\n{T * 2}dataType: string\n{T * 2}isHidden\n{T * 2}isAv
        f"{T}partition _Measures = calculated\n{T * 2}mode: import\n{T * 2}source = ROW ( \"Hidden\", BLANK () )\n\n"
        + IGNORE(["ENSURE_TABLES_HAVE_RELATIONSHIPS", "REMOVE_UNNECESSARY_COLUMNS"]))
 w(DEFN / "tables" / "_Measures.tmdl", ms)
+
+# ---------------------------------------------------------------- Refresh Info (one row, NOW() at refresh time, for the footer)
+ri = (f"/// When the model was last refreshed (calculated at refresh time), for the report footer.\ntable 'Refresh Info'\n{T}isHidden\n{T}{lt()}\n\n"
+      f"{T}column Refreshed\n{T * 2}dataType: dateTime\n{T * 2}formatString: dd-mmm-yyyy\n{T * 2}isHidden\n{T * 2}isAvailableInMdx: false\n{T * 2}{lt()}\n"
+      f"{T * 2}summarizeBy: none\n{T * 2}isNameInferred\n{T * 2}sourceColumn: [Refreshed]\n\n"
+      f"{T}partition 'Refresh Info' = calculated\n{T * 2}mode: import\n{T * 2}source = ROW ( \"Refreshed\", NOW () )\n\n"
+      + IGNORE(["ENSURE_TABLES_HAVE_RELATIONSHIPS"]))
+w(DEFN / "tables" / "Refresh Info.tmdl", ri)
+
 
 # ---------------------------------------------------------------- relationships: star schema, many-to-one, single direction (TMDL defaults)
 w(DEFN / "relationships.tmdl", "\n".join(f"relationship {n}\n\tfromColumn: {a}\n\ttoColumn: {b}\n" for n, a, b in RELS))

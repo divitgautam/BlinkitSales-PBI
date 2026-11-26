@@ -70,6 +70,26 @@ SPEC = {
         ("revenue", "Lifetime Revenue", "decimal", f"{RUPEE}#,##0.00", False, "Order Total summed over the whole period (not affected by slicers)."),
         ("customer_type", "Customer Type", "string", None, False, "New (1 order), Repeat (2+ orders) or No orders."),
     ]),
+    "Forecast": ("Monthly revenue on full months (Apr 2023 to Oct 2024, Actual) and the forecast to Dec 2025 with an 80% band. Disconnected from Date by design. "
+                 "Source: data/clean/forecast.csv written by _build/forecast.py.", [
+        ("month_start", "Month Start", "dateTime", "mmm yyyy", False, "First day of the month."),
+        ("kind", "Kind", "string", None, H, "Actual or Forecast row."),
+        ("actual", "Actual", "decimal", "#,##0", H, "Actual monthly revenue (full months only)."),
+        ("forecast", "Forecast", "decimal", "#,##0", H, "Forecast monthly revenue; the last actual month repeats here so the lines join."),
+        ("low80", "Low 80", "decimal", "#,##0", H, "Lower end of the 80% band."),
+        ("high80", "High 80", "decimal", "#,##0", H, "Upper end of the 80% band."),
+    ]),
+    "Levers": ("Sized revenue levers (annual, basis: last 12 full months) with their assumptions. Disconnected by design. "
+               "Source: data/clean/levers.csv written by _build/forecast.py.", [
+        ("lever", "Lever", "string", None, False, "Lever name."),
+        ("lever_label", "Lever Label", "string", None, False, "Lever with its value type, for chart labels."),
+        ("lever_type", "Lever Type", "string", None, False, "Exposure removed, attributed revenue gained or stock value saved: not additive across types."),
+        ("assumption", "Assumption", "string", None, False, "What is assumed and how the value was sized."),
+        ("annual_value", "Annual Value", "decimal", "#,##0", H, "Annual value in assumed INR. Source of Lever Value."),
+        ("pct_of_revenue", "Pct of Revenue", "decimal", "0.0%", H, "Annual value as a share of the last 12 full months of revenue."),
+        ("confidence", "Confidence", "string", None, False, "How far to trust the sizing."),
+        ("basis", "Basis", "string", None, False, "Period the lever was sized on."),
+    ]),
 }
 KEYS = {("dim_product", "Product Id"), ("dim_customer", "Customer Id")}
 CATEGORY = {("dim_customer", "Pincode"): "PostalCode"}
@@ -82,7 +102,10 @@ RELS = [("fact_orders_Date", "fact_orders.'Order Date'", "Date.Date"),
         ("fact_inventory_Product", "fact_inventory.'Product Id'", "dim_product.'Product Id'"),
         ("fact_orders_Customer", "fact_orders.'Customer Id'", "dim_customer.'Customer Id'")]
 # calculated columns: (name, dtype, expression, format, hidden, sortBy, description)
-CALC = {"fact_orders": [
+CALC = {"Forecast": [
+    ("Month Label", "string", 'FORMAT ( Forecast[Month Start], "MMM yy", "en-US" )', None, False, "Month Start", "Month label, e.g. Nov 24."),
+    ("Year", "int64", "YEAR ( Forecast[Month Start] )", "0", H, None, "Calendar year of the month (used to total 2025)."),
+], "fact_orders": [
     ("Minutes Late Band", "string",
      'VAR m = fact_orders[Minutes Late] RETURN SWITCH ( TRUE (), m < 0, "Early", m <= 5, "0 to 5", m <= 10, "6 to 10", m <= 15, "11 to 15", m <= 20, "16 to 20", m <= 25, "21 to 25", "26 to 30" )',
      None, False, "Minutes Late Band Order", "Minutes late in 5-minute bands (Early, 0 to 5, ... 26 to 30)."),

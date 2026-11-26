@@ -1,11 +1,11 @@
 /// One row per campaign record (5,400). No key to orders: attributed revenue is a separate star and is not order revenue. Source: data/clean/fact_marketing.csv.
 table fact_marketing
-	lineageTag: af6b1b9b-ea2d-4f93-8647-ac6d080242ef
+	lineageTag: d74d0648-e59b-4849-8160-677e29850e02
 
 	/// Campaign name (9 campaigns).
 	column 'Campaign Name'
 		dataType: string
-		lineageTag: 5de8ca07-d731-49dd-942f-9c44f2268fa2
+		lineageTag: 236f0836-5e55-4dc9-b71c-cd5df984dcd0
 		summarizeBy: none
 		sourceColumn: Campaign Name
 
@@ -16,7 +16,7 @@ table fact_marketing
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
 		isHidden
-		lineageTag: ea70ef5e-f747-45da-ad54-c3e7dd1f65a3
+		lineageTag: b8120eb6-06c0-462a-8a76-3fa62fa0fa6b
 		summarizeBy: none
 		sourceColumn: Campaign Date
 
@@ -25,7 +25,7 @@ table fact_marketing
 	/// App, Email, SMS or Social Media.
 	column Channel
 		dataType: string
-		lineageTag: 3adf0508-c0d9-4ac5-9b4a-b10d831ad025
+		lineageTag: 00cd3a7b-869d-4b0f-a70d-d58d7e8efd07
 		summarizeBy: none
 		sourceColumn: Channel
 
@@ -34,7 +34,7 @@ table fact_marketing
 	/// All, Inactive, New Users or Premium.
 	column 'Target Audience'
 		dataType: string
-		lineageTag: 53b5d3bc-8b5d-4de8-a085-b831060a629b
+		lineageTag: 7fdbf8c3-7eec-4ad0-be0a-bb0c5f532c46
 		summarizeBy: none
 		sourceColumn: Target Audience
 
@@ -46,7 +46,7 @@ table fact_marketing
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: f984ae56-c869-4276-bab0-f93fda6ce789
+		lineageTag: 0841927e-0db1-46be-877d-5bee2a763353
 		summarizeBy: none
 		sourceColumn: Impressions
 
@@ -58,7 +58,7 @@ table fact_marketing
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 958b961a-a4e0-45f6-b5b4-88c7b400ee45
+		lineageTag: 2f021098-6e8c-4b2e-ab8b-c3c602863779
 		summarizeBy: none
 		sourceColumn: Clicks
 
@@ -70,7 +70,7 @@ table fact_marketing
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 3da7ed63-cdab-43d1-89ed-744782ec79e6
+		lineageTag: 78aa693a-b871-4cd3-9fc4-eb5959d7ef5e
 		summarizeBy: none
 		sourceColumn: Conversions
 
@@ -82,7 +82,7 @@ table fact_marketing
 		formatString: ₹#,##0.00
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: b29eda7f-9fce-407e-85e2-0576c4a5100e
+		lineageTag: 70cd1cc4-4fd2-4325-b420-56c426c828bf
 		summarizeBy: none
 		sourceColumn: Spend
 
@@ -94,7 +94,7 @@ table fact_marketing
 		formatString: ₹#,##0.00
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: e037e3f3-c11e-4238-b188-d3917505d8e9
+		lineageTag: 7488fa4e-18d4-4a15-8160-c578c87640e4
 		summarizeBy: none
 		sourceColumn: Attributed Revenue
 

@@ -1,6 +1,11 @@
-"""Measures for BlinkitSales-PBI. Definitions mirror docs/reconciliation.md.
+"""Measures for BlinkitSales-PBI. Definitions mirror docs/reconciliation.md; forecast numbers come from data/clean/report_facts.json.
 MEASURES = [(name, DAX, formatString, displayFolder, description)]"""
+import json
+from pathlib import Path
+
 RUPEE = "₹"
+_f = Path(__file__).resolve().parents[1] / "data" / "clean" / "report_facts.json"
+FACTS = json.loads(_f.read_text(encoding="utf-8")) if _f.exists() else {}
 R0, R2, PCT, PCT2, INT, DEC2 = f"{RUPEE}#,##0", f"{RUPEE}#,##0.00", "0.0%", "0.00%", "#,##0", "0.00"
 O, MK, IV = "fact_orders", "fact_marketing", "fact_inventory"
 MEASURES = []
@@ -117,63 +122,153 @@ add("Card AOV", f'"{RUPEE}" & {fm("[AOV]", "#,##0.00")}', None, P, "Average orde
 add("Card On-Time %", fm("[On-Time %]", "0.0%"), None, P, "On-time rate for cards.")
 add("Card Avg Rating", fm("[Avg Rating]", "0.00"), None, P, "Average rating for cards.")
 add("Card ROAS", f'{fm("[ROAS]", "0.00")} & "x"', None, P, "ROAS for cards.")
-for nm, cur, py in (("Revenue", "[Revenue]", "[Revenue PY]"), ("Orders", "[Orders]", "[Orders PY]"), ("AOV", "[AOV]", "[AOV PY]")):
-    add(f"Δ {nm}",
-        f'VAR p = {py} VAR d = DIVIDE ( {cur} - p, p ) RETURN IF ( ISBLANK ( p ), "No like-for-like year (partial months)", '
-        f'IF ( d >= 0, "{UP}", "{DOWN}" ) & FORMAT ( ABS ( d ), "0.0%", "en-US" ) & " vs last year" )', None, P,
-        f"Card change line for {nm}: arrow and change vs last year; says so when the comparison is not like-for-like.")
-    add(f"Δ {nm} Color", f'VAR p = {py} RETURN IF ( ISBLANK ( p ), "{NEUTRAL}", IF ( {cur} >= p, "{GOOD}", "{BAD}" ) )', None, P,
+# ---- unit measures for charts (₹ lakh) so axes and data labels carry their unit
+LAKH = f"{RUPEE}#,##0.00 \\L"
+for nm, base, desc in (("Revenue", "[Revenue]", "Revenue"), ("Line Value", "[Line Value]", "Line value"), ("Revenue at Risk", "[Revenue at Risk]", "Revenue at Risk"),
+                       ("Marketing Spend", "[Marketing Spend]", "Marketing spend"), ("Marketing Revenue", "[Marketing Revenue]", "Attributed marketing revenue")):
+    add(f"{nm} ₹ L", f"DIVIDE ( {base}, 100000 )", LAKH, P, f"{desc} in ₹ lakh, for chart axes and data labels.")
+add("Last Full Month", "CALCULATE ( MAX ( 'Date'[Month Start] ), 'Date'[Is Full Month] = TRUE () )", "mmm yyyy", P,
+    "Last full month inside the current date selection (blank when the selection holds no full month). Drives the card change lines.")
+add("Category Share of All", "DIVIDE ( [Line Value], CALCULATE ( [Line Value], REMOVEFILTERS ( dim_product ) ) )", PCT, S,
+    "Line value share of one category against all categories, ignoring product filters (so it still works on the drill-through page).")
+add("Negative Sentiment vs All (pp)",
+    f"IF ( NOT ISBLANK ( [Negative Sentiment %] ), ( [Negative Sentiment %] - CALCULATE ( [Negative Sentiment %], REMOVEFILTERS ( {O}[Feedback Category] ) ) ) * 100 )",
+    "+0.0;-0.0;0.0", E, "Negative-sentiment share minus the all-orders share, in percentage points (diverging colour in the matrix).")
+
+# ---- cards: text values
+card = lambda nm, expr, desc: add(f"Card {nm}", expr, None, P, desc)
+card("Late %", fm("[Late %]", "0.0%"), "Late share for cards.")
+card("Slightly Delayed %", fm("[Slightly Delayed %]", "0.0%"), "Slightly delayed share for cards.")
+card("Significantly Delayed %", fm("[Significantly Delayed %]", "0.0%"), "Significantly delayed share for cards.")
+card("Avg Minutes Late", fm("[Avg Minutes Late (Late Orders)]", "0.0") + ' & " min"', "Mean minutes late among late orders, for cards.")
+card("Low Rating %", fm("[Low Rating %]", "0.0%"), "Share of orders rated 1-2 stars, for cards.")
+card("Poor Experience Rate", fm("[Poor Experience Rate]", "0.0%"), "Poor-experience rate for cards.")
+card("Negative Sentiment %", fm("[Negative Sentiment %]", "0.0%"), "Negative sentiment share for cards.")
+card("Repeat Rate", fm("[Repeat Rate]", "0.0%"), "Repeat customer rate for cards.")
+card("Line Value", f"VAR v = [Line Value] RETURN {inr('v')}", "Line value for cards, in crore or lakh.")
+card("Units Sold", fm("[Units Sold]", "#,##0"), "Units sold for cards.")
+card("Avg Margin %", fm("[Avg Margin %]", "0.0%"), "Average stored margin for cards.")
+card("Revenue per Customer", f'"{RUPEE}" & {fm("[Revenue per Customer]", "#,##0")}', "Revenue per ordering customer for cards.")
+card("Marketing Spend", f"VAR v = [Marketing Spend] RETURN {inr('v')}", "Marketing spend for cards.")
+card("Marketing Revenue", f"VAR v = [Marketing Revenue] RETURN {inr('v')}", "Attributed marketing revenue for cards.")
+card("Impressions", fm("DIVIDE ( [Total Impressions], 1000000 )", "0.00") + ' & " M"', "Impressions in millions, for cards.")
+card("Clicks", fm("DIVIDE ( [Total Clicks], 1000000 )", "0.00") + ' & " M"', "Clicks in millions, for cards.")
+card("Conversions", fm("[Total Conversions]", "#,##0"), "Conversions for cards.")
+# ---- cards: change / context lines (arrows only where there is a like-for-like comparison)
+for nm, cur in (("Revenue", "[Revenue]"), ("Orders", "[Orders]"), ("AOV", "[AOV]")):
+    head = (f"VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) "
+            f"VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 "
+            f"VAR c = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = pm ) ")
+    add(f"Δ {nm}", head + f'RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", '
+        f'IF ( c >= p, "{UP}", "{DOWN}" ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )',
+        None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
+    add(f"Δ {nm} Color", head + f'RETURN IF ( NOT ok, "{NEUTRAL}", IF ( c >= p, "{GOOD}", "{BAD}" ) )', None, P,
         f"Colour of the {nm} change line: green up, red down, grey when not comparable.")
 add("Δ Revenue at Risk", f'{fm("[Revenue at Risk %]", "0%")} & " of revenue"', None, P, "Card line: Revenue at Risk as a share of revenue.")
 add("Δ On-Time %", f'"Late: " & {fm("[Late %]", "0.0%")} & ", " & {fm("[Avg Minutes Late (Late Orders)]", "0.0")} & " min over"', None, P,
     "Card line: late share and how late.")
+add("Δ Late %", f'{fm("[Late Orders]", "#,##0")} & " of " & {fm("[Orders]", "#,##0")} & " orders"', None, P, "Card line: late orders over all orders.")
+add("Δ Slightly Delayed %", '"6 to 15 minutes late"', None, P, "Card line: definition of Slightly Delayed in the source.")
+add("Δ Significantly Delayed %", '"16 to 30 minutes late"', None, P, "Card line: definition of Significantly Delayed in the source.")
+add("Δ Avg Minutes Late", '"Late orders only"', None, P, "Card line: scope of the average.")
+add("Δ Avg Rating", f'IF ( ISBLANK ( [Avg Rating Late] ) || ISBLANK ( [Avg Rating On-Time] ), "No late or on-time pair", "Late " & {fm("[Avg Rating Late]", "0.00")} & " vs on-time " & {fm("[Avg Rating On-Time]", "0.00")} )',
+    None, P, "Card line: mean rating of late vs on-time orders.")
+add("Δ Low Rating %", f'{fm("[Low Rating Orders]", "#,##0")} & " orders rated 1-2"', None, P, "Card line: count of low-rated orders.")
+add("Δ Poor Experience Rate", '"Late or rated 1-2 stars"', None, P, "Card line: definition of a poor experience.")
+add("Δ Negative Sentiment %", '"Of feedback comments"', None, P, "Card line: scope of the sentiment share.")
+add("Δ Repeat Rate", f'{fm("[Repeat Customers]", "#,##0")} & " of " & {fm("[Customers Ordering]", "#,##0")} & " customers"', None, P, "Card line: repeat customers over customers ordering.")
+add("Δ Line Value", f'{fm("DIVIDE ( [Line Value], [Revenue] )", "0%")} & " of order revenue"', None, P, "Card line: line value as a share of order revenue (the gap is a data note).")
+add("Δ Units Sold", f'{fm("DIVIDE ( [Units Sold], [Orders] )", "0.00")} & " per order"', None, P, "Card line: units per order.")
+add("Δ Avg Margin %", '"Simple average of products"', None, P, "Card line: how the margin is averaged.")
+add("Δ Revenue per Customer", f'{fm("[Customers Ordering]", "#,##0")} & " customers ordering"', None, P, "Card line: customers behind the average.")
+add("Δ Marketing Spend", f'"{RUPEE}" & {fm("[Cost per Conversion]", "#,##0.00")} & " per conversion"', None, P, "Card line: cost per conversion.")
+add("Δ Marketing Revenue", '"Attributed, not order revenue"', None, P, "Card line: what attributed revenue is.")
+add("Δ ROAS", f'IF ( ISBLANK ( [ROAS vs Portfolio] ), "", {fm("[ROAS vs Portfolio]", "+0.00;-0.00;0.00")} & "x vs all campaigns" )', None, P, "Card line: ROAS minus the all-campaign ROAS.")
+add("Δ ROAS Color", f'IF ( ISBLANK ( [ROAS vs Portfolio] ) || ABS ( [ROAS vs Portfolio] ) < 0.1, "{NEUTRAL}", IF ( [ROAS vs Portfolio] > 0, "{GOOD}", "{BAD}" ) )', None, P,
+    "Colour of the ROAS line: grey unless the gap is 0.1x or more (smaller gaps are noise).")
+add("Δ Impressions", f'"{RUPEE}" & {fm("DIVIDE ( [Marketing Spend], [Total Impressions] ) * 1000", "0.00")} & " per 1,000"', None, P, "Card line: cost per thousand impressions.")
+add("Δ Clicks", f'"CTR " & {fm("[CTR]", "0.00%")}', None, P, "Card line: click-through rate.")
+add("Δ Conversions", f'{fm("[Conversion Rate]", "0.0%")} & " of clicks"', None, P, "Card line: conversion rate.")
 add("Δ Neutral Color", f'"{NEUTRAL}"', None, P, "Grey for card lines that carry context, not a change.")
 add("Selected Category", 'SELECTEDVALUE ( dim_product[Category], "All categories" )', None, P, "Category in the current filter context (drill-through title).")
 add("Selected Campaign", f'SELECTEDVALUE ( {MK}[Campaign Name], "All campaigns" )', None, P, "Campaign in the current filter context (drill-through title).")
 add("Footer Text",
     f'"Source: Blinkit sales dataset (Kaggle, synthetic)  ·  Orders " & FORMAT ( CALCULATE ( MIN ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & " to " '
-    f'& FORMAT ( CALCULATE ( MAX ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & "  ·  Currency assumed INR  ·  Mar 2023 and Nov 2024 are partial months, left out of trends and YoY"',
-    None, P, "Footer: source, data period, currency assumption and the partial-month caveat.")
-# 8 Titles: action titles that follow the slicers
+    f'& FORMAT ( CALCULATE ( MAX ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & "  ·  INR assumed  ·  Refreshed " & FORMAT ( MAX ( \'Refresh Info\'[Refreshed] ), "d mmm yyyy", "en-US" )',
+    None, P, "Footer: source, data period, currency assumption and the refresh date.")
+# ---- 9 Forecast (disconnected Forecast and Levers tables)
+FC = "9 Forecast"
+for nm, col_, desc in (("Actual", "Actual", "Actual monthly revenue"), ("Forecast", "Forecast", "Forecast monthly revenue (flat level)"),
+                       ("Low", "Low 80", "Low end of the 80% band"), ("High", "High 80", "High end of the 80% band")):
+    add(f"Fcst {nm} ₹ L", f"DIVIDE ( SUM ( Forecast[{col_}] ), 100000 )", LAKH, FC, f"{desc}, ₹ lakh; blank outside its months.")
+F25 = lambda c: f'CALCULATE ( SUM ( Forecast[{c}] ), Forecast[Year] = 2025, Forecast[Kind] = "Forecast" )'
+add("F25 Revenue", F25("Forecast"), R0, FC, "2025 revenue forecast: the sum of the twelve forecast months (flat level model).")
+add("F25 Low", F25("Low 80"), R0, FC, "2025 low case: sum of the monthly 80% lower bounds.")
+add("F25 High", F25("High 80"), R0, FC, "2025 high case: sum of the monthly 80% upper bounds.")
+add("LTM Revenue", "VAR lastA = CALCULATE ( MAX ( Forecast[Month Start] ), Forecast[Kind] = \"Actual\" ) "
+    "RETURN CALCULATE ( SUM ( Forecast[Actual] ), Forecast[Month Start] > EDATE ( lastA, -12 ), Forecast[Month Start] <= lastA )", R0, FC,
+    "Revenue of the last 12 full months (Nov 2023 to Oct 2024).")
+add("F25 vs LTM %", "DIVIDE ( [F25 Revenue] - [LTM Revenue], [LTM Revenue] )", "+0.0%;-0.0%;0.0%", FC, "2025 forecast vs the last 12 full months.")
+add("Lever Value", "SUM ( Levers[Annual Value] )", R0, FC, "Annual lever value in ₹ (types are not additive).")
+add("Lever Value ₹ L", "DIVIDE ( SUM ( Levers[Annual Value] ), 100000 )", LAKH, FC, "Annual lever value in ₹ lakh, for the lever chart.")
+add("Lever Value % of Revenue", "SUM ( Levers[Pct of Revenue] )", PCT, FC, "Lever value as a share of the last 12 full months of revenue.")
+add("Lever Exposure Removed", 'CALCULATE ( SUM ( Levers[Annual Value] ), Levers[Lever Type] = "Exposure removed" )', R0, FC,
+    "Revenue at Risk removed by the two experience levers (late deliveries, low ratings); the two overlap little but are not strictly additive.")
+add("Card F25 Revenue", f"VAR v = [F25 Revenue] RETURN {inr('v')}", None, P, "2025 forecast for cards.")
+add("Card F25 Range", f"VAR lo = [F25 Low] VAR hi = [F25 High] RETURN {inr('lo')} & \" to \" & {inr('hi')}", None, P, "80% band of the 2025 forecast for cards.")
+add("Card F25 vs LTM", f"{fm('ABS ( [F25 vs LTM %] )', '0.0%')} & IF ( [F25 vs LTM %] < 0, \" below\", \" above\" )", None, P, "2025 forecast vs the last 12 months, as text.")
+add("Card Backtest", f'"{FACTS.get("backtest_mape", 0):.1f}%"', None, P, "Backtest error (MAPE) of the forecast model, from _build/forecast.py.")
+add("Card Lever Exposure", f"VAR v = [Lever Exposure Removed] RETURN {inr('v')}", None, P, "Annual exposure removed by the two experience levers, for cards.")
+add("Δ F25 Revenue", f'"Flat at " & {inr("DIVIDE ( [F25 Revenue], 12 )")} & " a month"', None, P, "Card line: the monthly level behind the 2025 forecast.")
+add("Δ F25 Range", f'"Each month ±{FACTS.get("band80", 0) * 100:.1f}%"', None, P, "Card line: width of the monthly band.")
+add("Δ F25 vs LTM", f'"Last 12 months: " & {inr("[LTM Revenue]")}', None, P, "Card line: the last-12-month revenue.")
+add("Δ Backtest", f'"{FACTS.get("backtest_best", "model")}"', None, P, "Card line: the winning model of the rolling-origin backtest.")
+add("Δ Lever Exposure", f'{fm("DIVIDE ( [Lever Exposure Removed], [LTM Revenue] )", "0.0%")} & " of a year\'s revenue"', None, P, "Card line: exposure removed as a share of last-12-month revenue.")
+# 8 Titles: action titles that follow the slicers (every title stays within 70 characters, counting ₹ as one)
 TT = "8 Titles"
 add("Title Overview",
-    f"VAR r = [Revenue] RETURN {inr('r')} & \" revenue from \" & {fm('[Orders]', '#,##0')} & \" orders; \" & {fm('[Late %]', '0%')} & \" arrive late and \" & {fm('[Revenue at Risk %]', '0%')} & \" of revenue is at risk\"",
+    f"VAR r = [Revenue] RETURN {inr('r')} & \" revenue, \" & {fm('[Orders]', '#,##0')} & \" orders; \" & {fm('[Late %]', '0%')} & \" late, \" & {fm('[Revenue at Risk %]', '0%')} & \" of revenue at risk\"",
     None, TT, "Page 1 headline: revenue, orders, late share and revenue at risk.")
 add("Title Sales",
     "VAR cats = ALLSELECTED ( dim_product[Category] ) VAR tot = CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) "
     "VAR t1 = TOPN ( 1, cats, [Line Value], DESC ) VAR topName = MAXX ( t1, dim_product[Category] ) VAR topShare = DIVIDE ( MAXX ( t1, [Line Value] ), tot ) "
     "VAR top3 = DIVIDE ( SUMX ( TOPN ( 3, cats, [Line Value], DESC ), [Line Value] ), tot ) "
-    f"RETURN topName & \" leads with \" & {fm('topShare', '0.0%')} & \" of line value; the top 3 categories hold \" & {fm('top3', '0%')}",
+    f"RETURN topName & \" leads at \" & {fm('topShare', '0.0%')} & \" of line value; top 3 hold \" & {fm('top3', '0%')}",
     None, TT, "Page 2 headline: leading category by line value, its share and the top-3 share.")
 add("Title Monthly Trend",
     "VAR m = CALCULATETABLE ( VALUES ( 'Date'[Month Start] ), 'Date'[Is Full Month] = TRUE () ) VAR lo = MINX ( m, [Revenue] ) VAR hi = MAXX ( m, [Revenue] ) "
     f"RETURN \"Monthly revenue stays between \" & {inr('lo')} & \" and \" & {inr('hi')} & \" (full months only)\"",
     None, TT, "Monthly revenue chart title: low and high month among full months.")
 add("Title Delivery",
-    f"{fm('[On-Time %]', '0%')} & \" of orders arrive within 5 minutes of the promise; the late ones run \" & {fm('[Avg Minutes Late (Late Orders)]', '0.0')} & \" minutes over\"",
+    f"{fm('[On-Time %]', '0%')} & \" of orders arrive on time; the late ones run \" & {fm('[Avg Minutes Late (Late Orders)]', '0.0')} & \" minutes over\"",
     None, TT, "Page 3 headline: on-time share and how late the misses are.")
 add("Title Experience",
-    "VAR gap = [Rating Gap Late vs On-Time] "
-    f"RETURN \"Late orders rate \" & {fm('[Avg Rating Late]', '0.00')} & \" vs \" & {fm('[Avg Rating On-Time]', '0.00')} & \" for on-time orders: \" & "
-    "IF ( ISBLANK ( gap ), \"no comparison in this selection\", IF ( ABS ( gap ) < 0.1, \"delay does not move the rating\", IF ( gap < 0, \"delay lowers the rating\", \"late orders rate higher\" ) ) )",
+    "VAR a = [Avg Rating Late] VAR b = [Avg Rating On-Time] VAR gap = a - b "
+    f"RETURN IF ( ISBLANK ( a ) || ISBLANK ( b ), \"Too few late or on-time orders to compare ratings\", \"Late orders rate \" & {fm('a', '0.00')} & \" vs \" & {fm('b', '0.00')} & \" on time: \" & "
+    "IF ( ABS ( gap ) < 0.1, \"delay does not move rating\", IF ( gap < 0, \"delay lowers rating\", \"late orders rate higher\" ) ) )",
     None, TT, "Page 4 headline: mean rating of late vs on-time orders and what the gap says.")
 add("Title Revenue at Risk",
-    f"VAR v = [Revenue at Risk] RETURN {inr('v')} & \" (\" & {fm('[Revenue at Risk %]', '0%')} & \" of revenue) sits in orders that were late or rated 1-2 stars\"",
+    f"VAR v = [Revenue at Risk] RETURN {inr('v')} & \" (\" & {fm('[Revenue at Risk %]', '0%')} & \" of revenue) at risk: late or rated 1-2 stars\"",
     None, TT, "Revenue at Risk headline.")
 add("Title Marketing",
-    f"VAR ch = ALLSELECTED ( {MK}[Channel] ) VAR hi = MAXX ( ch, [ROAS] ) VAR lo = MINX ( ch, [ROAS] ) "
+    f"VAR ch = ALLSELECTED ( {MK}[Channel] ) VAR n = COUNTROWS ( ch ) VAR hi = MAXX ( ch, [ROAS] ) VAR lo = MINX ( ch, [ROAS] ) VAR s = [Marketing Spend] "
     f"VAR hiName = MAXX ( TOPN ( 1, ch, [ROAS], DESC ), {MK}[Channel] ) VAR loName = MAXX ( TOPN ( 1, ch, [ROAS], ASC ), {MK}[Channel] ) "
-    f"RETURN \"Each {RUPEE}1 of spend returns {RUPEE}\" & {fm('[ROAS]', '0.00')} & \" attributed revenue; \" & hiName & \" leads at \" & {fm('hi', '0.00')} & \"x, \" & loName & \" trails at \" & {fm('lo', '0.00')} & \"x\"",
-    None, TT, "Page 5 headline: portfolio ROAS and the best and worst channel.")
+    f"RETURN IF ( n = 0 || ISBLANK ( [ROAS] ), \"No marketing data in this selection\", IF ( n = 1, hiName & \": ROAS \" & {fm('[ROAS]', '0.00')} & \"x on \" & {inr('s')} & \" spend\", "
+    f"\"ROAS \" & {fm('[ROAS]', '0.00')} & \"x: \" & hiName & \" leads at \" & {fm('hi', '0.00')} & \"x, \" & loName & \" trails at \" & {fm('lo', '0.00')} & \"x\" ) )",
+    None, TT, "Page 5 headline: portfolio ROAS and the best and worst channel; one channel selected shows that channel's ROAS and spend.")
 add("Title Insights",
-    f"VAR r = [Revenue] RETURN {inr('r')} & \" revenue, \" & {fm('[Late %]', '0%')} & \" of orders late, ROAS \" & {fm('[ROAS]', '0.00')} & \"x: five findings and the data caveats\"",
+    f"VAR r = [Revenue] RETURN {inr('r')} & \" revenue, \" & {fm('[Late %]', '0%')} & \" late, ROAS \" & {fm('[ROAS]', '0.00')} & \"x: five findings, data caveats\"",
     None, TT, "Page 6 headline: revenue, late share and ROAS.")
 add("Title Forecast",
-    f"VAR a = [Avg Monthly Revenue] VAR b = [Avg Monthly Revenue at Risk] RETURN \"Full months average \" & {inr('a')} & \" of revenue, of which \" & {inr('b')} & \" a month is at risk\"",
-    None, TT, "Page 7 headline: average monthly revenue and revenue at risk (full months).")
+    f"VAR v = [F25 Revenue] RETURN \"2025 revenue forecast \" & {inr('v')} & \", \" & {fm('ABS ( [F25 vs LTM %] )', '0%')} & IF ( [F25 vs LTM %] < 0, \" below\", \" above\" ) & \" the last 12 months\"",
+    None, TT, "Page 7 headline: 2025 revenue forecast and its change vs the last 12 full months.")
 add("Title Category Detail",
-    "[Selected Category] & \": \" & " + fm('[Category Share]', '0.0%') + " & \" of line value, \" & " + fm('[On-Time %]', '0%') + " & \" delivered on time, rating \" & " + fm('[Avg Rating]', '0.00'),
-    None, TT, "Category drill-through headline.")
+    "IF ( DISTINCTCOUNT ( dim_product[Category] ) <> 1, \"Select a category to drill through\", [Selected Category] & \": \" & " + fm('[Category Share of All]', '0.0%') + " & \" of line value, \" & " + fm('[On-Time %]', '0%') + " & \" on time, \" & " + fm('[Avg Rating]', '0.00') + " & \" stars\" )",
+    None, TT, "Category drill-through headline (a prompt when no single category is in context).")
 add("Title Campaign Detail",
-    f"VAR s = [Marketing Spend] RETURN [Selected Campaign] & \": ROAS \" & {fm('[ROAS]', '0.00')} & \"x on \" & {inr('s')} & \" spend\"",
-    None, TT, "Campaign drill-through headline.")
+    f"VAR s = [Marketing Spend] RETURN IF ( DISTINCTCOUNT ( {MK}[Campaign Name] ) <> 1, \"Select a campaign to drill through\", [Selected Campaign] & \": ROAS \" & {fm('[ROAS]', '0.00')} & \"x on \" & {inr('s')} & \" spend\" )",
+    None, TT, "Campaign drill-through headline (a prompt when no single campaign is in context).")
+# ---- extra display measures (heat-map cell value, tooltip cards)
+add("Line Value ₹ L Plain", "DIVIDE ( [Line Value], 100000 )", "0.00", P, "Line value in ₹ lakh with two decimals and no unit text, for the compact category x month heat map.")
+card("CTR", fm("[CTR]", "0.00%"), "Click-through rate for cards.")
+card("Conversion Rate", fm("[Conversion Rate]", "0.0%"), "Conversion rate for cards.")

@@ -8,7 +8,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["ProjectFolder","SourceFolder","fact_orders","fact_marketing","fact_inventory","dim_product","dim_customer"]
+annotation PBI_QueryOrder = ["ProjectFolder","SourceFolder","fact_orders","fact_marketing","fact_inventory","dim_product","dim_customer","Forecast","Levers"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -17,7 +17,10 @@ ref table fact_marketing
 ref table fact_inventory
 ref table dim_product
 ref table dim_customer
+ref table Forecast
+ref table Levers
 ref table Date
 ref table _Measures
+ref table 'Refresh Info'
 
 ref cultureInfo en-IN

@@ -1,0 +1,176 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "txt_plan",
+  "position": {
+    "x": 720,
+    "y": 452,
+    "z": 15000,
+    "height": 230,
+    "width": 544,
+    "tabOrder": 15000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Levers and their assumptions (all data)",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "12pt",
+                      "color": "#13241A",
+                      "fontFamily": "'Segoe UI Semibold', 'Segoe UI', sans-serif"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "1. Late deliveries -5 points: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "₹2.64 L of revenue no longer at risk (low confidence).",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "2. Low ratings -5 points: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "₹2.31 L no longer at risk (low confidence).",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "3. Shift 20% of App spend to Email: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "₹67,456 more attributed revenue.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "4. Stock damage -0.5 points: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "₹43,325 of stock saved at list price.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Read with care: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "delay and rating are not linked here, exposure is not lost revenue, and the types above are not additive.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Levers and their assumptions (all data)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

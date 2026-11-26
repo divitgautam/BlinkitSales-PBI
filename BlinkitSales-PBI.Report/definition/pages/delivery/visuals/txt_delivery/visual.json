@@ -1,0 +1,176 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "txt_delivery",
+  "position": {
+    "x": 646,
+    "y": 440,
+    "z": 19000,
+    "height": 242,
+    "width": 618,
+    "tabOrder": 19000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "What this tells us (all orders)",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "12pt",
+                      "color": "#13241A",
+                      "fontFamily": "'Segoe UI Semibold', 'Segoe UI', sans-serif"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Promise kept: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "69.4% of orders arrive within 5 minutes; 30.6% are late, by 14.5 minutes on average.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Delays are short: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "21% of orders are slightly late (6-15 minutes) and 10% significantly (16-30).",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "No peak hour: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "the late share stays between 23% and 37% in every hour.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Reasons are empty: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "the only delay reason is 'Traffic', also set on 1,568 on-time orders.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Action: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "size the 5-point late-share lever on page 7.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'What this tells us (all orders)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

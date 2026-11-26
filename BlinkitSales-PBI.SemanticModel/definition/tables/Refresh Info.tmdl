@@ -1,0 +1,20 @@
+/// When the model was last refreshed (calculated at refresh time), for the report footer.
+table 'Refresh Info'
+	isHidden
+	lineageTag: 896305f3-d7fb-41cc-adde-a43944e56017
+
+	column Refreshed
+		dataType: dateTime
+		formatString: dd-mmm-yyyy
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: b16c8c39-9d9e-4341-aaf7-5e21c8c896b6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Refreshed]
+
+	partition 'Refresh Info' = calculated
+		mode: import
+		source = ROW ( "Refreshed", NOW () )
+
+	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}

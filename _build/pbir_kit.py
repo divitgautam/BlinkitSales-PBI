@@ -154,7 +154,7 @@ class Page:
     def header(self, title, subtitle, width=W - 2 * M, title_measure=None, title_w=None):
         """title_measure: a measure whose text replaces the fixed title, so the headline follows the slicers."""
         if HEADER_IMAGE:
-            self.add("hdr_art", "image", 0, 0, W, 72,
+            self.add("hdr_art", "image", 0, 0, W, 72, alt="Decorative header banner",
                      objects={"general": [{"properties": {"imageUrl": image_ref(HEADER_IMAGE)}}],
                               "imageScaling": [{"properties": {"imageScalingType": L("Fill")}}]},
                      container={"background": [{"properties": {"show": L(False)}}], "border": [{"properties": {"show": L(False)}}],

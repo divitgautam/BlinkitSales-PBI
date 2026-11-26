@@ -1,0 +1,342 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "txt_notes",
+  "position": {
+    "x": 646,
+    "y": 80,
+    "z": 4000,
+    "height": 602,
+    "width": 618,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Data notes and definitions",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "12pt",
+                      "color": "#13241A",
+                      "fontFamily": "'Segoe UI Semibold', 'Segoe UI', sans-serif"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Synthetic data. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "Flat distributions, 25 feedback sentences, one item per order: read patterns as illustrations, not Blinkit's real performance.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Revenue vs line value. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "Revenue is the order total (₹1.10 Cr). Item lines (quantity x unit price) total ₹49.72 L and match the order total on 1 of 5,000 orders, so categories use line value.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Partial months. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "Mar 2023 (120 orders) and Nov 2024 (30 orders) are left out of trends, YoY and the forecast.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Delivery. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "Minutes late are measured against the promise; On Time allows up to 5 minutes late; the only delay reason is Traffic.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Customers. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "2,172 of 2,500 customers order; stored lifetime orders and registration dates are unreliable, so customer metrics come from orders.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Marketing. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "ROAS is recomputed as revenue / spend because the stored ROAS does not match; marketing has no key to orders.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Inventory. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "The monthly file is used (the daily file shows a 54% damage rate); there are no stock levels, so only the damage rate is reported.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Privacy and currency. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "Name, email, phone and address were dropped before loading. Currency is assumed to be INR.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Forecast. ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#C0392B"
+                    }
+                  },
+                  {
+                    "value": "A naive level model chosen by rolling backtest (MAPE 2.8%), 80% band ±5.0% a month: a baseline, not a prediction.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "",
+                    "textStyle": {
+                      "fontSize": "6pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Data notes and definitions'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

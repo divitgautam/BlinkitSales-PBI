@@ -9,6 +9,15 @@
         "page": "2.3.1"
       },
       "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "QuickCommerce.json",
+      "reportVersionAtImport": {
+        "visual": "2.14.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
     }
   },
   "objects": {
@@ -48,6 +57,22 @@
           "name": "Fluent2-CY26SU10",
           "path": "BaseThemes/Fluent2-CY26SU10.json",
           "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "QuickCommerce.json",
+          "path": "QuickCommerce.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "header_quick.svg",
+          "path": "header_quick.svg",
+          "type": "Image"
         }
       ]
     }

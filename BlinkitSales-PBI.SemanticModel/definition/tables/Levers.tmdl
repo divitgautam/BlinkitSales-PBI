@@ -1,0 +1,97 @@
+/// Sized revenue levers (annual, basis: last 12 full months) with their assumptions. Disconnected by design. Source: data/clean/levers.csv written by _build/forecast.py.
+table Levers
+	lineageTag: d8e1fe25-5cb9-4540-8ebe-4affce0b831f
+
+	/// Lever name.
+	column Lever
+		dataType: string
+		lineageTag: 63e4c6ae-a736-48b2-95fc-aecd50fa92ff
+		summarizeBy: none
+		sourceColumn: Lever
+
+		annotation SummarizationSetBy = User
+
+	/// Lever with its value type, for chart labels.
+	column 'Lever Label'
+		dataType: string
+		lineageTag: 3c173906-a318-414f-8741-4d850f0951d7
+		summarizeBy: none
+		sourceColumn: Lever Label
+
+		annotation SummarizationSetBy = User
+
+	/// Exposure removed, attributed revenue gained or stock value saved: not additive across types.
+	column 'Lever Type'
+		dataType: string
+		lineageTag: b81455e4-9971-4e19-a2a9-1a9f026110af
+		summarizeBy: none
+		sourceColumn: Lever Type
+
+		annotation SummarizationSetBy = User
+
+	/// What is assumed and how the value was sized.
+	column Assumption
+		dataType: string
+		lineageTag: b1f430e0-4425-4366-b144-82f91f135dc4
+		summarizeBy: none
+		sourceColumn: Assumption
+
+		annotation SummarizationSetBy = User
+
+	/// Annual value in assumed INR. Source of Lever Value.
+	column 'Annual Value'
+		dataType: decimal
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 2ec9605c-6d17-4e46-b7f8-1cc8df96bb7f
+		summarizeBy: none
+		sourceColumn: Annual Value
+
+		annotation SummarizationSetBy = User
+
+	/// Annual value as a share of the last 12 full months of revenue.
+	column 'Pct of Revenue'
+		dataType: decimal
+		formatString: 0.0%
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a888a673-3b8f-4549-a6a6-c23667ac68da
+		summarizeBy: none
+		sourceColumn: Pct of Revenue
+
+		annotation SummarizationSetBy = User
+
+	/// How far to trust the sizing.
+	column Confidence
+		dataType: string
+		lineageTag: cf38101a-5000-42c4-9a7a-efb86c90de1a
+		summarizeBy: none
+		sourceColumn: Confidence
+
+		annotation SummarizationSetBy = User
+
+	/// Period the lever was sized on.
+	column Basis
+		dataType: string
+		lineageTag: 0837a5b5-972c-4580-b436-af276ccdaf7b
+		summarizeBy: none
+		sourceColumn: Basis
+
+		annotation SummarizationSetBy = User
+
+	partition Levers = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(ProjectFolder & "\" & SourceFolder & "\Levers.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Selected = Table.SelectColumns(Promoted, {"lever", "lever_label", "lever_type", "assumption", "annual_value", "pct_of_revenue", "confidence", "basis"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"lever", type text}, {"lever_label", type text}, {"lever_type", type text}, {"assumption", type text}, {"annual_value", Currency.Type}, {"pct_of_revenue", Currency.Type}, {"confidence", type text}, {"basis", type text}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"lever", "Lever"}, {"lever_label", "Lever Label"}, {"lever_type", "Lever Type"}, {"assumption", "Assumption"}, {"annual_value", "Annual Value"}, {"pct_of_revenue", "Pct of Revenue"}, {"confidence", "Confidence"}, {"basis", "Basis"}})
+				in
+				    Renamed
+
+	annotation PBI_ResultType = Table
+
+	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
