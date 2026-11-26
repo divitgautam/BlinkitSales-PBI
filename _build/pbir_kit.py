@@ -185,7 +185,7 @@ class Page:
                             "border": [{"properties": {"show": L(True), "color": C(LINE), "radius": L(6)}}],
                             "padding": [{"properties": {"top": L(2), "bottom": L(2), "left": L(8), "right": L(8)}}]})
 
-    def cards(self, items, y=80, h=88, filters=None, small=(), x0=M, width=None):
+    def cards(self, items, y=80, h=100, filters=None, small=(), x0=M, width=None):
         """items: (name, value field, label[, change-line field, change-line colour field])."""
         n = len(items)
         width = width or W - 2 * M
@@ -199,20 +199,22 @@ class Page:
                                              "selector": {"id": "default"}}],
                               "outline": [{"properties": {"show": L(False)}, "selector": {"id": "default"}}],
                               "label": [{"properties": {"fontSize": L(10)}, "selector": {"id": "default"}}],
-                              "value": [{"properties": {"fontSize": L(14 if name in small else 22)}, "selector": {"id": "default"}}]})
+                              "value": [{"properties": {"fontSize": L(14 if name in small else 20)}, "selector": {"id": "default"}}]},
+                     # bottom padding keeps label and value above the change line (they are centred in the free area)
+                     container={"padding": [{"properties": {"top": L(4), "bottom": L(26 if len(it) > 3 else 4)}}]})
             if len(it) > 3:   # change line ("▲ 24.6% vs last year") overlaid at the bottom of the card
-                self.add(name + "_d", "cardVisual", x + 4, y + h - 28, round(cw) - 8, 24,
+                self.add(name + "_d", "cardVisual", x + 4, y + h - 26, round(cw) - 8, 22,
                          roles={"Data": [(it[3], label + " change")]}, filters=filters, alt=f"{label} change",
                          objects={**PLAIN_CARD,
                                   "label": [{"properties": {"show": L(False)}, "selector": {"id": "default"}}],
                                   "value": [{"properties": {"fontSize": L(9), "fontColor": {"solid": {"color": {"expr": it[4]}}}},
                                              "selector": {"id": "default"}}]},
-                         container={**NO_CHROME, "padding": [{"properties": {"top": L(0), "bottom": L(0), "left": L(12), "right": L(4)}}]})
+                         container={**NO_CHROME, "padding": [{"properties": {"top": L(0), "bottom": L(0), "left": L(12), "right": L(2)}}]})
 
     def footer(self, field, nav=True):
         """Source / refresh / caveat line, plus a page navigator on the right."""
-        fy = self.h - 32
-        self.add("ftr_text", "cardVisual", M, fy, 780 if nav else self.w - 2 * M, 30, roles={"Data": [(field, "Source")]},
+        fy = self.h - 34
+        self.add("ftr_text", "cardVisual", M, fy, 780 if nav else self.w - 2 * M, 28, roles={"Data": [(field, "Source")]},
                  alt="Report footer: data source, refresh date and caveat",
                  objects={**PLAIN_CARD,
                           "label": [{"properties": {"show": L(False)}, "selector": {"id": "default"}}],
@@ -220,7 +222,7 @@ class Page:
                  container={**NO_CHROME, "padding": [{"properties": {"top": L(0), "bottom": L(0), "left": L(0), "right": L(0)}}]})
         if nav:
             zero = {"expr": {"Literal": {"Value": "0L"}}}
-            self.add("ftr_nav", "pageNavigator", self.w - M - 460, fy, 460, 30, alt="Page navigation",
+            self.add("ftr_nav", "pageNavigator", self.w - M - 460, fy, 460, 28, alt="Page navigation",
                      objects={"text": [{"properties": {"fontSize": L(8), "topMargin": zero, "bottomMargin": zero,
                                                        **({"fontColor": C(WHITE)} if s == "selected" else {})}, "selector": {"id": s}}
                                        for s in ("default", "hover", "press", "selected")],

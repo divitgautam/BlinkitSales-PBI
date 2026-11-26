@@ -3,9 +3,9 @@
   "name": "mx_ca",
   "position": {
     "x": 428,
-    "y": 178,
+    "y": 190,
     "z": 19000,
-    "height": 262,
+    "height": 272,
     "width": 380,
     "tabOrder": 19000
   },
@@ -265,7 +265,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Darker green = higher ROAS (ColorBrewer YlGn)'"
+                  "Value": "'Darker = higher ROAS; All audiences is its own group'"
                 }
               }
             },

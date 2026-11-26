@@ -53,6 +53,7 @@ def from_raw():
         "revenue_at_risk": poor_rev,
         "revenue_at_risk_decomp": n * (sum(poor) / n) * (poor_rev / sum(poor)),  # orders x poor rate x AOV of poor orders
         "revenue_at_risk_overall_aov": n * (sum(poor) / n) * (rev / n),
+        "revenue_at_risk_share": poor_rev / rev,
     }
     # category by LINE value (quantity x unit_price), not order_total
     cat = dict(zip(pr.product_id, pr.category))
@@ -106,6 +107,7 @@ def from_clean():
         "revenue_at_risk": poor.order_total.sum(),
         "revenue_at_risk_decomp": n * fo.poor_experience.mean() * poor.order_total.mean(),
         "revenue_at_risk_overall_aov": n * fo.poor_experience.mean() * fo.order_total.mean(),
+        "revenue_at_risk_share": poor.order_total.sum() / fo.order_total.sum(),
     }
     lv = fo.merge(dp[["product_id", "category"]], on="product_id").groupby("category").line_value.sum()
     r["line_value_total"] = lv.sum()
@@ -133,6 +135,7 @@ assert a.keys() == b.keys(), set(a) ^ set(b)
 bad = {k: (a[k], b[k]) for k in a if not math.isclose(a[k], b[k], rel_tol=1e-9, abs_tol=1e-6)}
 assert not bad, bad
 assert math.isclose(a["revenue_at_risk"], a["revenue_at_risk_decomp"], rel_tol=1e-9)
+assert abs(a["revenue_at_risk_share"] - 0.458) < 0.001           # page 4 title: share of TOTAL revenue (45.8%), not of poor orders
 assert a["orders"] == 5000 and a["customers_ordering"] == 2172 and a["full_months"] == 19
 assert math.isclose(a["revenue"], 11009308, abs_tol=1)           # audit: order_total sum 11.01M
 assert abs(a["line_value_total"] - 4.97e6) < 5e4                 # audit: item lines 4.97M
@@ -171,7 +174,14 @@ late = [r["is_late"] == "True" for r in ordr]
 l1 = 0.05 / (sum(late) / n12) * sum(float(r["order_total"]) for r, lt in zip(ordr, late) if lt and int(r["rating"]) > 2)
 lowr = [int(r["rating"]) <= 2 for r in ordr]
 l2 = 0.05 / (sum(lowr) / n12) * sum(float(r["order_total"]) for r, lt, lo in zip(ordr, late, lowr) if lo and not lt)
+# combined scenario: late-only x f1 + low-only x f2 + both x f1 x f2 (no double counting)
+f1, f2 = 0.05 / (sum(late) / n12), 0.05 / (sum(lowr) / n12)
+only_l = sum(float(r["order_total"]) for r, lt, lo in zip(ordr, late, lowr) if lt and not lo)
+only_o = sum(float(r["order_total"]) for r, lt, lo in zip(ordr, late, lowr) if lo and not lt)
+both_ = sum(float(r["order_total"]) for r, lt, lo in zip(ordr, late, lowr) if lo and lt)
+l2b = f1 * only_l + f2 * only_o + f1 * f2 * both_
 got = {r["lever"]: float(r["annual_value"]) for r in lv}
+assert math.isclose(got["Cut late deliveries and low ratings by 5 points each"], l2b, abs_tol=0.01), (got, l2b)
 assert math.isclose(got["Cut late deliveries by 5 points"], l1, abs_tol=0.01) and math.isclose(got["Cut 1-2 star ratings by 5 points"], l2, abs_tol=0.01)
 # lever 3: 20% of the lowest-ROAS channel's last-12-month spend moved to the highest-ROAS channel (full-period ROAS)
 mk12 = [r for r in rows("fact_marketing.csv") if "2023-11-01" <= r["month_start"] <= "2024-10-01"]
@@ -204,6 +214,7 @@ H = [
  ("Poor-experience rate", pc(a["poor_rate"]), "late OR rating <= 2"),
  ("Revenue at Risk", inr(a["revenue_at_risk"]) + f" ({a['revenue_at_risk']:,.2f})",
   f"revenue of poor-experience orders = orders x poor rate x AOV of those orders; with overall AOV: {inr(a['revenue_at_risk_overall_aov'])}"),
+ ("Revenue at Risk share", pc(a["revenue_at_risk_share"]), "Revenue at Risk / total revenue (the page 4 title uses this, with the class filter removed)"),
 ]
 L += [f"| {i} | {m} | {v} | {d} |" for i, (m, v, d) in enumerate(H, 1)]
 L += ["", "## Category mix by LINE value (quantity x unit_price, not order revenue)\n",
@@ -230,6 +241,7 @@ L += ["", "## Forecast and levers (re-derived with plain Python loops from data/
       f"Forecast = {inr(ym[-1])} a month for Nov 2024 to Dec 2025; 2025 total {inr(f25)}; last 12 full months {inr(ltm)} ({f25 / ltm - 1:+.1%}).\n",
       "| Lever (basis Nov 2023 to Oct 2024) | Annual value |", "|---|---|",
       f"| Cut late deliveries by 5 points | {inr(l1)} ({l1:,.0f}) |", f"| Cut 1-2 star ratings by 5 points | {inr(l2)} ({l2:,.0f}) |",
+      f"| Cut late deliveries and low ratings by 5 points each (one scenario, not l1 + l2) | {inr(l2b)} ({l2b:,.0f}) |",
       f"| Move 20% of {lo_ch} spend to {hi_ch} | {inr(l3)} ({l3:,.0f}) |", f"| Cut stock damage by 0.5 points | {inr(l4)} ({l4:,.0f}) |", ""]
 (DOCS / "reconciliation.md").write_text("\n".join(L), encoding="utf-8")
 print(f"reconcile OK: {len(a)} values match")

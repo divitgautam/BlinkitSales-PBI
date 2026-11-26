@@ -1,11 +1,11 @@
 /// Sized revenue levers (annual, basis: last 12 full months) with their assumptions. Disconnected by design. Source: data/clean/levers.csv written by _build/forecast.py.
 table Levers
-	lineageTag: d8e1fe25-5cb9-4540-8ebe-4affce0b831f
+	lineageTag: 49f80cf0-0659-4386-916d-7482bd34023f
 
 	/// Lever name.
 	column Lever
 		dataType: string
-		lineageTag: 63e4c6ae-a736-48b2-95fc-aecd50fa92ff
+		lineageTag: 8bbcad26-253b-4d64-ab37-235accc3d84b
 		summarizeBy: none
 		sourceColumn: Lever
 
@@ -14,7 +14,7 @@ table Levers
 	/// Lever with its value type, for chart labels.
 	column 'Lever Label'
 		dataType: string
-		lineageTag: 3c173906-a318-414f-8741-4d850f0951d7
+		lineageTag: 878f5c3c-d4b9-491e-a006-77f3e27f5b0a
 		summarizeBy: none
 		sourceColumn: Lever Label
 
@@ -23,7 +23,7 @@ table Levers
 	/// Exposure removed, attributed revenue gained or stock value saved: not additive across types.
 	column 'Lever Type'
 		dataType: string
-		lineageTag: b81455e4-9971-4e19-a2a9-1a9f026110af
+		lineageTag: 8acac4b0-294e-4430-96bf-6f1c35830929
 		summarizeBy: none
 		sourceColumn: Lever Type
 
@@ -32,7 +32,7 @@ table Levers
 	/// What is assumed and how the value was sized.
 	column Assumption
 		dataType: string
-		lineageTag: b1f430e0-4425-4366-b144-82f91f135dc4
+		lineageTag: 6c5957e5-0e5e-4040-aad8-307265f370fa
 		summarizeBy: none
 		sourceColumn: Assumption
 
@@ -44,7 +44,7 @@ table Levers
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 2ec9605c-6d17-4e46-b7f8-1cc8df96bb7f
+		lineageTag: 19296179-db05-47b9-bb22-08e9b0fede14
 		summarizeBy: none
 		sourceColumn: Annual Value
 
@@ -56,7 +56,7 @@ table Levers
 		formatString: 0.0%
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: a888a673-3b8f-4549-a6a6-c23667ac68da
+		lineageTag: 3342fe17-e5b2-421b-8992-185de6f730c7
 		summarizeBy: none
 		sourceColumn: Pct of Revenue
 
@@ -65,7 +65,7 @@ table Levers
 	/// How far to trust the sizing.
 	column Confidence
 		dataType: string
-		lineageTag: cf38101a-5000-42c4-9a7a-efb86c90de1a
+		lineageTag: 10cb302f-4606-4ccf-a393-8bec70f023c6
 		summarizeBy: none
 		sourceColumn: Confidence
 
@@ -74,7 +74,7 @@ table Levers
 	/// Period the lever was sized on.
 	column Basis
 		dataType: string
-		lineageTag: 0837a5b5-972c-4580-b436-af276ccdaf7b
+		lineageTag: 77775321-e9bb-44bf-88ff-e2c637d80fcc
 		summarizeBy: none
 		sourceColumn: Basis
 

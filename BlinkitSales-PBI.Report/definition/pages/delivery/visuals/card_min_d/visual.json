@@ -3,9 +3,9 @@
   "name": "card_min_d",
   "position": {
     "x": 1028,
-    "y": 140,
+    "y": 154,
     "z": 15000,
-    "height": 24,
+    "height": 22,
     "width": 232,
     "tabOrder": 15000
   },
@@ -117,7 +117,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Δ Neutral Color"
+                      "Property": "Δ Avg Minutes Late Color"
                     }
                   }
                 }
@@ -223,7 +223,7 @@
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             }

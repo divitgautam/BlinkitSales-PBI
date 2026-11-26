@@ -3,9 +3,9 @@
   "name": "card_roas_d",
   "position": {
     "x": 440,
-    "y": 140,
+    "y": 154,
     "z": 11000,
-    "height": 24,
+    "height": 22,
     "width": 190,
     "tabOrder": 11000
   },
@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Δ ROAS",
               "nativeQueryRef": "Δ ROAS",
-              "displayName": "ROAS (revenue per ₹1 spent) change"
+              "displayName": "ROAS (₹ per ₹1 spent) change"
             }
           ]
         }
@@ -223,7 +223,7 @@
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             }
@@ -236,7 +236,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'ROAS (revenue per ₹1 spent) change'"
+                  "Value": "'ROAS (₹ per ₹1 spent) change'"
                 }
               }
             }

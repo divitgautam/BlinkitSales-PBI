@@ -64,7 +64,7 @@ ONE_COLOR = lambda c: {"dataPoint": [{"properties": {"fill": C(c)}}]}
 CAT_PAD = lambda fs=9: {"categoryAxis": [{"properties": {"showAxisTitle": L(False), "fontSize": L(fs), "innerPadding": L(25)}}]}
 SCALAR_X = {"categoryAxis": [{"properties": {"showAxisTitle": L(False), "fontSize": L(9), "axisType": L("Scalar")}}]}
 
-row2_y = 178
+row2_y = 190
 row3_end = H - 38
 
 
@@ -113,9 +113,9 @@ def fix_footer(pg):
     """Wider page navigator (seven tab labels) and a footer text that stops where it starts."""
     for v in pg.visuals:
         if v["name"] == "ftr_text":
-            v["position"]["width"] = 700
+            v["position"]["width"] = 540
         if v["name"] == "ftr_nav":
-            v["position"]["x"], v["position"]["width"] = W - M - 530, 530
+            v["position"]["x"], v["position"]["width"] = W - M - 700, 700
 
 
 def slicer(pg, name, field, label, x, w, group=None):
@@ -144,6 +144,13 @@ def fits(lines, w, h, pt, title_pt=12):
     assert used <= h - 10, f"text box too long: needs {used:.0f}px of {h}"
 
 
+HINTS = {}   # (page, visual) -> category rows the visual must show without scrolling; written to _build/row_hints.json for check_report.py
+
+
+def hint(pg, name, rows):
+    HINTS[f"{pg.name}/{name}"] = rows
+
+
 pages = []
 # =====================================================================
 # PAGE 1 - Executive overview
@@ -157,9 +164,9 @@ p.cards([
     ("card_rev", mea("Card Revenue"), "Revenue", D("Revenue"), DC("Revenue")),
     ("card_orders", mea("Card Orders"), "Orders", D("Orders"), DC("Orders")),
     ("card_aov", mea("Card AOV"), "Average order value", D("AOV"), DC("AOV")),
-    ("card_ontime", mea("Card On-Time %"), "On-time orders", D("On-Time %"), NEU),
-    ("card_rating", mea("Card Avg Rating"), "Average rating (1-5)", D("Avg Rating"), NEU),
-    ("card_rar", mea("Card Revenue at Risk"), "Revenue at Risk", D("Revenue at Risk"), NEU),
+    ("card_ontime", mea("Card On-Time %"), "On-time orders", D("On-Time %"), DC("On-Time %")),
+    ("card_rating", mea("Card Avg Rating"), "Average rating (1-5)", D("Avg Rating"), DC("Avg Rating")),
+    ("card_rar", mea("Card Revenue at Risk"), "Revenue at Risk", D("Revenue at Risk"), DC("Revenue at Risk")),
 ])
 lw, rw = 760, W - 2 * M - 760 - G
 r2h = 250
@@ -201,10 +208,10 @@ p.header("Sales", "Category and product visuals use line value (item lines)  · 
 std_slicers(p)
 p.cards([
     ("card_rev", mea("Card Revenue"), "Revenue (order total)", D("Revenue"), DC("Revenue")),
-    ("card_lv", mea("Card Line Value"), "Line value (item lines)", D("Line Value"), NEU),
-    ("card_units", mea("Card Units Sold"), "Units sold", D("Units Sold"), NEU),
-    ("card_margin", mea("Card Avg Margin %"), "Average product margin", D("Avg Margin %"), NEU),
-    ("card_rpc", mea("Card Revenue per Customer"), "Revenue per customer", D("Revenue per Customer"), NEU),
+    ("card_lv", mea("Card Line Value"), "Line value (item lines)", D("Line Value"), DC("Line Value")),
+    ("card_units", mea("Card Units Sold"), "Units sold", D("Units Sold"), DC("Units Sold")),
+    ("card_margin", mea("Card Avg Margin %"), "Average product margin", D("Avg Margin %"), DC("Avg Margin %")),
+    ("card_rpc", mea("Card Revenue per Customer"), "Revenue per customer", D("Revenue per Customer"), DC("Revenue per Customer")),
 ])
 cw = 440
 rx = M + cw + G
@@ -216,24 +223,33 @@ p.add("bar_cat", "clusteredBarChart", M, row2_y, cw, row3_end - row2_y,
       alt="Sorted bar chart of line value by category in lakh rupees; hover for share, margin and on-time rate",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)},
       sort=[(mea("Line Value ₹ L"), "Descending")], tooltip_page="cat_tip")
-p.add("bar_prod", "clusteredBarChart", rx, row2_y, hw, 224,
+top_h = 170
+p.add("bar_prod", "clusteredBarChart", rx, row2_y, hw, top_h,
       roles={"Category": [PROD], "Y": [(mea("Line Value ₹ L"), "Line value")]},
-      title="Top 8 products by line value, ₹ lakh", subtitle="Product name and id (names repeat across products)",
-      alt="Sorted bar chart of the eight products with the highest line value in lakh rupees",
+      title="Top 5 products by line value, ₹ lakh", subtitle="Product name and id (names repeat across products)",
+      alt="Sorted bar chart of the five products with the highest line value in lakh rupees",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(8), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)},
-      sort=[(mea("Line Value ₹ L"), "Descending")], filters=[top_n_filter("top8_products", "dim_product", "Product Label", "Line Value", 8)])
-p.add("bar_pay", "clusteredBarChart", rx + hw + G, row2_y, rwid - hw - G, 224,
+      sort=[(mea("Line Value ₹ L"), "Descending")], filters=[top_n_filter("top5_products", "dim_product", "Product Label", "Line Value", 5)])
+hint(p, "bar_prod", 5)
+p.add("bar_pay", "clusteredBarChart", rx + hw + G, row2_y, rwid - hw - G, top_h,
       roles={"Category": [PAY], "Y": [(mea("Revenue ₹ L"), "Revenue")]},
       title="Revenue by payment method, ₹ lakh", subtitle="Order revenue; four methods, sorted",
       alt="Sorted bar chart of order revenue in lakh rupees by payment method: card, cash, UPI and wallet",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GOLD)},
       sort=[(mea("Revenue ₹ L"), "Descending")])
-p.add("mx_heat", "pivotTable", rx, row2_y + 224 + G, rwid, row3_end - row2_y - 224 - G,
+hint(p, "bar_pay", 4)
+LAST12 = {"name": "last12", "field": MS, "type": "Advanced", "howCreated": "User",
+          "filter": {"Version": 2, "From": [{"Name": "d", "Entity": "Date", "Type": 0}],
+                     "Where": [{"Condition": {"Comparison": {"ComparisonKind": 2, "Left": {"Column": {"Expression": {"SourceRef": {"Source": "d"}}, "Property": "Month Start"}},
+                                                             "Right": {"Literal": {"Value": "datetime'2023-11-01T00:00:00'"}}}}}]}}
+heat_y = row2_y + top_h + G
+p.add("mx_heat", "pivotTable", rx, heat_y, rwid, row3_end - heat_y,
       roles={"Rows": [CAT], "Columns": [YM], "Values": [(mea("Line Value ₹ L Plain"), "Line value ₹ L")]},
-      title="Line value by category and month, ₹ lakh", subtitle="Darker green = more line value (ColorBrewer YlGn)  ·  full months only",
-      alt="Heat map of line value in lakh rupees by category and month, full months only, darker green means more",
+      title="Line value by category and month, ₹ lakh", subtitle="Last 12 full months (Nov 2023 to Oct 2024)  ·  darker green = more (ColorBrewer YlGn)",
+      alt="Heat map of line value in lakh rupees by category for the last 12 full months, darker green means more",
       objects={**COMPACT(8), "grid": [{"properties": {"rowPadding": L(1)}}], "values": [{"properties": {"fontSize": L(8)}}, gradient("Line Value ₹ L Plain", th.SEQ_MIN, th.SEQ_MAX)]},
-      filters=[FULL])
+      filters=[FULL, LAST12])
+hint(p, "mx_heat", 12)
 p.footer(FOOTER)
 fix_footer(p)
 pages.append(p)
@@ -247,11 +263,11 @@ p.header("Delivery", "On time = up to 5 minutes late  ·  slightly delayed 6-15 
          title_measure=mea("Title Delivery"), title_w=x0 - 70)
 std_slicers(p)
 p.cards([
-    ("card_ontime", mea("Card On-Time %"), "On-time orders", D("On-Time %"), NEU),
-    ("card_late", mea("Card Late %"), "Late orders", D("Late %"), NEU),
-    ("card_slight", mea("Card Slightly Delayed %"), "Slightly delayed", D("Slightly Delayed %"), NEU),
-    ("card_sig", mea("Card Significantly Delayed %"), "Significantly delayed", D("Significantly Delayed %"), NEU),
-    ("card_min", mea("Card Avg Minutes Late"), "Minutes over the promise", D("Avg Minutes Late"), NEU),
+    ("card_ontime", mea("Card On-Time %"), "On-time orders", D("On-Time %"), DC("On-Time %")),
+    ("card_late", mea("Card Late %"), "Late orders", D("Late %"), DC("Late %")),
+    ("card_slight", mea("Card Slightly Delayed %"), "Slightly delayed", D("Slightly Delayed %"), DC("Slightly Delayed %")),
+    ("card_sig", mea("Card Significantly Delayed %"), "Significantly delayed", D("Significantly Delayed %"), DC("Significantly Delayed %")),
+    ("card_min", mea("Card Avg Minutes Late"), "Minutes over the promise", D("Avg Minutes Late"), DC("Avg Minutes Late")),
 ])
 hw = (W - 2 * M - G) // 2
 r2h = 250
@@ -302,10 +318,10 @@ p.header("Experience", "Poor experience = late or rated 1-2 stars  ·  ratings 1
          title_measure=mea("Title Experience"), title_w=x0 - 70)
 std_slicers(p)
 p.cards([
-    ("card_rating", mea("Card Avg Rating"), "Average rating (1-5)", D("Avg Rating"), NEU),
-    ("card_low", mea("Card Low Rating %"), "Rated 1-2 stars", D("Low Rating %"), NEU),
-    ("card_neg", mea("Card Negative Sentiment %"), "Negative sentiment", D("Negative Sentiment %"), NEU),
-    ("card_poor", mea("Card Poor Experience Rate"), "Poor-experience orders", D("Poor Experience Rate"), NEU),
+    ("card_rating", mea("Card Avg Rating"), "Average rating (1-5)", D("Avg Rating"), DC("Avg Rating")),
+    ("card_low", mea("Card Low Rating %"), "Rated 1-2 stars", D("Low Rating %"), DC("Low Rating %")),
+    ("card_neg", mea("Card Negative Sentiment %"), "Negative sentiment", D("Negative Sentiment %"), DC("Negative Sentiment %")),
+    ("card_poor", mea("Card Poor Experience Rate"), "Poor-experience orders", D("Poor Experience Rate"), DC("Poor Experience Rate")),
     ("card_repeat", mea("Card Repeat Rate"), "Repeat customers", D("Repeat Rate"), NEU),
 ])
 r2h = 236
@@ -335,6 +351,7 @@ p.add("mx_sent", "pivotTable", M, r3y, hw, row3_end - r3y,
       alt="Table of orders, negative sentiment share and difference from the overall share for each feedback category, coloured blue to red",
       objects={**COMPACT(10), "values": [{"properties": {"fontSize": L(10)}}, gradient("Negative Sentiment vs All (pp)", th.DIV_LOW, th.DIV_HIGH, th.DIV_MID)]},
       sort=[(mea("Orders"), "Descending")])
+hint(p, "mx_sent", 4)
 p.add("bar_rar", "clusteredBarChart", M + hw + G, r3y, hw, row3_end - r3y,
       roles={"Category": [XCLASS], "Y": [(mea("Revenue at Risk ₹ L"), "Revenue at Risk")]},
       title=mea("Title Revenue at Risk"), subtitle="Revenue of orders in each poor-experience class, ₹ lakh (good experience left out)",
@@ -359,14 +376,14 @@ slicer(p, "slc_channel", CHAN, "Channel", x0, 130)
 slicer(p, "slc_aud", AUD, "Audience", x0 + 138, 150)
 slicer(p, "slc_month", YM, "Month", x0 + 296, 130, "Month")
 p.cards([
-    ("card_spend", mea("Card Marketing Spend"), "Marketing spend", D("Marketing Spend"), NEU),
-    ("card_mrev", mea("Card Marketing Revenue"), "Attributed revenue", D("Marketing Revenue"), NEU),
-    ("card_roas", mea("Card ROAS"), "ROAS (revenue per ₹1 spent)", D("ROAS"), DC("ROAS")),
-    ("card_impr", mea("Card Impressions"), "Impressions", D("Impressions"), NEU),
-    ("card_clicks", mea("Card Clicks"), "Clicks", D("Clicks"), NEU),
-    ("card_conv", mea("Card Conversions"), "Conversions", D("Conversions"), NEU),
+    ("card_spend", mea("Card Marketing Spend"), "Marketing spend", D("Marketing Spend"), DC("Marketing Spend")),
+    ("card_mrev", mea("Card Marketing Revenue"), "Attributed revenue", D("Marketing Revenue"), DC("Marketing Revenue")),
+    ("card_roas", mea("Card ROAS"), "ROAS (₹ per ₹1 spent)", D("ROAS"), DC("ROAS")),
+    ("card_impr", mea("Card Impressions"), "Impressions", D("Impressions"), DC("Impressions")),
+    ("card_clicks", mea("Card Clicks"), "Clicks", D("Clicks"), DC("Clicks")),
+    ("card_conv", mea("Card Conversions"), "Conversions", D("Conversions"), DC("Conversions")),
 ])
-r2h = 262
+r2h = 272
 r3y = row2_y + r2h + G
 c1, c2 = 400, 380
 c3w = W - 2 * M - c1 - c2 - 2 * G
@@ -378,14 +395,16 @@ p.add("bar_channel", "clusteredBarChart", M, row2_y, c1, r2h,
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
 p.add("mx_ca", "pivotTable", M + c1 + G, row2_y, c2, r2h,
       roles={"Rows": [CHAN], "Columns": [AUD], "Values": [(ROAS, "ROAS")]},
-      title="ROAS by channel and audience", subtitle="Darker green = higher ROAS (ColorBrewer YlGn)",
+      title="ROAS by channel and audience", subtitle="Darker = higher ROAS; All audiences is its own group",
       alt="Heat map of ROAS for each channel and target audience; all cells are between about 1.6 and 2.3",
       objects={**COMPACT(10), "values": [{"properties": {"fontSize": L(10)}}, gradient("ROAS", th.SEQ_MIN, th.SEQ_MAX)]})
 p.add("bar_campaign", "clusteredBarChart", M + c1 + c2 + 2 * G, row2_y, c3w, r2h,
       roles={"Category": [CAMP], "Y": [(ROAS, "ROAS")]},
       title="ROAS by campaign", subtitle="Nine campaigns  ·  right-click to drill through",
       alt="Sorted bar chart of ROAS for the nine marketing campaigns",
-      objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
+      objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(8), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
+hint(p, "bar_campaign", 9)
+hint(p, "mx_ca", 4)
 hw = (W - 2 * M - G) // 2
 p.add("line_spend", "lineChart", M, r3y, hw, row3_end - r3y,
       roles={"Category": [MS], "Y": [(mea("Marketing Spend ₹ L"), "Spend")]},
@@ -447,14 +466,14 @@ p = Page("forecast", "7 Forecast")
 p.header("Forecast", "Naive level model chosen by a rolling backtest  ·  80% band  ·  levers sized on the last 12 full months (Nov 2023 to Oct 2024)",
          title_measure=mea("Title Forecast"), title_w=1180)
 p.cards([
-    ("card_f25", mea("Card F25 Revenue"), "2025 revenue (forecast)", D("F25 Revenue"), NEU),
+    ("card_f25", mea("Card F25 Revenue"), "2025 revenue (forecast)", D("F25 Revenue"), DC("F25 Revenue")),
     ("card_range", mea("Card F25 Range"), "80% range for 2025", D("F25 Range"), NEU),
     ("card_vs", mea("Card F25 vs LTM"), "vs last 12 months", D("F25 vs LTM"), NEU),
     ("card_bt", mea("Card Backtest"), "Backtest error (MAPE)", D("Backtest"), NEU),
-    ("card_lev", mea("Card Lever Exposure"), "Exposure removed by levers 1-2", D("Lever Exposure"), NEU),
+    ("card_lev", mea("Card Lever Exposure"), "Exposure removed (both cuts)", D("Lever Exposure"), NEU),
 ], small=("card_range", "card_vs"))
 FA, FF, FL, FH = mea("Fcst Actual ₹ L"), mea("Fcst Forecast ₹ L"), mea("Fcst Low ₹ L"), mea("Fcst High ₹ L")
-r2h = 262
+r2h = 226
 r3y = row2_y + r2h + G
 p.add("line_forecast", "lineChart", M, row2_y, W - 2 * M, r2h,
       roles={"Category": [FMONTH], "Y": [(FA, "Actual"), (FF, "Forecast"), (FL, "Low case (80%)"), (FH, "High case (80%)")]},
@@ -468,14 +487,17 @@ p.add("line_forecast", "lineChart", M, row2_y, W - 2 * M, r2h,
 lw = round((W - 2 * M - G) * 0.56)
 p.add("bar_levers", "clusteredBarChart", M, r3y, lw, row3_end - r3y,
       roles={"Category": [LEVLAB], "Y": [(mea("Lever Value ₹ L"), "Annual value")], "Tooltips": [(mea("Lever Value % of Revenue"), "% of last-12-month revenue")]},
-      title="Late deliveries and low ratings are the biggest levers", subtitle="Annual value, ₹ lakh  ·  the label names the kind of value, which differs by lever",
+      title="Late deliveries and low ratings are the biggest levers", subtitle="Annual value, ₹ lakh  ·  the label names the value type (combined scenario: see card)",
       alt="Sorted bar chart of four lever values per year in lakh rupees: late deliveries, low ratings, channel shift, stock damage",
-      objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(mea("Lever Value ₹ L"), "Descending")])
+      objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(mea("Lever Value ₹ L"), "Descending")],
+      filters=[cat_filter("single_levers", "Levers", "Lever Type", ["'Exposure removed (combined)'"], exclude=True)])
+hint(p, "bar_levers", 4)
 plan = [("1. Late deliveries -5 points: ", f"{inr(lev['Cut late deliveries by 5 points'].annual_value)} of revenue no longer at risk (low confidence)."),
         ("2. Low ratings -5 points: ", f"{inr(lev['Cut 1-2 star ratings by 5 points'].annual_value)} no longer at risk (low confidence)."),
         ("3. Shift 20% of App spend to Email: ", f"{inr(lev['Move 20% of App spend to Email'].annual_value)} more attributed revenue."),
         ("4. Stock damage -0.5 points: ", f"{inr(lev['Cut stock damage by 0.5 points'].annual_value)} of stock saved at list price."),
-        ("Read with care: ", "delay and rating are not linked here, exposure is not lost revenue, and the types above are not additive.")]
+        ("Both cuts together: ", f"{inr(lev['Cut late deliveries and low ratings by 5 points each'].annual_value)} of revenue no longer at risk, one scenario on late-or-low-rated orders (the card above); levers 1 and 2 are its parts.")
+        ,("Read with care: ", "delay and rating are not linked here, exposure is not lost revenue, and the value types of levers 1-4 are not additive.")]
 fits(plan, W - 2 * M - lw - G, row3_end - r3y, 10)
 p.textbox("txt_plan", M + lw + G, r3y, W - 2 * M - lw - G, row3_end - r3y, "Levers and their assumptions (all data)", plan)
 p.footer(FOOTER)
@@ -501,14 +523,14 @@ p.header("Category detail", "Drill-through page: one category  ·  use the Back 
          title_measure=mea("Title Category Detail"), title_w=1000)
 back_button(p)
 p.cards([
-    ("card_lv", mea("Card Line Value"), "Line value", D("Line Value"), NEU),
+    ("card_lv", mea("Card Line Value"), "Line value", D("Line Value"), DC("Line Value")),
     ("card_orders", mea("Card Orders"), "Orders", D("Orders"), DC("Orders")),
-    ("card_ontime", mea("Card On-Time %"), "On-time orders", D("On-Time %"), NEU),
-    ("card_rating", mea("Card Avg Rating"), "Average rating", D("Avg Rating"), NEU),
-    ("card_margin", mea("Card Avg Margin %"), "Average margin", D("Avg Margin %"), NEU),
+    ("card_ontime", mea("Card On-Time %"), "On-time orders", D("On-Time %"), DC("On-Time %")),
+    ("card_rating", mea("Card Avg Rating"), "Average rating", D("Avg Rating"), DC("Avg Rating")),
+    ("card_margin", mea("Card Avg Margin %"), "Average margin", D("Avg Margin %"), DC("Avg Margin %")),
 ])
 hw = (W - 2 * M - G) // 2
-r2h = 236
+r2h = 180
 r3y = row2_y + r2h + G
 p.add("col_cat_month", "clusteredColumnChart", M, row2_y, hw, r2h,
       roles={"Category": [YM], "Y": [(mea("Line Value ₹ L"), "Line value")]},
@@ -521,7 +543,8 @@ p.add("bar_cat_status", "clusteredBarChart", M + hw + G, row2_y, hw, r2h,
 p.add("tbl_products", "pivotTable", M, r3y, W - 2 * M, row3_end - r3y,
       roles={"Rows": [PROD], "Values": [(mea("Line Value ₹ L"), "Line value"), (mea("Avg Margin %"), "Margin"), (mea("On-Time %"), "On time"), (mea("Avg Rating"), "Rating")]},
       title="Top 8 products in the category", subtitle="By line value", alt="Table of the category's eight top products with line value, margin, on-time rate and rating",
-      objects={**COMPACT(10)}, sort=[(mea("Line Value ₹ L"), "Descending")], filters=[top_n_filter("top8_cat_products", "dim_product", "Product Label", "Line Value", 8)])
+      objects={**COMPACT(9), "grid": [{"properties": {"rowPadding": L(1)}}]}, sort=[(mea("Line Value ₹ L"), "Descending")], filters=[top_n_filter("top8_cat_products", "dim_product", "Product Label", "Line Value", 8)])
+hint(p, "tbl_products", 8)
 p.footer(FOOTER, nav=False)
 fix_footer(p)
 pages.append(p)
@@ -533,11 +556,11 @@ p.header("Campaign detail", "Drill-through page: one campaign  ·  use the Back 
          title_measure=mea("Title Campaign Detail"), title_w=1000)
 back_button(p)
 p.cards([
-    ("card_spend", mea("Card Marketing Spend"), "Marketing spend", D("Marketing Spend"), NEU),
-    ("card_mrev", mea("Card Marketing Revenue"), "Attributed revenue", D("Marketing Revenue"), NEU),
+    ("card_spend", mea("Card Marketing Spend"), "Marketing spend", D("Marketing Spend"), DC("Marketing Spend")),
+    ("card_mrev", mea("Card Marketing Revenue"), "Attributed revenue", D("Marketing Revenue"), DC("Marketing Revenue")),
     ("card_roas", mea("Card ROAS"), "ROAS", D("ROAS"), DC("ROAS")),
-    ("card_ctr", mea("Card CTR"), "Click-through rate", D("Clicks"), NEU),
-    ("card_conv", mea("Card Conversion Rate"), "Conversion rate", D("Conversions"), NEU),
+    ("card_ctr", mea("Card CTR"), "Click-through rate", D("CTR"), DC("CTR")),
+    ("card_conv", mea("Card Conversion Rate"), "Conversion rate", D("Conversion Rate"), DC("Conversion Rate")),
 ])
 p.add("bar_camp_channel", "clusteredBarChart", M, row2_y, hw, r2h,
       roles={"Category": [CHAN], "Y": [(ROAS, "ROAS")]}, title="ROAS by channel", subtitle="This campaign only",
@@ -591,4 +614,7 @@ pages.append(tooltip_page("chan_tip", "Channel tooltip",
 missing = [(pg.name, v["name"]) for pg in pages for v in pg.visuals
            if not any("altText" in x.get("properties", {}) for x in v.get("visual", {}).get("visualContainerObjects", {}).get("general", []))]
 assert not missing, f"visuals without alt text: {missing}"
+HINTS.update({"overview/bar_cat": 11, "overview/bar_exp": 4, "sales/bar_cat": 11, "delivery/col_band": 8, "experience/bar_status": 3,
+              "experience/bar_ctype": 2, "marketing/bar_channel": 4})
+(Path(__file__).parent / "row_hints.json").write_text(json.dumps(HINTS, indent=1), encoding="utf-8")
 k.finish(pages)

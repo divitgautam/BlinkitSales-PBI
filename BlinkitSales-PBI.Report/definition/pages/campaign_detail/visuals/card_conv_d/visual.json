@@ -3,9 +3,9 @@
   "name": "card_conv_d",
   "position": {
     "x": 1028,
-    "y": 140,
+    "y": 154,
     "z": 13000,
-    "height": 24,
+    "height": 22,
     "width": 232,
     "tabOrder": 13000
   },
@@ -24,11 +24,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Δ Conversions"
+                  "Property": "Δ Conversion Rate"
                 }
               },
-              "queryRef": "_Measures.Δ Conversions",
-              "nativeQueryRef": "Δ Conversions",
+              "queryRef": "_Measures.Δ Conversion Rate",
+              "nativeQueryRef": "Δ Conversion Rate",
               "displayName": "Conversion rate change"
             }
           ]
@@ -117,7 +117,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Δ Neutral Color"
+                      "Property": "Δ Conversion Rate Color"
                     }
                   }
                 }
@@ -223,7 +223,7 @@
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             }

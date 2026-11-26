@@ -3,9 +3,9 @@
   "name": "bar_campaign",
   "position": {
     "x": 820,
-    "y": 178,
+    "y": 190,
     "z": 20000,
-    "height": 262,
+    "height": 272,
     "width": 444,
     "tabOrder": 20000
   },
@@ -86,7 +86,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "8D"
                 }
               }
             },

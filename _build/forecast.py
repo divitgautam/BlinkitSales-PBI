@@ -95,6 +95,15 @@ frac2 = LOW_CUT / low_rate
 exp2 = frac2 * o12.loc[(o12.rating <= 2) & ~o12.is_late, "order_total"].sum()
 levers.append(("Cut 1-2 star ratings by 5 points", "Exposure removed", f"Low-rating share {low_rate:.1%} to {low_rate - LOW_CUT:.1%}; "
                "low-rated orders that are also late stay at risk", exp2, "Low: no cause identified in the data"))
+# 2b both exposure levers as ONE scenario (no double counting): a late-only order leaves the at-risk pool with probability f1, a low-only order with f2,
+# an order that is both late and low-rated only when both are fixed (f1 x f2, independent fixes)
+late_only = o12.loc[o12.is_late & (o12.rating > 2), "order_total"].sum()
+low_only = o12.loc[~o12.is_late & (o12.rating <= 2), "order_total"].sum()
+both = o12.loc[o12.is_late & (o12.rating <= 2), "order_total"].sum()
+exp_both = frac * late_only + frac2 * low_only + frac * frac2 * both
+levers.append(("Cut late deliveries and low ratings by 5 points each", "Exposure removed (combined)",
+               "One scenario on late OR low-rated orders: late-only and low-only exposure scale by their cut, orders that are both leave only if both are fixed (independent fixes)",
+               exp_both, "Low: delay and rating are not linked in this data"))
 # 3 marketing: move 20% of the lowest-ROAS channel's spend to the highest (full-period ROAS, last-12-month spend)
 ch = fm.groupby("channel")[["spend", "attributed_revenue"]].sum()
 ch["roas"] = ch.attributed_revenue / ch.spend
@@ -123,8 +132,8 @@ levers.append(("Cut stock damage by 0.5 points", "Stock value saved", f"Damage r
 lv = pd.DataFrame(levers, columns=["lever", "lever_type", "assumption", "annual_value", "confidence"])
 lv["pct_of_revenue"] = lv.annual_value / rev12
 lv["lever_label"] = [f"{short} ({tag})" for short, tag in zip(
-    lv.lever.str.replace("points", "pts").str.replace("Move", "Shift"),
-    lv.lever_type.map({"Exposure removed": "exposure", "Attributed revenue gained": "attributed revenue", "Stock value saved": "stock value"}))]
+    lv.lever.str.replace("points each", "pts each").str.replace("points", "pts").str.replace("Move", "Shift"),
+    lv.lever_type.map({"Exposure removed": "exposure", "Exposure removed (combined)": "exposure, both together", "Attributed revenue gained": "attributed revenue", "Stock value saved": "stock value"}))]
 lv["basis"] = "Nov 2023 to Oct 2024 (last 12 full months)"
 lv = lv.sort_values("annual_value", ascending=False).reset_index(drop=True)
 lv.round({"annual_value": 2, "pct_of_revenue": 6}).to_csv(CLEAN / "levers.csv", index=False)

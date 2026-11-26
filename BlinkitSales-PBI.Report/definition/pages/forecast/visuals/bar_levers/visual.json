@@ -3,9 +3,9 @@
   "name": "bar_levers",
   "position": {
     "x": 16,
-    "y": 452,
+    "y": 428,
     "z": 14000,
-    "height": 230,
+    "height": 254,
     "width": 692,
     "tabOrder": 14000
   },
@@ -236,7 +236,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Annual value, ₹ lakh  ·  the label names the kind of value, which differs by lever'"
+                  "Value": "'Annual value, ₹ lakh  ·  the label names the value type (combined scenario: see card)'"
                 }
               }
             },
@@ -275,5 +275,67 @@
         }
       ]
     }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "single_levers",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Levers"
+              }
+            },
+            "Property": "Lever Type"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "s",
+              "Entity": "Levers",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "In": {
+                      "Expressions": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "s"
+                              }
+                            },
+                            "Property": "Lever Type"
+                          }
+                        }
+                      ],
+                      "Values": [
+                        [
+                          {
+                            "Literal": {
+                              "Value": "'Exposure removed (combined)'"
+                            }
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

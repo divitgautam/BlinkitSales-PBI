@@ -1,0 +1,17 @@
+{
+ "sales/bar_prod": 5,
+ "sales/bar_pay": 4,
+ "sales/mx_heat": 12,
+ "experience/mx_sent": 4,
+ "marketing/bar_campaign": 9,
+ "marketing/mx_ca": 4,
+ "forecast/bar_levers": 4,
+ "category_detail/tbl_products": 8,
+ "overview/bar_cat": 11,
+ "overview/bar_exp": 4,
+ "sales/bar_cat": 11,
+ "delivery/col_band": 8,
+ "experience/bar_status": 3,
+ "experience/bar_ctype": 2,
+ "marketing/bar_channel": 4
+}

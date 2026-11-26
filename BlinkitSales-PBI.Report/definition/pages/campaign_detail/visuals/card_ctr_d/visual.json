@@ -3,9 +3,9 @@
   "name": "card_ctr_d",
   "position": {
     "x": 776,
-    "y": 140,
+    "y": 154,
     "z": 11000,
-    "height": 24,
+    "height": 22,
     "width": 232,
     "tabOrder": 11000
   },
@@ -24,11 +24,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Δ Clicks"
+                  "Property": "Δ CTR"
                 }
               },
-              "queryRef": "_Measures.Δ Clicks",
-              "nativeQueryRef": "Δ Clicks",
+              "queryRef": "_Measures.Δ CTR",
+              "nativeQueryRef": "Δ CTR",
               "displayName": "Click-through rate change"
             }
           ]
@@ -117,7 +117,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Δ Neutral Color"
+                      "Property": "Δ CTR Color"
                     }
                   }
                 }
@@ -223,7 +223,7 @@
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             }

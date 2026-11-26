@@ -3,9 +3,9 @@
   "name": "txt_plan",
   "position": {
     "x": 720,
-    "y": 452,
+    "y": 428,
     "z": 15000,
-    "height": 230,
+    "height": 254,
     "width": 544,
     "tabOrder": 15000
   },
@@ -109,6 +109,25 @@
               {
                 "textRuns": [
                   {
+                    "value": "Both cuts together: ",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "10pt",
+                      "color": "#0C831F"
+                    }
+                  },
+                  {
+                    "value": "₹5.12 L of revenue no longer at risk, one scenario on late-or-low-rated orders (the card above); levers 1 and 2 are its parts.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#13241A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
                     "value": "Read with care: ",
                     "textStyle": {
                       "fontWeight": "bold",
@@ -117,7 +136,7 @@
                     }
                   },
                   {
-                    "value": "delay and rating are not linked here, exposure is not lost revenue, and the types above are not additive.",
+                    "value": "delay and rating are not linked here, exposure is not lost revenue, and the value types of levers 1-4 are not additive.",
                     "textStyle": {
                       "fontSize": "10pt",
                       "color": "#13241A"

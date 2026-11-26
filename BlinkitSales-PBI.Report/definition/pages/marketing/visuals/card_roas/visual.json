@@ -5,7 +5,7 @@
     "x": 436,
     "y": 80,
     "z": 10000,
-    "height": 88,
+    "height": 100,
     "width": 198,
     "tabOrder": 10000
   },
@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Card ROAS",
               "nativeQueryRef": "Card ROAS",
-              "displayName": "ROAS (revenue per ₹1 spent)"
+              "displayName": "ROAS (₹ per ₹1 spent)"
             }
           ]
         }
@@ -101,7 +101,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "22D"
+                  "Value": "20D"
                 }
               }
             }
@@ -113,13 +113,33 @@
       ]
     },
     "visualContainerObjects": {
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "26D"
+                }
+              }
+            }
+          }
+        }
+      ],
       "general": [
         {
           "properties": {
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'ROAS (revenue per ₹1 spent) card'"
+                  "Value": "'ROAS (₹ per ₹1 spent) card'"
                 }
               }
             }

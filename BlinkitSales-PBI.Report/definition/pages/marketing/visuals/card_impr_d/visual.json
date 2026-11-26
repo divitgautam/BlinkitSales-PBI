@@ -3,9 +3,9 @@
   "name": "card_impr_d",
   "position": {
     "x": 650,
-    "y": 140,
+    "y": 154,
     "z": 13000,
-    "height": 24,
+    "height": 22,
     "width": 190,
     "tabOrder": 13000
   },
@@ -117,7 +117,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Δ Neutral Color"
+                      "Property": "Δ Impressions Color"
                     }
                   }
                 }
@@ -223,7 +223,7 @@
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             }

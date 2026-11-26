@@ -3,9 +3,9 @@
   "name": "card_lev_d",
   "position": {
     "x": 1028,
-    "y": 140,
+    "y": 154,
     "z": 12000,
-    "height": 24,
+    "height": 22,
     "width": 232,
     "tabOrder": 12000
   },
@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Δ Lever Exposure",
               "nativeQueryRef": "Δ Lever Exposure",
-              "displayName": "Exposure removed by levers 1-2 change"
+              "displayName": "Exposure removed (both cuts) change"
             }
           ]
         }
@@ -223,7 +223,7 @@
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             }
@@ -236,7 +236,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Exposure removed by levers 1-2 change'"
+                  "Value": "'Exposure removed (both cuts) change'"
                 }
               }
             }

@@ -67,7 +67,8 @@ add("Poor Experience Orders", f"CALCULATE ( [Orders], {O}[Poor Experience] = TRU
 add("Poor Experience Rate", "DIVIDE ( [Poor Experience Orders], [Orders] )", PCT, E, "Poor-experience orders / orders.")
 add("Revenue at Risk", f"CALCULATE ( [Revenue], {O}[Poor Experience] = TRUE () )", R0, E,
     "HEADLINE KPI. Sum of order totals of poor-experience orders (late or rated 1-2 stars) = Orders x Poor Experience Rate x AOV of those orders.")
-add("Revenue at Risk %", "DIVIDE ( [Revenue at Risk], [Revenue] )", PCT, E, "Revenue at Risk / Revenue.")
+add("Revenue at Risk %", f"DIVIDE ( [Revenue at Risk], CALCULATE ( [Revenue], REMOVEFILTERS ( {O}[Experience Class] ) ) )", PCT, E,
+    "Revenue at Risk / total revenue. The Experience Class filter is removed from the denominator, so a visual that hides good-experience orders still shows the share of ALL revenue.")
 add("Low Rating Orders", f"CALCULATE ( [Orders], {O}[Rating] <= 2 )", INT, E, "Orders rated 1 or 2 stars.")
 add("Low Rating %", "DIVIDE ( [Low Rating Orders], [Orders] )", PCT, E, "Low-rating orders / orders.")
 add("Negative Sentiment %", f'DIVIDE ( CALCULATE ( [Orders], {O}[Sentiment] = "Negative" ), [Orders] )', PCT, E, "Share of orders with negative feedback sentiment.")
@@ -164,37 +165,41 @@ for nm, cur in (("Revenue", "[Revenue]"), ("Orders", "[Orders]"), ("AOV", "[AOV]
         None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
     add(f"Δ {nm} Color", head + f'RETURN IF ( NOT ok, "{NEUTRAL}", IF ( c >= p, "{GOOD}", "{BAD}" ) )', None, P,
         f"Colour of the {nm} change line: green up, red down, grey when not comparable.")
-add("Δ Revenue at Risk", f'{fm("[Revenue at Risk %]", "0%")} & " of revenue"', None, P, "Card line: Revenue at Risk as a share of revenue.")
-add("Δ On-Time %", f'"Late: " & {fm("[Late %]", "0.0%")} & ", " & {fm("[Avg Minutes Late (Late Orders)]", "0.0")} & " min over"', None, P,
-    "Card line: late share and how late.")
-add("Δ Late %", f'{fm("[Late Orders]", "#,##0")} & " of " & {fm("[Orders]", "#,##0")} & " orders"', None, P, "Card line: late orders over all orders.")
-add("Δ Slightly Delayed %", '"6 to 15 minutes late"', None, P, "Card line: definition of Slightly Delayed in the source.")
-add("Δ Significantly Delayed %", '"16 to 30 minutes late"', None, P, "Card line: definition of Significantly Delayed in the source.")
-add("Δ Avg Minutes Late", '"Late orders only"', None, P, "Card line: scope of the average.")
-add("Δ Avg Rating", f'IF ( ISBLANK ( [Avg Rating Late] ) || ISBLANK ( [Avg Rating On-Time] ), "No late or on-time pair", "Late " & {fm("[Avg Rating Late]", "0.00")} & " vs on-time " & {fm("[Avg Rating On-Time]", "0.00")} )',
-    None, P, "Card line: mean rating of late vs on-time orders.")
-add("Δ Low Rating %", f'{fm("[Low Rating Orders]", "#,##0")} & " orders rated 1-2"', None, P, "Card line: count of low-rated orders.")
-add("Δ Poor Experience Rate", '"Late or rated 1-2 stars"', None, P, "Card line: definition of a poor experience.")
-add("Δ Negative Sentiment %", '"Of feedback comments"', None, P, "Card line: scope of the sentiment share.")
 add("Δ Repeat Rate", f'{fm("[Repeat Customers]", "#,##0")} & " of " & {fm("[Customers Ordering]", "#,##0")} & " customers"', None, P, "Card line: repeat customers over customers ordering.")
-add("Δ Line Value", f'{fm("DIVIDE ( [Line Value], [Revenue] )", "0%")} & " of order revenue"', None, P, "Card line: line value as a share of order revenue (the gap is a data note).")
-add("Δ Units Sold", f'{fm("DIVIDE ( [Units Sold], [Orders] )", "0.00")} & " per order"', None, P, "Card line: units per order.")
-add("Δ Avg Margin %", '"Simple average of products"', None, P, "Card line: how the margin is averaged.")
-add("Δ Revenue per Customer", f'{fm("[Customers Ordering]", "#,##0")} & " customers ordering"', None, P, "Card line: customers behind the average.")
-add("Δ Marketing Spend", f'"{RUPEE}" & {fm("[Cost per Conversion]", "#,##0.00")} & " per conversion"', None, P, "Card line: cost per conversion.")
-add("Δ Marketing Revenue", '"Attributed, not order revenue"', None, P, "Card line: what attributed revenue is.")
-add("Δ ROAS", f'IF ( ISBLANK ( [ROAS vs Portfolio] ), "", {fm("[ROAS vs Portfolio]", "+0.00;-0.00;0.00")} & "x vs all campaigns" )', None, P, "Card line: ROAS minus the all-campaign ROAS.")
-add("Δ ROAS Color", f'IF ( ISBLANK ( [ROAS vs Portfolio] ) || ABS ( [ROAS vs Portfolio] ) < 0.1, "{NEUTRAL}", IF ( [ROAS vs Portfolio] > 0, "{GOOD}", "{BAD}" ) )', None, P,
-    "Colour of the ROAS line: grey unless the gap is 0.1x or more (smaller gaps are noise).")
-add("Δ Impressions", f'"{RUPEE}" & {fm("DIVIDE ( [Marketing Spend], [Total Impressions] ) * 1000", "0.00")} & " per 1,000"', None, P, "Card line: cost per thousand impressions.")
-add("Δ Clicks", f'"CTR " & {fm("[CTR]", "0.00%")}', None, P, "Card line: click-through rate.")
-add("Δ Conversions", f'{fm("[Conversion Rate]", "0.0%")} & " of clicks"', None, P, "Card line: conversion rate.")
+# generic like-for-like change lines: last full month in the selection vs the same month a year earlier (arrow, size, both months named)
+def yoy(nm, cur, mode, good, unit=""):
+    """mode rel: % change; pp: percentage points of a ratio; abs: absolute difference (unit appended). good: up, down or none (colour)."""
+    head = (f"VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) "
+            f"VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 "
+            f"VAR c = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = pm ) ")
+    size = {"rel": 'FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" )',
+            "pp": 'FORMAT ( ABS ( c - p ) * 100, "0.0", "en-US" ) & " pp"',
+            "abs": f'FORMAT ( ABS ( c - p ), "0.00", "en-US" ) & " {unit}"'}[mode]
+    add(f"Δ {nm}", head + f'RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "No prior-year month", '
+        f'IF ( c >= p, "{UP}", "{DOWN}" ) & {size} & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )',
+        None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
+    colour = (f'IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "{NEUTRAL}", IF ( ( c >= p ) = {"TRUE ()" if good == "up" else "FALSE ()"}, "{GOOD}", "{BAD}" ) )'
+              if good in ("up", "down") else f'"{NEUTRAL}"')
+    add(f"Δ {nm} Color", head + f"RETURN {colour}", None, P, f"Colour of the {nm} change line: green is good, red is bad, grey when not comparable or when direction has no good side.")
+
+
+for nm, cur, mode, good, unit in (
+        ("On-Time %", "[On-Time %]", "pp", "up", ""), ("Late %", "[Late %]", "pp", "down", ""), ("Slightly Delayed %", "[Slightly Delayed %]", "pp", "down", ""),
+        ("Significantly Delayed %", "[Significantly Delayed %]", "pp", "down", ""), ("Avg Minutes Late", "[Avg Minutes Late (Late Orders)]", "abs", "down", "min"),
+        ("Avg Rating", "[Avg Rating]", "abs", "up", "pts"), ("Low Rating %", "[Low Rating %]", "pp", "down", ""),
+        ("Poor Experience Rate", "[Poor Experience Rate]", "pp", "down", ""), ("Negative Sentiment %", "[Negative Sentiment %]", "pp", "down", ""),
+        ("Revenue at Risk", "[Revenue at Risk]", "rel", "down", ""), ("Line Value", "[Line Value]", "rel", "up", ""), ("Units Sold", "[Units Sold]", "rel", "up", ""),
+        ("Avg Margin %", "[Avg Margin %]", "pp", "up", ""), ("Revenue per Customer", "[Revenue per Customer]", "rel", "up", ""),
+        ("Marketing Spend", "[Marketing Spend]", "rel", "none", ""), ("Marketing Revenue", "[Marketing Revenue]", "rel", "up", ""), ("ROAS", "[ROAS]", "rel", "up", ""),
+        ("Impressions", "[Total Impressions]", "rel", "up", ""), ("Clicks", "[Total Clicks]", "rel", "up", ""), ("Conversions", "[Total Conversions]", "rel", "up", ""),
+        ("CTR", "[CTR]", "pp", "up", ""), ("Conversion Rate", "[Conversion Rate]", "pp", "up", "")):
+    yoy(nm, cur, mode, good, unit)
 add("Δ Neutral Color", f'"{NEUTRAL}"', None, P, "Grey for card lines that carry context, not a change.")
 add("Selected Category", 'SELECTEDVALUE ( dim_product[Category], "All categories" )', None, P, "Category in the current filter context (drill-through title).")
 add("Selected Campaign", f'SELECTEDVALUE ( {MK}[Campaign Name], "All campaigns" )', None, P, "Campaign in the current filter context (drill-through title).")
 add("Footer Text",
-    f'"Source: Blinkit sales dataset (Kaggle, synthetic)  ·  Orders " & FORMAT ( CALCULATE ( MIN ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & " to " '
-    f'& FORMAT ( CALCULATE ( MAX ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & "  ·  INR assumed  ·  Refreshed " & FORMAT ( MAX ( \'Refresh Info\'[Refreshed] ), "d mmm yyyy", "en-US" )',
+    f'"Source: Blinkit sales (Kaggle, synthetic) · orders " & FORMAT ( CALCULATE ( MIN ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & " to " '
+    f'& FORMAT ( CALCULATE ( MAX ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & " · INR assumed · refreshed " & FORMAT ( MAX ( \'Refresh Info\'[Refreshed] ), "d mmm yyyy", "en-US" )',
     None, P, "Footer: source, data period, currency assumption and the refresh date.")
 # ---- 9 Forecast (disconnected Forecast and Levers tables)
 FC = "9 Forecast"
@@ -212,18 +217,16 @@ add("F25 vs LTM %", "DIVIDE ( [F25 Revenue] - [LTM Revenue], [LTM Revenue] )", "
 add("Lever Value", "SUM ( Levers[Annual Value] )", R0, FC, "Annual lever value in ₹ (types are not additive).")
 add("Lever Value ₹ L", "DIVIDE ( SUM ( Levers[Annual Value] ), 100000 )", LAKH, FC, "Annual lever value in ₹ lakh, for the lever chart.")
 add("Lever Value % of Revenue", "SUM ( Levers[Pct of Revenue] )", PCT, FC, "Lever value as a share of the last 12 full months of revenue.")
-add("Lever Exposure Removed", 'CALCULATE ( SUM ( Levers[Annual Value] ), Levers[Lever Type] = "Exposure removed" )', R0, FC,
-    "Revenue at Risk removed by the two experience levers (late deliveries, low ratings); the two overlap little but are not strictly additive.")
+add("Lever Exposure Removed", 'CALCULATE ( SUM ( Levers[Annual Value] ), Levers[Lever Type] = "Exposure removed (combined)" )', R0, FC,
+    "Revenue at Risk removed when late deliveries and 1-2 star ratings are both cut by 5 points: ONE scenario on late-or-low-rated orders (forecast.py), not the sum of two levers.")
 add("Card F25 Revenue", f"VAR v = [F25 Revenue] RETURN {inr('v')}", None, P, "2025 forecast for cards.")
 add("Card F25 Range", f"VAR lo = [F25 Low] VAR hi = [F25 High] RETURN {inr('lo')} & \" to \" & {inr('hi')}", None, P, "80% band of the 2025 forecast for cards.")
 add("Card F25 vs LTM", f"{fm('ABS ( [F25 vs LTM %] )', '0.0%')} & IF ( [F25 vs LTM %] < 0, \" below\", \" above\" )", None, P, "2025 forecast vs the last 12 months, as text.")
 add("Card Backtest", f'"{FACTS.get("backtest_mape", 0):.1f}%"', None, P, "Backtest error (MAPE) of the forecast model, from _build/forecast.py.")
 add("Card Lever Exposure", f"VAR v = [Lever Exposure Removed] RETURN {inr('v')}", None, P, "Annual exposure removed by the two experience levers, for cards.")
-add("Δ F25 Revenue", f'"Flat at " & {inr("DIVIDE ( [F25 Revenue], 12 )")} & " a month"', None, P, "Card line: the monthly level behind the 2025 forecast.")
 add("Δ F25 Range", f'"Each month ±{FACTS.get("band80", 0) * 100:.1f}%"', None, P, "Card line: width of the monthly band.")
 add("Δ F25 vs LTM", f'"Last 12 months: " & {inr("[LTM Revenue]")}', None, P, "Card line: the last-12-month revenue.")
 add("Δ Backtest", f'"{FACTS.get("backtest_best", "model")}"', None, P, "Card line: the winning model of the rolling-origin backtest.")
-add("Δ Lever Exposure", f'{fm("DIVIDE ( [Lever Exposure Removed], [LTM Revenue] )", "0.0%")} & " of a year\'s revenue"', None, P, "Card line: exposure removed as a share of last-12-month revenue.")
 # 8 Titles: action titles that follow the slicers (every title stays within 70 characters, counting ₹ as one)
 TT = "8 Titles"
 add("Title Overview",
@@ -269,6 +272,10 @@ add("Title Campaign Detail",
     f"VAR s = [Marketing Spend] RETURN IF ( DISTINCTCOUNT ( {MK}[Campaign Name] ) <> 1, \"Select a campaign to drill through\", [Selected Campaign] & \": ROAS \" & {fm('[ROAS]', '0.00')} & \"x on \" & {inr('s')} & \" spend\" )",
     None, TT, "Campaign drill-through headline (a prompt when no single campaign is in context).")
 # ---- extra display measures (heat-map cell value, tooltip cards)
-add("Line Value ₹ L Plain", "DIVIDE ( [Line Value], 100000 )", "0.00", P, "Line value in ₹ lakh with two decimals and no unit text, for the compact category x month heat map.")
+add("Line Value ₹ L Plain", "DIVIDE ( [Line Value], 100000 )", r"0.00 \L", P, "Line value in ₹ lakh with two decimals and no unit text, for the compact category x month heat map.")
 card("CTR", fm("[CTR]", "0.00%"), "Click-through rate for cards.")
 card("Conversion Rate", fm("[Conversion Rate]", "0.0%"), "Conversion rate for cards.")
+
+add("Δ Lever Exposure", f'{fm("DIVIDE ( [Lever Exposure Removed], [LTM Revenue] )", "0.0%")} & " of 12-month revenue"', None, P, "Card line: combined exposure removed as a share of last-12-month revenue.")
+add("Δ F25 Revenue", f'IF ( [F25 vs LTM %] < 0, "{DOWN}", "{UP}" ) & {fm("ABS ( [F25 vs LTM %] )", "0.0%")} & " vs last 12 months"', None, P, "Card line: 2025 forecast vs the last 12 full months.")
+add("Δ F25 Revenue Color", f'IF ( [F25 vs LTM %] < 0, "{BAD}", "{GOOD}" )', None, P, "Colour of the forecast change line.")

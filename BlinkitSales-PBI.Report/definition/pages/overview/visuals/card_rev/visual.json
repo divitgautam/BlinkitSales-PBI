@@ -5,7 +5,7 @@
     "x": 16,
     "y": 80,
     "z": 6000,
-    "height": 88,
+    "height": 100,
     "width": 198,
     "tabOrder": 6000
   },
@@ -101,7 +101,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "22D"
+                  "Value": "20D"
                 }
               }
             }
@@ -113,6 +113,26 @@
       ]
     },
     "visualContainerObjects": {
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "26D"
+                }
+              }
+            }
+          }
+        }
+      ],
       "general": [
         {
           "properties": {

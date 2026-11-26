@@ -3,9 +3,9 @@
   "name": "bar_prod",
   "position": {
     "x": 468,
-    "y": 178,
+    "y": 190,
     "z": 17000,
-    "height": 224,
+    "height": 170,
     "width": 392,
     "tabOrder": 17000
   },
@@ -172,7 +172,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Top 8 products by line value, ₹ lakh'"
+                  "Value": "'Top 5 products by line value, ₹ lakh'"
                 }
               }
             },
@@ -248,7 +248,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Sorted bar chart of the eight products with the highest line value in lakh rupees'"
+                  "Value": "'Sorted bar chart of the five products with the highest line value in lakh rupees'"
                 }
               }
             }
@@ -260,7 +260,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "top8_products",
+        "name": "top5_products",
         "field": {
           "Column": {
             "Expression": {
@@ -322,7 +322,7 @@
                         }
                       }
                     ],
-                    "Top": 8
+                    "Top": 5
                   }
                 }
               },

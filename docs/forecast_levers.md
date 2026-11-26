@@ -17,6 +17,7 @@
 
 | Lever | Type | Annual value | % of revenue | Assumption | Confidence |
 |---|---|---|---|---|---|
+| Cut late deliveries and low ratings by 5 points each | Exposure removed (combined) | ₹5.12 L | 7.68% | One scenario on late OR low-rated orders: late-only and low-only exposure scale by their cut, orders that are both leave only if both are fixed (independent fixes) | Low: delay and rating are not linked in this data |
 | Cut late deliveries by 5 points | Exposure removed | ₹2.64 L | 3.97% | Late share 31.6% to 26.6%; late orders that are also rated 1-2 stars stay at risk | Low: delay does not move the rating in this data |
 | Cut 1-2 star ratings by 5 points | Exposure removed | ₹2.31 L | 3.46% | Low-rating share 21.4% to 16.4%; low-rated orders that are also late stay at risk | Low: no cause identified in the data |
 | Move 20% of App spend to Email | Attributed revenue gained | ₹67,456 | 1.01% | App ROAS 1.92x vs Email 2.05x; bootstrap 95% interval of the gap +0.05 to +0.21x | Low: small gap, and attributed revenue is not order revenue |

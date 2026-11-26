@@ -3,9 +3,9 @@
   "name": "card_spend_d",
   "position": {
     "x": 20,
-    "y": 140,
+    "y": 154,
     "z": 7000,
-    "height": 24,
+    "height": 22,
     "width": 190,
     "tabOrder": 7000
   },
@@ -117,7 +117,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Δ Neutral Color"
+                      "Property": "Δ Marketing Spend Color"
                     }
                   }
                 }
@@ -223,7 +223,7 @@
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             }

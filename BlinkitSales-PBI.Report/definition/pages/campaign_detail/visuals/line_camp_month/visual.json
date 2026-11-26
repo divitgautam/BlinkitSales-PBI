@@ -3,9 +3,9 @@
   "name": "line_camp_month",
   "position": {
     "x": 16,
-    "y": 426,
+    "y": 382,
     "z": 16000,
-    "height": 256,
+    "height": 300,
     "width": 1248,
     "tabOrder": 16000
   },
