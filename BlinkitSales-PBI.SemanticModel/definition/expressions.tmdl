@@ -1,6 +1,6 @@
 /// Project folder on this machine. Change it when the project moves.
 expression ProjectFolder = "D:\Wolf\PBI\BlinkitSales-PBI" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
-	lineageTag: d0426944-f49d-4bf2-b62c-83456950af1b
+	lineageTag: 2b3c5264-9110-4ae5-82f4-dbdfdd54b06b
 
 	annotation PBI_NavigationStepName = Navigation
 
@@ -8,7 +8,7 @@ expression ProjectFolder = "D:\Wolf\PBI\BlinkitSales-PBI" meta [IsParameterQuery
 
 /// Folder with the clean CSV files, relative to ProjectFolder.
 expression SourceFolder = "data\clean" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
-	lineageTag: be962dbd-bea3-4e80-86ca-59b176ebe587
+	lineageTag: a4081b74-b589-426e-8d71-a87dd5c73e66
 
 	annotation PBI_NavigationStepName = Navigation
 

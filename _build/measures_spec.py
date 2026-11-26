@@ -140,9 +140,9 @@ add("Title Overview",
     f"VAR r = [Revenue] RETURN {inr('r')} & \" revenue from \" & {fm('[Orders]', '#,##0')} & \" orders; \" & {fm('[Late %]', '0%')} & \" arrive late and \" & {fm('[Revenue at Risk %]', '0%')} & \" of revenue is at risk\"",
     None, TT, "Page 1 headline: revenue, orders, late share and revenue at risk.")
 add("Title Sales",
-    "VAR cats = ALLSELECTED ( dim_product[Category] ) VAR total = CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) "
-    "VAR top = TOPN ( 1, cats, [Line Value], DESC ) VAR topName = MAXX ( top, dim_product[Category] ) VAR topShare = DIVIDE ( MAXX ( top, [Line Value] ), total ) "
-    "VAR top3 = DIVIDE ( SUMX ( TOPN ( 3, cats, [Line Value], DESC ), [Line Value] ), total ) "
+    "VAR cats = ALLSELECTED ( dim_product[Category] ) VAR tot = CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) "
+    "VAR t1 = TOPN ( 1, cats, [Line Value], DESC ) VAR topName = MAXX ( t1, dim_product[Category] ) VAR topShare = DIVIDE ( MAXX ( t1, [Line Value] ), tot ) "
+    "VAR top3 = DIVIDE ( SUMX ( TOPN ( 3, cats, [Line Value], DESC ), [Line Value] ), tot ) "
     f"RETURN topName & \" leads with \" & {fm('topShare', '0.0%')} & \" of line value; the top 3 categories hold \" & {fm('top3', '0%')}",
     None, TT, "Page 2 headline: leading category by line value, its share and the top-3 share.")
 add("Title Monthly Trend",

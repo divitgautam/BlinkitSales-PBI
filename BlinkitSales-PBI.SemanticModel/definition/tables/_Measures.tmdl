@@ -1,522 +1,522 @@
 /// Central home for report measures (no data).
 table _Measures
-	lineageTag: 193b9658-baaa-4c20-91c4-2869d9f68758
+	lineageTag: 8ddeb158-6326-4fc4-9d62-1738fa6fc07b
 
 	/// Revenue = sum of order totals (order header), in assumed INR. The revenue measure for every card and title.
 	measure Revenue = SUM ( fact_orders[Order Total] )
 		formatString: ₹#,##0
 		displayFolder: 1 Sales
-		lineageTag: eb1e7e3e-0319-4e65-99df-6ef338b73127
+		lineageTag: b82af9e8-956a-4c79-aa04-869f2166dd5f
 
 	/// Number of orders (one row per order).
 	measure Orders = COUNTROWS ( fact_orders )
 		formatString: #,##0
 		displayFolder: 1 Sales
-		lineageTag: 9ad992e3-082a-4d8a-bdc0-083f354fa03d
+		lineageTag: a2d6a5a3-b779-4631-a4f2-356670e1cb1f
 
 	/// Average order value = Revenue / Orders.
 	measure AOV = DIVIDE ( [Revenue], [Orders] )
 		formatString: ₹#,##0.00
 		displayFolder: 1 Sales
-		lineageTag: 1f0a9c53-de15-4bbc-ab58-af0060f13ba4
+		lineageTag: 9b4b6cd8-6495-4925-b912-8d139f963848
 
 	/// Distinct customers with at least one order in the selection (the customer file has 2,500, of whom 2,172 order).
 	measure 'Customers Ordering' = DISTINCTCOUNT ( fact_orders[Customer Id] )
 		formatString: #,##0
 		displayFolder: 1 Sales
-		lineageTag: 2e6d869c-3291-4510-b315-7c68c66d0e45
+		lineageTag: ea94a977-b7c1-42ad-9377-71cf39088e28
 
 	/// Customers with two or more orders in the selection.
 	measure 'Repeat Customers' = COUNTROWS ( FILTER ( VALUES ( fact_orders[Customer Id] ), CALCULATE ( COUNTROWS ( fact_orders ) ) >= 2 ) )
 		formatString: #,##0
 		displayFolder: 1 Sales
-		lineageTag: 673b7494-98b9-449b-b502-0981a3329a46
+		lineageTag: 2f7662f1-a360-4616-852c-7d1dcabd2b4e
 
 	/// Repeat customers / customers ordering.
 	measure 'Repeat Rate' = DIVIDE ( [Repeat Customers], [Customers Ordering] )
 		formatString: 0.0%
 		displayFolder: 1 Sales
-		lineageTag: 5359f46f-9e43-4d23-8178-034a45b29a62
+		lineageTag: 6afdb627-ffe9-42bb-ae57-71546354c287
 
 	/// Units on the order item lines.
 	measure 'Units Sold' = SUM ( fact_orders[Quantity] )
 		formatString: #,##0
 		displayFolder: 1 Sales
-		lineageTag: e4a561ae-a375-49eb-964b-7ad8d6e56a9f
+		lineageTag: 78f5d075-626e-4ba0-b76d-60f29f0f3816
 
 	/// Revenue / customers ordering.
 	measure 'Revenue per Customer' = DIVIDE ( [Revenue], [Customers Ordering] )
 		formatString: ₹#,##0.00
 		displayFolder: 1 Sales
-		lineageTag: 986a2b03-e372-4b77-a805-618cb053c869
+		lineageTag: dbd9901a-1f26-43af-b0dc-ed2a51f45c78
 
 	/// Quantity x unit price on the item lines, in assumed INR. Use ONLY for category and product mix: it does not reconcile to Revenue (about 45% of it in the source).
 	measure 'Line Value' = SUM ( fact_orders[Line Amount] )
 		formatString: ₹#,##0
 		displayFolder: 1 Sales
-		lineageTag: e93f2b5d-9781-40f4-800f-0f34aa9adc13
+		lineageTag: b008a802-11fe-4392-9cea-66c75858e79b
 
 	/// Category share of line value within the current selection (use with Category on an axis).
 	measure 'Category Share' = DIVIDE ( [Line Value], CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) )
 		formatString: 0.0%
 		displayFolder: 1 Sales
-		lineageTag: 40c9d286-ba19-442f-8a22-43c21801e2e4
+		lineageTag: 75dc925d-6c54-4c56-a82d-a7aaca32b671
 
 	/// Dense rank of a category by line value within the selection.
 	measure 'Category Rank' = IF ( NOT ISBLANK ( [Line Value] ), RANKX ( ALLSELECTED ( dim_product[Category] ), [Line Value], , DESC, DENSE ) )
 		formatString: 0
 		displayFolder: 1 Sales
-		lineageTag: 248357b8-5102-4031-9343-73b511b82cdc
+		lineageTag: 22962363-5643-4e6f-8ce4-d738c160099c
 
 	/// Average stored margin of the products in the selection (simple average across products).
 	measure 'Avg Margin %' = DIVIDE ( AVERAGE ( dim_product[Margin Percentage] ), 100 )
 		formatString: 0.0%
 		displayFolder: 1 Sales
-		lineageTag: be4a7d30-3ba8-4c48-b3eb-9dbbffdc64a0
+		lineageTag: 02287b70-4387-4f71-8da7-60819676cf2b
 
 	/// Orders delivered On Time (includes up to 5 minutes late).
 	measure 'On-Time Orders' = CALCULATE ( [Orders], fact_orders[Delivery Status] = "On Time" )
 		formatString: #,##0
 		displayFolder: 2 Delivery
-		lineageTag: f58837b6-8192-4557-b71b-ac521c0b8714
+		lineageTag: 67bb6e53-cc4b-4687-95c4-a1f8ce9ae948
 
 	/// On-time orders / orders. Late % = 1 - On-Time %.
 	measure 'On-Time %' = DIVIDE ( [On-Time Orders], [Orders] )
 		formatString: 0.0%
 		displayFolder: 2 Delivery
-		lineageTag: eb83b769-ff25-4fb6-b7c4-7957c687a802
+		lineageTag: ad0dd062-ec0f-4774-ae03-d401cab79856
 
 	/// Orders not delivered On Time (Slightly or Significantly Delayed).
 	measure 'Late Orders' = CALCULATE ( [Orders], fact_orders[Is Late] = TRUE () )
 		formatString: #,##0
 		displayFolder: 2 Delivery
-		lineageTag: 90cfb230-69f7-4305-a0d5-ae7aac93a6f1
+		lineageTag: 8837ea8a-27fd-4443-9ba1-8b0374c0e9f0
 
 	/// Late orders / orders.
 	measure 'Late %' = DIVIDE ( [Late Orders], [Orders] )
 		formatString: 0.0%
 		displayFolder: 2 Delivery
-		lineageTag: 7ebdf9bd-c323-4079-baae-1afbb17531b9
+		lineageTag: b9e882be-a2be-400d-ab81-eae0e89f8275
 
 	/// Share of orders with status Slightly Delayed.
 	measure 'Slightly Delayed %' = DIVIDE ( CALCULATE ( [Orders], fact_orders[Delivery Status] = "Slightly Delayed" ), [Orders] )
 		formatString: 0.0%
 		displayFolder: 2 Delivery
-		lineageTag: 04168bdf-3408-4edd-854c-c9cc937743f0
+		lineageTag: b617ff95-97e9-4d69-a5d5-f6216de53a83
 
 	/// Share of orders with status Significantly Delayed.
 	measure 'Significantly Delayed %' = DIVIDE ( CALCULATE ( [Orders], fact_orders[Delivery Status] = "Significantly Delayed" ), [Orders] )
 		formatString: 0.0%
 		displayFolder: 2 Delivery
-		lineageTag: f2607a9a-1bf0-4e2d-8946-a0a389026531
+		lineageTag: aa2259fc-128a-49f7-8b81-3fba123cfc71
 
 	/// Mean of minutes late; early deliveries count as negative minutes.
 	measure 'Avg Minutes Late' = AVERAGE ( fact_orders[Minutes Late] )
 		formatString: 0.00
 		displayFolder: 2 Delivery
-		lineageTag: 1542468d-ffcb-4263-bc46-e70406493fff
+		lineageTag: 2bc7fa6c-8c98-4de8-896d-6530759ecb62
 
 	/// Mean minutes late among late orders only.
 	measure 'Avg Minutes Late (Late Orders)' = CALCULATE ( AVERAGE ( fact_orders[Minutes Late] ), fact_orders[Is Late] = TRUE () )
 		formatString: 0.00
 		displayFolder: 2 Delivery
-		lineageTag: 7250b77a-698e-4512-93bf-be176859994c
+		lineageTag: 72c4575a-b078-422e-b5a6-2590a2289843
 
 	/// Mean delivery distance in kilometres.
 	measure 'Avg Distance Km' = AVERAGE ( fact_orders[Distance Km] )
 		formatString: 0.00
 		displayFolder: 2 Delivery
-		lineageTag: 90aca2ee-168a-4cec-8947-804f44515623
+		lineageTag: 52471bb6-4fee-4124-bfd0-95a8d8c72a3a
 
 	/// Mean customer rating, 1-5 stars.
 	measure 'Avg Rating' = AVERAGE ( fact_orders[Rating] )
 		formatString: 0.00
 		displayFolder: 3 Experience
-		lineageTag: b4a8d0e1-1567-4b9a-bb7e-114efb0860d8
+		lineageTag: 23d04c87-2562-40d3-9b35-2488c5bc65ed
 
 	/// Mean rating of on-time orders.
 	measure 'Avg Rating On-Time' = CALCULATE ( [Avg Rating], fact_orders[Delivery Status] = "On Time" )
 		formatString: 0.00
 		displayFolder: 3 Experience
-		lineageTag: 0dc5a9b6-f941-4523-aea6-352fed1f5df3
+		lineageTag: 9c9fbb01-c31e-4a3b-a306-c957bc0a71e1
 
 	/// Mean rating of late orders.
 	measure 'Avg Rating Late' = CALCULATE ( [Avg Rating], fact_orders[Is Late] = TRUE () )
 		formatString: 0.00
 		displayFolder: 3 Experience
-		lineageTag: b226773d-a277-4558-aee0-0b2c024fd263
+		lineageTag: cd21fe0a-dba8-4305-8923-ad793816292f
 
 	/// Late minus on-time mean rating; near zero means delay does not move the rating in this data.
 	measure 'Rating Gap Late vs On-Time' = [Avg Rating Late] - [Avg Rating On-Time]
 		formatString: +0.00;-0.00;0.00
 		displayFolder: 3 Experience
-		lineageTag: 3a001cb4-1f6a-4854-8f4b-a327484db7b2
+		lineageTag: d62ee08c-95b3-4e78-947b-19b9e2604ccb
 
 	/// Orders that were late or rated 1-2 stars.
 	measure 'Poor Experience Orders' = CALCULATE ( [Orders], fact_orders[Poor Experience] = TRUE () )
 		formatString: #,##0
 		displayFolder: 3 Experience
-		lineageTag: 946b5bd9-1d98-4dc7-a33d-805a4178be95
+		lineageTag: 3af2ee92-250a-48d5-bea1-1b2cec941587
 
 	/// Poor-experience orders / orders.
 	measure 'Poor Experience Rate' = DIVIDE ( [Poor Experience Orders], [Orders] )
 		formatString: 0.0%
 		displayFolder: 3 Experience
-		lineageTag: 2fa862a6-f2ce-4327-a6aa-6baf7904b0f6
+		lineageTag: 18728e6d-6e4e-4ce4-9749-56499a5a9338
 
 	/// HEADLINE KPI. Sum of order totals of poor-experience orders (late or rated 1-2 stars) = Orders x Poor Experience Rate x AOV of those orders.
 	measure 'Revenue at Risk' = CALCULATE ( [Revenue], fact_orders[Poor Experience] = TRUE () )
 		formatString: ₹#,##0
 		displayFolder: 3 Experience
-		lineageTag: cba198e2-b2bb-4ed8-b350-032a17860464
+		lineageTag: cdda1a7c-8110-4c1e-95f1-7d4ad4da0b1d
 
 	/// Revenue at Risk / Revenue.
 	measure 'Revenue at Risk %' = DIVIDE ( [Revenue at Risk], [Revenue] )
 		formatString: 0.0%
 		displayFolder: 3 Experience
-		lineageTag: f35928cb-ffc7-4936-98f6-c76474d6aa1e
+		lineageTag: f220a586-0e31-4f63-9879-1872603d5118
 
 	/// Orders rated 1 or 2 stars.
 	measure 'Low Rating Orders' = CALCULATE ( [Orders], fact_orders[Rating] <= 2 )
 		formatString: #,##0
 		displayFolder: 3 Experience
-		lineageTag: 4e70a0d8-b7be-45c7-9368-d698d4f49c75
+		lineageTag: e55ea6b3-673f-4744-b6bc-6b52afed5c58
 
 	/// Low-rating orders / orders.
 	measure 'Low Rating %' = DIVIDE ( [Low Rating Orders], [Orders] )
 		formatString: 0.0%
 		displayFolder: 3 Experience
-		lineageTag: d665a64e-e2fc-4184-9273-52fc2a35b632
+		lineageTag: 750facf0-a7f4-4a47-bc19-ab4b6268dff6
 
 	/// Share of orders with negative feedback sentiment.
 	measure 'Negative Sentiment %' = DIVIDE ( CALCULATE ( [Orders], fact_orders[Sentiment] = "Negative" ), [Orders] )
 		formatString: 0.0%
 		displayFolder: 3 Experience
-		lineageTag: 277b8686-8a06-4c13-a660-056778399879
+		lineageTag: 71d32d7e-0bf7-4a1c-a99c-0ff95a783e1d
 
 	/// Campaign spend in assumed INR.
 	measure 'Marketing Spend' = SUM ( fact_marketing[Spend] )
 		formatString: ₹#,##0
 		displayFolder: 4 Marketing
-		lineageTag: 0d7d44bf-bb0f-4ea6-8b0f-63eca9ad6ac3
+		lineageTag: 2ad66f2d-b834-42aa-993e-c1b0a66612ca
 
 	/// Revenue attributed to campaigns by the source. Not order revenue (it is 2.9x total order revenue) and cannot be reconciled to orders.
 	measure 'Marketing Revenue' = SUM ( fact_marketing[Attributed Revenue] )
 		formatString: ₹#,##0
 		displayFolder: 4 Marketing
-		lineageTag: e900bb6c-130a-4437-82b7-8467d27a98f9
+		lineageTag: 36e5eb17-abf9-4040-9a38-0d22b9c6d248
 
 	/// Return on ad spend = attributed revenue / spend, recomputed (the stored roas column did not match).
 	measure ROAS = DIVIDE ( [Marketing Revenue], [Marketing Spend] )
 		formatString: 0.00\x
 		displayFolder: 4 Marketing
-		lineageTag: 24a8faa8-69ab-48d6-976a-4fc459a0657a
+		lineageTag: 3a0524a9-a236-4541-bde2-1a9c6aed7a6f
 
 	/// ROAS minus the all-campaign ROAS: variance for diverging colour scales.
 	measure 'ROAS vs Portfolio' = IF ( NOT ISBLANK ( [ROAS] ), [ROAS] - CALCULATE ( [ROAS], REMOVEFILTERS ( fact_marketing ) ) )
 		formatString: +0.00;-0.00;0.00
 		displayFolder: 4 Marketing
-		lineageTag: cd663b57-7b4d-4aaf-8a0e-1aa9a89ec60c
+		lineageTag: 54cb83a4-6cf4-41d7-9ce7-afa1e2f2679e
 
 	/// Impressions served.
 	measure 'Total Impressions' = SUM ( fact_marketing[Impressions] )
 		formatString: #,##0
 		displayFolder: 4 Marketing
-		lineageTag: 7672f844-55a9-462c-bf27-46c8a7a7888b
+		lineageTag: f81dc56c-7cbe-4d79-8c06-36c4fdc4346a
 
 	/// Clicks.
 	measure 'Total Clicks' = SUM ( fact_marketing[Clicks] )
 		formatString: #,##0
 		displayFolder: 4 Marketing
-		lineageTag: 91f516fe-5783-49df-81e8-934fda487f77
+		lineageTag: 35b2a066-7722-4332-be40-9b93320de3eb
 
 	/// Conversions.
 	measure 'Total Conversions' = SUM ( fact_marketing[Conversions] )
 		formatString: #,##0
 		displayFolder: 4 Marketing
-		lineageTag: 7111d553-b56d-448a-bd7f-b9da901206e7
+		lineageTag: bc82909d-25f9-4595-9b40-20b8cdbced49
 
 	/// Click-through rate = clicks / impressions.
 	measure CTR = DIVIDE ( [Total Clicks], [Total Impressions] )
 		formatString: 0.00%
 		displayFolder: 4 Marketing
-		lineageTag: 82b2aa81-3034-4deb-8570-337f87e00228
+		lineageTag: f29f5ecb-898c-4343-a924-c95814307703
 
 	/// Conversion rate = conversions / clicks.
 	measure 'Conversion Rate' = DIVIDE ( [Total Conversions], [Total Clicks] )
 		formatString: 0.0%
 		displayFolder: 4 Marketing
-		lineageTag: 538d0bf0-bac2-4acf-82bf-3bb54ead57b6
+		lineageTag: 4b0f216f-922a-49cc-b7ed-276a85735bcf
 
 	/// Spend / conversions.
 	measure 'Cost per Conversion' = DIVIDE ( [Marketing Spend], [Total Conversions] )
 		formatString: ₹#,##0.00
 		displayFolder: 4 Marketing
-		lineageTag: abaeed29-1da9-4000-853b-5463251b9c6a
+		lineageTag: 6bf41715-d1db-4df5-ba3a-00f5251becfb
 
 	/// Spend / clicks.
 	measure 'Cost per Click' = DIVIDE ( [Marketing Spend], [Total Clicks] )
 		formatString: ₹#,##0.00
 		displayFolder: 4 Marketing
-		lineageTag: a6e5fbfd-0b7a-48d1-971f-c0dbfbeb518c
+		lineageTag: 80bc0c49-a0f7-4a48-b1ad-9d303f6b6a73
 
 	/// Units received (monthly inventory file, summed to product x month).
 	measure 'Stock Received' = SUM ( fact_inventory[Units Received] )
 		formatString: #,##0
 		displayFolder: 5 Inventory
-		lineageTag: 97382ce2-6b5e-4cb8-8499-610e6e1fb221
+		lineageTag: d3849bdb-1793-4327-a497-fe868fe29cec
 
 	/// Units damaged.
 	measure 'Damaged Stock' = SUM ( fact_inventory[Units Damaged] )
 		formatString: #,##0
 		displayFolder: 5 Inventory
-		lineageTag: af881d83-894f-4f66-984d-edcdf6340d1c
+		lineageTag: a3e804ad-2f27-42f5-a2f4-dfbfc967dd59
 
 	/// Damaged units / units received.
 	measure 'Damage Rate' = DIVIDE ( [Damaged Stock], [Stock Received] )
 		formatString: 0.00%
 		displayFolder: 5 Inventory
-		lineageTag: 3e3be7c1-870e-42ba-9f44-0a9578dce900
+		lineageTag: 2bbd0f91-d61f-443c-9896-9e13a818e223
 
 	/// Number of days in the selection that fall in a partial month (Mar 2023, Nov 2024).
 	measure 'Partial Months in Context' = CALCULATE ( COUNTROWS ( 'Date' ), 'Date'[Is Full Month] = FALSE () )
 		formatString: 0
 		displayFolder: 6 Trends
-		lineageTag: 2390e38e-c742-4927-90f5-da03027e5a27
+		lineageTag: 460bf6f6-a122-46fe-b407-c52dfd0abc1d
 
 	/// 1 when neither the selected period nor the same period last year touches a partial month, else 0. Guards every YoY measure.
 	measure 'Comparable Period' = VAR cur = CALCULATE ( COUNTROWS ( 'Date' ), 'Date'[Is Full Month] = FALSE () ) VAR py = CALCULATE ( COUNTROWS ( 'Date' ), SAMEPERIODLASTYEAR ( 'Date'[Date] ), 'Date'[Is Full Month] = FALSE () ) RETURN IF ( cur + py = 0, 1, 0 )
 		formatString: 0
 		displayFolder: 6 Trends
-		lineageTag: 6574efef-530f-4ab2-8953-73786885d069
+		lineageTag: f98ec110-aac2-42e9-881f-6562e3bf9e21
 
 	/// Revenue for the same period last year; blank when either period includes a partial month or last year has no data.
 	measure 'Revenue PY' = IF ( [Comparable Period] = 1, CALCULATE ( [Revenue], SAMEPERIODLASTYEAR ( 'Date'[Date] ) ) )
 		formatString: ₹#,##0
 		displayFolder: 6 Trends
-		lineageTag: bb6aa1ba-9e4a-46b9-9b81-8901d3d9b55e
+		lineageTag: 6c9d3db4-3e91-4dbc-9ab3-27ddb4f60c1e
 
 	/// Revenue change vs the same period last year; blank unless both periods are full months.
 	measure 'Revenue YoY %' = DIVIDE ( [Revenue] - [Revenue PY], [Revenue PY] )
 		formatString: 0.0%
 		displayFolder: 6 Trends
-		lineageTag: bc5ee38b-b5fa-409c-aeba-3c2c771ca12c
+		lineageTag: 3e91f046-784b-42e4-ab89-c4f1a266f8bf
 
 	/// Orders for the same period last year; blank when either period includes a partial month or last year has no data.
 	measure 'Orders PY' = IF ( [Comparable Period] = 1, CALCULATE ( [Orders], SAMEPERIODLASTYEAR ( 'Date'[Date] ) ) )
 		formatString: #,##0
 		displayFolder: 6 Trends
-		lineageTag: 26791b4b-e035-47f0-8d03-e6a283a09004
+		lineageTag: 784e57df-5ef3-4929-8252-8b123f285bdb
 
 	/// Orders change vs the same period last year; blank unless both periods are full months.
 	measure 'Orders YoY %' = DIVIDE ( [Orders] - [Orders PY], [Orders PY] )
 		formatString: 0.0%
 		displayFolder: 6 Trends
-		lineageTag: e45904d3-4303-47b0-8b86-3cae6d3b5548
+		lineageTag: 5191d36b-82bb-4f20-95f1-e7aeb3b4f4ad
 
 	/// AOV for the same period last year; blank when either period includes a partial month or last year has no data.
 	measure 'AOV PY' = IF ( [Comparable Period] = 1, CALCULATE ( [AOV], SAMEPERIODLASTYEAR ( 'Date'[Date] ) ) )
 		formatString: ₹#,##0.00
 		displayFolder: 6 Trends
-		lineageTag: 0e69688f-9384-49ee-8420-13ee8b965102
+		lineageTag: bd77a3e8-0f98-4ffd-9942-8abf5bed38d8
 
 	/// AOV change vs the same period last year; blank unless both periods are full months.
 	measure 'AOV YoY %' = DIVIDE ( [AOV] - [AOV PY], [AOV PY] )
 		formatString: 0.0%
 		displayFolder: 6 Trends
-		lineageTag: 90296dd3-efd3-4d6c-8caa-c9450a7782c1
+		lineageTag: b8303957-c51c-4d41-b887-8b3fe30eded5
 
 	/// Marketing Spend for the same period last year; blank when either period includes a partial month or last year has no data.
 	measure 'Marketing Spend PY' = IF ( [Comparable Period] = 1, CALCULATE ( [Marketing Spend], SAMEPERIODLASTYEAR ( 'Date'[Date] ) ) )
 		formatString: ₹#,##0
 		displayFolder: 6 Trends
-		lineageTag: ad8ebd25-1725-4d98-9062-afd688d3287f
+		lineageTag: bdb68323-6367-4185-b674-e507ff5de239
 
 	/// Marketing Spend change vs the same period last year; blank unless both periods are full months.
 	measure 'Marketing Spend YoY %' = DIVIDE ( [Marketing Spend] - [Marketing Spend PY], [Marketing Spend PY] )
 		formatString: 0.0%
 		displayFolder: 6 Trends
-		lineageTag: 31751fcf-9aae-451e-9d8d-971e181e8781
+		lineageTag: c7061534-6fd2-45d3-a302-dc7fea587061
 
 	/// Revenue restricted to full months (blank for Mar 2023 and Nov 2024). Use on monthly trend lines.
 	measure 'Revenue (Full Months)' = CALCULATE ( [Revenue], 'Date'[Is Full Month] = TRUE () )
 		formatString: ₹#,##0
 		displayFolder: 6 Trends
-		lineageTag: 01a455da-cce9-430b-a1fd-8c4045b95962
+		lineageTag: 67243fbc-ca64-4973-8122-2fbb9e876ccd
 
 	/// Orders restricted to full months.
 	measure 'Orders (Full Months)' = CALCULATE ( [Orders], 'Date'[Is Full Month] = TRUE () )
 		formatString: #,##0
 		displayFolder: 6 Trends
-		lineageTag: 0a00995a-c5c5-4e3f-9a19-de06a80629ea
+		lineageTag: b5bfa716-fbf5-47b0-a9ea-22579c72eb0b
 
 	/// Mean revenue per full month in the selection.
 	measure 'Avg Monthly Revenue' = AVERAGEX ( CALCULATETABLE ( VALUES ( 'Date'[Month Start] ), 'Date'[Is Full Month] = TRUE () ), [Revenue] )
 		formatString: ₹#,##0
 		displayFolder: 6 Trends
-		lineageTag: 10ae6d25-07f7-48b6-9bef-1c25c6cffc1c
+		lineageTag: 0b86d87d-01f6-4d2b-8f70-e91d0926fe2a
 
 	/// Mean revenue at risk per full month in the selection.
 	measure 'Avg Monthly Revenue at Risk' = AVERAGEX ( CALCULATETABLE ( VALUES ( 'Date'[Month Start] ), 'Date'[Is Full Month] = TRUE () ), [Revenue at Risk] )
 		formatString: ₹#,##0
 		displayFolder: 6 Trends
-		lineageTag: 06d966e8-9766-421d-bea6-93645dfa2403
+		lineageTag: b264c821-9fdb-43e1-b780-1e85de2cc186
 
 	/// Revenue for cards, in crore or lakh.
 	measure 'Card Revenue' = VAR v = [Revenue] RETURN IF ( v >= 10000000, "₹" & FORMAT ( DIVIDE ( v, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( v >= 100000, "₹" & FORMAT ( DIVIDE ( v, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( v, "#,##0", "en-US" ) ) )
 		displayFolder: 7 Display
-		lineageTag: 80e374a1-e8e7-4ed9-b175-5b767626751e
+		lineageTag: 2a8f6a46-777b-494b-a472-0c620b0e651b
 
 	/// Revenue at Risk for cards, in crore or lakh.
 	measure 'Card Revenue at Risk' = VAR v = [Revenue at Risk] RETURN IF ( v >= 10000000, "₹" & FORMAT ( DIVIDE ( v, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( v >= 100000, "₹" & FORMAT ( DIVIDE ( v, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( v, "#,##0", "en-US" ) ) )
 		displayFolder: 7 Display
-		lineageTag: b740a4e9-f7c3-41eb-9339-d3412dc1d7e8
+		lineageTag: de256ac9-0a9e-46e2-90fb-9826b4cea044
 
 	/// Orders for cards.
 	measure 'Card Orders' = FORMAT ( [Orders], "#,##0", "en-US" )
 		displayFolder: 7 Display
-		lineageTag: bceb18ca-0ff0-4203-ab2c-a1c5fe92e4f0
+		lineageTag: b0bef0f9-7fe7-4461-bff8-01dca2f47575
 
 	/// Average order value for cards.
 	measure 'Card AOV' = "₹" & FORMAT ( [AOV], "#,##0.00", "en-US" )
 		displayFolder: 7 Display
-		lineageTag: 201c68e1-560c-47b1-8d6f-b1e3b6485e27
+		lineageTag: d7b8f116-21f5-4a41-a754-5717c935f840
 
 	/// On-time rate for cards.
 	measure 'Card On-Time %' = FORMAT ( [On-Time %], "0.0%", "en-US" )
 		displayFolder: 7 Display
-		lineageTag: ffd62e25-5fc7-497b-b4b5-2d2a7d50cb7f
+		lineageTag: 42c8288b-407a-412e-9aec-3c7c2f1d570e
 
 	/// Average rating for cards.
 	measure 'Card Avg Rating' = FORMAT ( [Avg Rating], "0.00", "en-US" )
 		displayFolder: 7 Display
-		lineageTag: 6430ee06-091a-4537-b58c-14761957ff69
+		lineageTag: b3ec6d93-4269-4ae4-a5c1-81dd3911854e
 
 	/// ROAS for cards.
 	measure 'Card ROAS' = FORMAT ( [ROAS], "0.00", "en-US" ) & "x"
 		displayFolder: 7 Display
-		lineageTag: 0a2b38f5-3910-46f2-8cf6-e1bcda2ddd34
+		lineageTag: acc252c2-403e-4989-887b-40de1ef734b4
 
 	/// Card change line for Revenue: arrow and change vs last year; says so when the comparison is not like-for-like.
 	measure 'Δ Revenue' = VAR p = [Revenue PY] VAR d = DIVIDE ( [Revenue] - p, p ) RETURN IF ( ISBLANK ( p ), "No like-for-like year (partial months)", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%", "en-US" ) & " vs last year" )
 		displayFolder: 7 Display
-		lineageTag: 3afe2218-10ff-4ba3-8359-161ca40d5e8b
+		lineageTag: 81f9fd1a-16f8-4a2c-9493-368221e65432
 
 	/// Colour of the Revenue change line: green up, red down, grey when not comparable.
 	measure 'Δ Revenue Color' = VAR p = [Revenue PY] RETURN IF ( ISBLANK ( p ), "#5B6B7F", IF ( [Revenue] >= p, "#1E7F4B", "#C0392B" ) )
 		displayFolder: 7 Display
-		lineageTag: 2507c71a-9166-403f-8968-68c0a4b65c9f
+		lineageTag: f8d4b505-3d60-4ede-9a28-625e5cb1987e
 
 	/// Card change line for Orders: arrow and change vs last year; says so when the comparison is not like-for-like.
 	measure 'Δ Orders' = VAR p = [Orders PY] VAR d = DIVIDE ( [Orders] - p, p ) RETURN IF ( ISBLANK ( p ), "No like-for-like year (partial months)", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%", "en-US" ) & " vs last year" )
 		displayFolder: 7 Display
-		lineageTag: 511d5b03-4910-4428-bcd4-a237b852606e
+		lineageTag: 4d4a9a74-b3ff-438e-b7af-e7497e8e2dd4
 
 	/// Colour of the Orders change line: green up, red down, grey when not comparable.
 	measure 'Δ Orders Color' = VAR p = [Orders PY] RETURN IF ( ISBLANK ( p ), "#5B6B7F", IF ( [Orders] >= p, "#1E7F4B", "#C0392B" ) )
 		displayFolder: 7 Display
-		lineageTag: 6648c3a5-a39d-466e-8a92-d60bd8bd34ab
+		lineageTag: 6b5925a2-0a2f-420a-a6d3-8ca6df4a3e9d
 
 	/// Card change line for AOV: arrow and change vs last year; says so when the comparison is not like-for-like.
 	measure 'Δ AOV' = VAR p = [AOV PY] VAR d = DIVIDE ( [AOV] - p, p ) RETURN IF ( ISBLANK ( p ), "No like-for-like year (partial months)", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%", "en-US" ) & " vs last year" )
 		displayFolder: 7 Display
-		lineageTag: e4be6511-18bf-4f0b-9051-f835e2d99ec8
+		lineageTag: a8132557-465a-4b40-a133-8cb2faf44066
 
 	/// Colour of the AOV change line: green up, red down, grey when not comparable.
 	measure 'Δ AOV Color' = VAR p = [AOV PY] RETURN IF ( ISBLANK ( p ), "#5B6B7F", IF ( [AOV] >= p, "#1E7F4B", "#C0392B" ) )
 		displayFolder: 7 Display
-		lineageTag: a3b316b2-dda0-4929-aa0a-4903568aee4e
+		lineageTag: e3458987-7ba1-4d2c-a24b-438aca8f5ec7
 
 	/// Card line: Revenue at Risk as a share of revenue.
 	measure 'Δ Revenue at Risk' = FORMAT ( [Revenue at Risk %], "0%", "en-US" ) & " of revenue"
 		displayFolder: 7 Display
-		lineageTag: 2e4d3c2f-c1a6-4764-a6ed-3bc7fc268f0a
+		lineageTag: bab6f03f-f1b9-4c03-b723-214cb5d960ae
 
 	/// Card line: late share and how late.
 	measure 'Δ On-Time %' = "Late: " & FORMAT ( [Late %], "0.0%", "en-US" ) & ", " & FORMAT ( [Avg Minutes Late (Late Orders)], "0.0", "en-US" ) & " min over"
 		displayFolder: 7 Display
-		lineageTag: 92d04753-f178-42d2-80cf-1f9da68ea165
+		lineageTag: c33e57ea-ff99-4523-81d3-5c48303d602f
 
 	/// Grey for card lines that carry context, not a change.
 	measure 'Δ Neutral Color' = "#5B6B7F"
 		displayFolder: 7 Display
-		lineageTag: 04c16878-f59c-4a60-929b-fd448162032a
+		lineageTag: 78716bac-46ab-4493-9757-321483944564
 
 	/// Category in the current filter context (drill-through title).
 	measure 'Selected Category' = SELECTEDVALUE ( dim_product[Category], "All categories" )
 		displayFolder: 7 Display
-		lineageTag: f6a9cc44-fe44-461e-bd16-ed1b7ccd629b
+		lineageTag: 555b3eec-31e8-4a98-8997-0d4f60307124
 
 	/// Campaign in the current filter context (drill-through title).
 	measure 'Selected Campaign' = SELECTEDVALUE ( fact_marketing[Campaign Name], "All campaigns" )
 		displayFolder: 7 Display
-		lineageTag: 37acba18-4c04-4935-94bd-1718659e52ae
+		lineageTag: 1e95f2bd-30ed-47f1-8b66-bb5ef71245d2
 
 	/// Footer: source, data period, currency assumption and the partial-month caveat.
 	measure 'Footer Text' = "Source: Blinkit sales dataset (Kaggle, synthetic)  ·  Orders " & FORMAT ( CALCULATE ( MIN ( fact_orders[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & " to " & FORMAT ( CALCULATE ( MAX ( fact_orders[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & "  ·  Currency assumed INR  ·  Mar 2023 and Nov 2024 are partial months, left out of trends and YoY"
 		displayFolder: 7 Display
-		lineageTag: 1c8ce9a8-425f-49a8-a0f8-e582144edcce
+		lineageTag: 9e4f71a3-548a-4a8d-aa87-5a8db0329ea4
 
 	/// Page 1 headline: revenue, orders, late share and revenue at risk.
 	measure 'Title Overview' = VAR r = [Revenue] RETURN IF ( r >= 10000000, "₹" & FORMAT ( DIVIDE ( r, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( r >= 100000, "₹" & FORMAT ( DIVIDE ( r, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( r, "#,##0", "en-US" ) ) ) & " revenue from " & FORMAT ( [Orders], "#,##0", "en-US" ) & " orders; " & FORMAT ( [Late %], "0%", "en-US" ) & " arrive late and " & FORMAT ( [Revenue at Risk %], "0%", "en-US" ) & " of revenue is at risk"
 		displayFolder: 8 Titles
-		lineageTag: 650b975b-90d8-4697-bb5c-07b5bbac5f50
+		lineageTag: 89acf670-5ebd-44dd-9baf-8754dd171bdf
 
 	/// Page 2 headline: leading category by line value, its share and the top-3 share.
-	measure 'Title Sales' = VAR cats = ALLSELECTED ( dim_product[Category] ) VAR total = CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) VAR top = TOPN ( 1, cats, [Line Value], DESC ) VAR topName = MAXX ( top, dim_product[Category] ) VAR topShare = DIVIDE ( MAXX ( top, [Line Value] ), total ) VAR top3 = DIVIDE ( SUMX ( TOPN ( 3, cats, [Line Value], DESC ), [Line Value] ), total ) RETURN topName & " leads with " & FORMAT ( topShare, "0.0%", "en-US" ) & " of line value; the top 3 categories hold " & FORMAT ( top3, "0%", "en-US" )
+	measure 'Title Sales' = VAR cats = ALLSELECTED ( dim_product[Category] ) VAR tot = CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) VAR t1 = TOPN ( 1, cats, [Line Value], DESC ) VAR topName = MAXX ( t1, dim_product[Category] ) VAR topShare = DIVIDE ( MAXX ( t1, [Line Value] ), tot ) VAR top3 = DIVIDE ( SUMX ( TOPN ( 3, cats, [Line Value], DESC ), [Line Value] ), tot ) RETURN topName & " leads with " & FORMAT ( topShare, "0.0%", "en-US" ) & " of line value; the top 3 categories hold " & FORMAT ( top3, "0%", "en-US" )
 		displayFolder: 8 Titles
-		lineageTag: ce17b106-381e-457f-8210-20ca706c4d84
+		lineageTag: 0e1eb49d-5e80-4faa-9ec8-bdbe76a3b116
 
 	/// Monthly revenue chart title: low and high month among full months.
 	measure 'Title Monthly Trend' = VAR m = CALCULATETABLE ( VALUES ( 'Date'[Month Start] ), 'Date'[Is Full Month] = TRUE () ) VAR lo = MINX ( m, [Revenue] ) VAR hi = MAXX ( m, [Revenue] ) RETURN "Monthly revenue stays between " & IF ( lo >= 10000000, "₹" & FORMAT ( DIVIDE ( lo, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( lo >= 100000, "₹" & FORMAT ( DIVIDE ( lo, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( lo, "#,##0", "en-US" ) ) ) & " and " & IF ( hi >= 10000000, "₹" & FORMAT ( DIVIDE ( hi, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( hi >= 100000, "₹" & FORMAT ( DIVIDE ( hi, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( hi, "#,##0", "en-US" ) ) ) & " (full months only)"
 		displayFolder: 8 Titles
-		lineageTag: 866fc1c2-df64-4485-8c49-01a6c7672e9f
+		lineageTag: 8586ff3a-198f-4185-aaa7-7f5edc2c273c
 
 	/// Page 3 headline: on-time share and how late the misses are.
 	measure 'Title Delivery' = FORMAT ( [On-Time %], "0%", "en-US" ) & " of orders arrive within 5 minutes of the promise; the late ones run " & FORMAT ( [Avg Minutes Late (Late Orders)], "0.0", "en-US" ) & " minutes over"
 		displayFolder: 8 Titles
-		lineageTag: 44666c30-41af-4039-aaeb-ad6cc4d984fa
+		lineageTag: e4b38f23-c111-4a1f-b090-ba93ccf96778
 
 	/// Page 4 headline: mean rating of late vs on-time orders and what the gap says.
 	measure 'Title Experience' = VAR gap = [Rating Gap Late vs On-Time] RETURN "Late orders rate " & FORMAT ( [Avg Rating Late], "0.00", "en-US" ) & " vs " & FORMAT ( [Avg Rating On-Time], "0.00", "en-US" ) & " for on-time orders: " & IF ( ISBLANK ( gap ), "no comparison in this selection", IF ( ABS ( gap ) < 0.1, "delay does not move the rating", IF ( gap < 0, "delay lowers the rating", "late orders rate higher" ) ) )
 		displayFolder: 8 Titles
-		lineageTag: c377f8ea-8826-4a04-9a1f-5192301a540a
+		lineageTag: 6d2ba21e-0636-45d4-a711-f0271e910404
 
 	/// Revenue at Risk headline.
 	measure 'Title Revenue at Risk' = VAR v = [Revenue at Risk] RETURN IF ( v >= 10000000, "₹" & FORMAT ( DIVIDE ( v, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( v >= 100000, "₹" & FORMAT ( DIVIDE ( v, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( v, "#,##0", "en-US" ) ) ) & " (" & FORMAT ( [Revenue at Risk %], "0%", "en-US" ) & " of revenue) sits in orders that were late or rated 1-2 stars"
 		displayFolder: 8 Titles
-		lineageTag: 0f36aade-1c47-463a-a9e9-4b822c6e77a5
+		lineageTag: 89f5bbec-0b3f-4d67-ae22-1649142514d2
 
 	/// Page 5 headline: portfolio ROAS and the best and worst channel.
 	measure 'Title Marketing' = VAR ch = ALLSELECTED ( fact_marketing[Channel] ) VAR hi = MAXX ( ch, [ROAS] ) VAR lo = MINX ( ch, [ROAS] ) VAR hiName = MAXX ( TOPN ( 1, ch, [ROAS], DESC ), fact_marketing[Channel] ) VAR loName = MAXX ( TOPN ( 1, ch, [ROAS], ASC ), fact_marketing[Channel] ) RETURN "Each ₹1 of spend returns ₹" & FORMAT ( [ROAS], "0.00", "en-US" ) & " attributed revenue; " & hiName & " leads at " & FORMAT ( hi, "0.00", "en-US" ) & "x, " & loName & " trails at " & FORMAT ( lo, "0.00", "en-US" ) & "x"
 		displayFolder: 8 Titles
-		lineageTag: c63b6daa-fd57-4160-ae80-13d44614152d
+		lineageTag: 79bf1594-a63a-4f8f-8a19-b7b955304e7a
 
 	/// Page 6 headline: revenue, late share and ROAS.
 	measure 'Title Insights' = VAR r = [Revenue] RETURN IF ( r >= 10000000, "₹" & FORMAT ( DIVIDE ( r, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( r >= 100000, "₹" & FORMAT ( DIVIDE ( r, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( r, "#,##0", "en-US" ) ) ) & " revenue, " & FORMAT ( [Late %], "0%", "en-US" ) & " of orders late, ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x: five findings and the data caveats"
 		displayFolder: 8 Titles
-		lineageTag: 172ca995-5843-4ae7-bfdb-c7f092e2a5a8
+		lineageTag: 41310325-f7ce-4814-bf17-f7dcc18536a5
 
 	/// Page 7 headline: average monthly revenue and revenue at risk (full months).
 	measure 'Title Forecast' = VAR a = [Avg Monthly Revenue] VAR b = [Avg Monthly Revenue at Risk] RETURN "Full months average " & IF ( a >= 10000000, "₹" & FORMAT ( DIVIDE ( a, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( a >= 100000, "₹" & FORMAT ( DIVIDE ( a, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( a, "#,##0", "en-US" ) ) ) & " of revenue, of which " & IF ( b >= 10000000, "₹" & FORMAT ( DIVIDE ( b, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( b >= 100000, "₹" & FORMAT ( DIVIDE ( b, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( b, "#,##0", "en-US" ) ) ) & " a month is at risk"
 		displayFolder: 8 Titles
-		lineageTag: 21c2ad0d-2fdb-4d5d-837b-4ea8119ea51f
+		lineageTag: 92181f68-f2be-4f06-9ff5-47cc49cdf96a
 
 	/// Category drill-through headline.
 	measure 'Title Category Detail' = [Selected Category] & ": " & FORMAT ( [Category Share], "0.0%", "en-US" ) & " of line value, " & FORMAT ( [On-Time %], "0%", "en-US" ) & " delivered on time, rating " & FORMAT ( [Avg Rating], "0.00", "en-US" )
 		displayFolder: 8 Titles
-		lineageTag: 4203e40d-a230-4b75-a9d3-67824eea7ff2
+		lineageTag: 2a984e5c-ec7c-4e2c-a1a7-6c9521b262bd
 
 	/// Campaign drill-through headline.
 	measure 'Title Campaign Detail' = VAR s = [Marketing Spend] RETURN [Selected Campaign] & ": ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x on " & IF ( s >= 10000000, "₹" & FORMAT ( DIVIDE ( s, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( s >= 100000, "₹" & FORMAT ( DIVIDE ( s, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( s, "#,##0", "en-US" ) ) ) & " spend"
 		displayFolder: 8 Titles
-		lineageTag: bfd0aef1-2652-416e-87f5-51ee5a4ea07a
+		lineageTag: 3d90a69e-640a-45b6-ba63-1c9cd6d36006
 
 	column Hidden
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 51afeee6-80f4-4cf7-b8fe-0e57a192d7f9
+		lineageTag: c33b808b-18ee-40c1-bc64-344f8018e785
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Hidden]
