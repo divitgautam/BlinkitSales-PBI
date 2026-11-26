@@ -72,7 +72,7 @@ w(DEFN / "database.tmdl", "database\n\tcompatibilityLevel: 1606\n\n")
 if not (DEFN / "cultures" / "en-IN.tmdl").exists():   # keep Desktop's linguistic metadata once it has written it
     w(DEFN / "cultures" / "en-IN.tmdl", "cultureInfo en-IN\n")
 FACTS_DIMS = list(SPEC)
-TABLES = FACTS_DIMS + ["Date", "Measures"]
+TABLES = FACTS_DIMS + ["Date", "_Measures"]
 w(DEFN / "model.tmdl",
   "model Model\n\tculture: en-IN\n\tdefaultPowerBIDataSourceVersion: powerBI_V3\n\tsourceQueryCulture: en-IN\n"
   "\tdataAccessOptions\n\t\tlegacyRedirects\n\t\treturnErrorValuesAsNull\n\n"
@@ -168,15 +168,15 @@ ds += f"{T}partition Date = calculated\n{T * 2}mode: import\n{T * 2}source = {da
 w(DEFN / "tables" / "Date.tmdl", ds)
 
 # ---------------------------------------------------------------- Measures table
-ms = f"/// Central home for report measures (no data).\ntable Measures\n{T}{lt()}\n\n"
+ms = f"/// Central home for report measures (no data).\ntable _Measures\n{T}{lt()}\n\n"
 for n, e, fmt, folder, desc in MEASURES:
     ms += f"{T}/// {desc}\n{T}measure {q(n)} = {e}\n"
     if fmt: ms += f"{T * 2}formatString: {fmt}\n"
     ms += f"{T * 2}displayFolder: {folder}\n{T * 2}{lt()}\n\n"
 ms += (f"{T}column Hidden\n{T * 2}dataType: string\n{T * 2}isHidden\n{T * 2}isAvailableInMdx: false\n{T * 2}{lt()}\n{T * 2}summarizeBy: none\n{T * 2}isNameInferred\n{T * 2}sourceColumn: [Hidden]\n\n"
-       f"{T}partition Measures = calculated\n{T * 2}mode: import\n{T * 2}source = ROW ( \"Hidden\", BLANK () )\n\n"
+       f"{T}partition _Measures = calculated\n{T * 2}mode: import\n{T * 2}source = ROW ( \"Hidden\", BLANK () )\n\n"
        + IGNORE(["ENSURE_TABLES_HAVE_RELATIONSHIPS", "REMOVE_UNNECESSARY_COLUMNS"]))
-w(DEFN / "tables" / "Measures.tmdl", ms)
+w(DEFN / "tables" / "_Measures.tmdl", ms)
 
 # ---------------------------------------------------------------- relationships: star schema, many-to-one, single direction (TMDL defaults)
 w(DEFN / "relationships.tmdl", "\n".join(f"relationship {n}\n\tfromColumn: {a}\n\ttoColumn: {b}\n" for n, a, b in RELS))

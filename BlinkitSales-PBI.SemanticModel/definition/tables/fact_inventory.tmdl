@@ -1,13 +1,13 @@
 /// Stock received and damaged per product and month (5,571 rows, from the monthly inventoryNew file). Source: data/clean/fact_inventory.csv.
 table fact_inventory
-	lineageTag: a0eacde7-7783-43c8-8b58-1becc8d0a521
+	lineageTag: e7a34787-bdd6-4103-a7f4-933ca827392b
 
 	/// Foreign key to dim_product.
 	column 'Product Id'
 		dataType: int64
 		formatString: 0
 		isHidden
-		lineageTag: 6b41ef2e-15dd-43d2-9afe-48342c90f0a3
+		lineageTag: 0927f3e2-911c-4359-a0a2-5aa1f6285a0f
 		summarizeBy: none
 		sourceColumn: Product Id
 
@@ -18,7 +18,7 @@ table fact_inventory
 		dataType: dateTime
 		formatString: mmm yyyy
 		isHidden
-		lineageTag: e3add21e-b6af-4e91-9bb3-61df0c9f60a0
+		lineageTag: d783261e-d30c-403c-b6fb-34a5a210e9ff
 		summarizeBy: none
 		sourceColumn: Month Start
 
@@ -30,7 +30,7 @@ table fact_inventory
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: d2e061d5-7f2e-40c2-861c-7091869c1e04
+		lineageTag: b6b9ca94-e110-466b-a297-2c64cbbb0fba
 		summarizeBy: none
 		sourceColumn: Units Received
 
@@ -42,7 +42,7 @@ table fact_inventory
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 8f38724f-236c-4cf9-a538-3679cab7b28e
+		lineageTag: 8eeb9f50-391e-4b32-b5fa-464718ef9ae1
 		summarizeBy: none
 		sourceColumn: Units Damaged
 

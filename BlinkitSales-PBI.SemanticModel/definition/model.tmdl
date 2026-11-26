@@ -18,6 +18,6 @@ ref table fact_inventory
 ref table dim_product
 ref table dim_customer
 ref table Date
-ref table Measures
+ref table _Measures
 
 ref cultureInfo en-IN
