@@ -129,7 +129,7 @@ for t, (tdesc, cols) in SPEC.items():
          "in\n    Renamed")
     s = f"/// {tdesc}\ntable {t}\n{T}{lt()}\n\n"
     for src, nm, dt, fmt, hid, desc in cols:
-        mdx_off = hid and (t, nm) not in REL_FROM and (t, nm) not in KEYS
+        mdx_off = hid and (t, nm) not in REL_FROM and (t, nm) not in KEYS and nm not in {v for (tt, _), v in SORT_BY.items() if tt == t}
         s += column(nm, dt, fmt, hid, desc, key=(t, nm) in KEYS, category=CATEGORY.get((t, nm)), mdx_off=mdx_off, sort_by=SORT_BY.get((t, nm)))
     for nm, dt, expr, fmt, hid, sb, desc in CALC.get(t, []):
         s += calc_column(nm, dt, expr, fmt, hid, sb, desc)
