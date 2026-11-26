@@ -139,8 +139,8 @@ for t, (tdesc, cols) in SPEC.items():
     w(DEFN / "tables" / f"{t}.tmdl", s)
 
 # ---------------------------------------------------------------- Date (calculated: whole months over orders, marketing and inventory)
-date_dax = ('VAR lo = MIN ( MIN ( fact_orders[Order Date] ), MIN ( fact_marketing[Campaign Date] ), MIN ( fact_inventory[Month Start] ) ) '
-            'VAR hi = MAX ( MAX ( fact_orders[Order Date] ), MAX ( fact_marketing[Campaign Date] ), MAX ( fact_inventory[Month Start] ) ) '
+date_dax = ('VAR lo = MIN ( MIN ( MIN ( fact_orders[Order Date] ), MIN ( fact_marketing[Campaign Date] ) ), MIN ( fact_inventory[Month Start] ) ) '
+            'VAR hi = MAX ( MAX ( MAX ( fact_orders[Order Date] ), MAX ( fact_marketing[Campaign Date] ) ), MAX ( fact_inventory[Month Start] ) ) '
             'VAR firstMonth = DATE ( YEAR ( MIN ( fact_orders[Order Date] ) ), MONTH ( MIN ( fact_orders[Order Date] ) ), 1 ) '
             'VAR lastMonth = DATE ( YEAR ( MAX ( fact_orders[Order Date] ) ), MONTH ( MAX ( fact_orders[Order Date] ) ), 1 ) '
             'RETURN ADDCOLUMNS ( CALENDAR ( DATE ( YEAR ( lo ), MONTH ( lo ), 1 ), EOMONTH ( hi, 0 ) ), '
