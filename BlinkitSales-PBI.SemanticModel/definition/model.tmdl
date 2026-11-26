@@ -1,0 +1,23 @@
+model Model
+	culture: en-IN
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["ProjectFolder","SourceFolder","fact_orders","fact_marketing","fact_inventory","dim_product","dim_customer"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table fact_orders
+ref table fact_marketing
+ref table fact_inventory
+ref table dim_product
+ref table dim_customer
+ref table Date
+ref table Measures
+
+ref cultureInfo en-IN

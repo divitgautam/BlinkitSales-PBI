@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "BlinkitSales-PBI"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "cf6c23e2-f5a0-4bb2-a34c-0f3f9bd5169c"
+  }
+}

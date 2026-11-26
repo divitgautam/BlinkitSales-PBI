@@ -1,0 +1,23 @@
+relationship fact_orders_Date
+	fromColumn: fact_orders.'Order Date'
+	toColumn: Date.Date
+
+relationship fact_marketing_Date
+	fromColumn: fact_marketing.'Campaign Date'
+	toColumn: Date.Date
+
+relationship fact_inventory_Date
+	fromColumn: fact_inventory.'Month Start'
+	toColumn: Date.Date
+
+relationship fact_orders_Product
+	fromColumn: fact_orders.'Product Id'
+	toColumn: dim_product.'Product Id'
+
+relationship fact_inventory_Product
+	fromColumn: fact_inventory.'Product Id'
+	toColumn: dim_product.'Product Id'
+
+relationship fact_orders_Customer
+	fromColumn: fact_orders.'Customer Id'
+	toColumn: dim_customer.'Customer Id'

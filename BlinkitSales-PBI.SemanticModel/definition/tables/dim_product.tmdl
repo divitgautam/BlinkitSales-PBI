@@ -1,0 +1,127 @@
+/// One row per product (268). Brand is almost one per product and product names repeat, so use Product Label or Category. Source: data/clean/dim_product.csv.
+table dim_product
+	lineageTag: 07ce138b-04c8-4493-9a97-362a9615adaf
+
+	/// Product key.
+	column 'Product Id'
+		dataType: int64
+		formatString: 0
+		isKey
+		isHidden
+		lineageTag: 040cb5b6-afbc-4c60-995b-9aef4a55054c
+		summarizeBy: none
+		sourceColumn: Product Id
+
+		annotation SummarizationSetBy = User
+
+	/// Product name (51 distinct names across 268 products).
+	column 'Product Name'
+		dataType: string
+		lineageTag: 28fcdcfd-b2d8-461d-b9c4-bb96ec05c7e8
+		summarizeBy: none
+		sourceColumn: Product Name
+
+		annotation SummarizationSetBy = User
+
+	/// Product name plus id; unique, use it in visuals.
+	column 'Product Label'
+		dataType: string
+		lineageTag: fc805208-6696-42f9-be8a-2fe89223c6b8
+		summarizeBy: none
+		sourceColumn: Product Label
+
+		annotation SummarizationSetBy = User
+
+	/// Product category (11 categories).
+	column Category
+		dataType: string
+		lineageTag: ec211bb4-1a9e-44b8-887e-19ca778b10e9
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = User
+
+	/// Brand (about one per product).
+	column Brand
+		dataType: string
+		lineageTag: a6fdb677-d886-4006-988e-16d4165ec02b
+		summarizeBy: none
+		sourceColumn: Brand
+
+		annotation SummarizationSetBy = User
+
+	/// List price in assumed INR.
+	column Price
+		dataType: decimal
+		formatString: ₹#,##0.00
+		lineageTag: dafb7cec-5344-4732-9686-a1351227d464
+		summarizeBy: none
+		sourceColumn: Price
+
+		annotation SummarizationSetBy = User
+
+	/// Maximum retail price in assumed INR.
+	column MRP
+		dataType: decimal
+		formatString: ₹#,##0.00
+		lineageTag: 6741de5d-f7da-461b-9d6e-e360663472b3
+		summarizeBy: none
+		sourceColumn: MRP
+
+		annotation SummarizationSetBy = User
+
+	/// Stored margin as a percentage number, 15-40.
+	column 'Margin Percentage'
+		dataType: decimal
+		formatString: 0.0
+		lineageTag: feee5ec8-6eac-410d-ad06-c16ccf0ef981
+		summarizeBy: none
+		sourceColumn: Margin Percentage
+
+		annotation SummarizationSetBy = User
+
+	/// Shelf life in days.
+	column 'Shelf Life Days'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e90a3a5-8d2e-4b90-b317-8fb56cdc373d
+		summarizeBy: none
+		sourceColumn: Shelf Life Days
+
+		annotation SummarizationSetBy = User
+
+	/// Minimum stock level.
+	column 'Min Stock Level'
+		dataType: int64
+		formatString: 0
+		lineageTag: 9849637b-89f2-4f74-8165-f1690304767e
+		summarizeBy: none
+		sourceColumn: Min Stock Level
+
+		annotation SummarizationSetBy = User
+
+	/// Maximum stock level.
+	column 'Max Stock Level'
+		dataType: int64
+		formatString: 0
+		lineageTag: acd8f045-d248-44bc-97a6-d362716463f1
+		summarizeBy: none
+		sourceColumn: Max Stock Level
+
+		annotation SummarizationSetBy = User
+
+	partition dim_product = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(ProjectFolder & "\" & SourceFolder & "\dim_product.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Selected = Table.SelectColumns(Promoted, {"product_id", "product_name", "product_label", "category", "brand", "price", "mrp", "margin_percentage", "shelf_life_days", "min_stock_level", "max_stock_level"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"product_id", Int64.Type}, {"product_name", type text}, {"product_label", type text}, {"category", type text}, {"brand", type text}, {"price", Currency.Type}, {"mrp", Currency.Type}, {"margin_percentage", Currency.Type}, {"shelf_life_days", Int64.Type}, {"min_stock_level", Int64.Type}, {"max_stock_level", Int64.Type}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"product_id", "Product Id"}, {"product_name", "Product Name"}, {"product_label", "Product Label"}, {"category", "Category"}, {"brand", "Brand"}, {"price", "Price"}, {"mrp", "MRP"}, {"margin_percentage", "Margin Percentage"}, {"shelf_life_days", "Shelf Life Days"}, {"min_stock_level", "Min Stock Level"}, {"max_stock_level", "Max Stock Level"}})
+				in
+				    Renamed
+
+	annotation PBI_ResultType = Table
+
+	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}

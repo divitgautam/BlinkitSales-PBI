@@ -1,0 +1,108 @@
+/// One row per customer in the customer file (2,500; 2,172 have orders). Name, email, phone and address are not loaded. Lifetime figures come from the orders table. Source: data/clean/dim_customer.csv.
+table dim_customer
+	lineageTag: 34148de5-5149-4fce-8018-ede0319e5e2c
+
+	/// Customer key.
+	column 'Customer Id'
+		dataType: int64
+		formatString: 0
+		isKey
+		isHidden
+		lineageTag: 775701ac-ec3a-4d6b-acc8-80ec41507637
+		summarizeBy: none
+		sourceColumn: Customer Id
+
+		annotation SummarizationSetBy = User
+
+	/// Customer area.
+	column Area
+		dataType: string
+		lineageTag: 9f344711-f490-4447-b644-93271306f25a
+		summarizeBy: none
+		sourceColumn: Area
+
+		annotation SummarizationSetBy = User
+
+	/// Postal code.
+	column Pincode
+		dataType: string
+		dataCategory: PostalCode
+		lineageTag: 382534d7-924c-401e-a388-08c470176198
+		summarizeBy: none
+		sourceColumn: Pincode
+
+		annotation SummarizationSetBy = User
+
+	/// Stored registration date (unreliable: many orders precede it).
+	column 'Registration Date'
+		dataType: dateTime
+		formatString: dd-mmm-yyyy
+		lineageTag: 6ba1f1cd-f94d-43e0-863b-ed527baf93a0
+		summarizeBy: none
+		sourceColumn: Registration Date
+
+		annotation SummarizationSetBy = User
+
+	/// Stored segment: Regular, Premium, New or Inactive.
+	column Segment
+		dataType: string
+		lineageTag: f201e1d0-566f-45ac-8831-a38f2e47cd35
+		summarizeBy: none
+		sourceColumn: Segment
+
+		annotation SummarizationSetBy = User
+
+	/// Date of the customer's first order; blank without orders.
+	column 'First Order Date'
+		dataType: dateTime
+		formatString: dd-mmm-yyyy
+		lineageTag: 84d8085f-2a6c-4d16-b1cf-6b92b3ace14a
+		summarizeBy: none
+		sourceColumn: First Order Date
+
+		annotation SummarizationSetBy = User
+
+	/// Orders placed over the whole period (not affected by slicers).
+	column 'Lifetime Orders'
+		dataType: int64
+		formatString: 0
+		lineageTag: dcb4272a-4227-40e2-b943-43266f6f8383
+		summarizeBy: none
+		sourceColumn: Lifetime Orders
+
+		annotation SummarizationSetBy = User
+
+	/// Order Total summed over the whole period (not affected by slicers).
+	column 'Lifetime Revenue'
+		dataType: decimal
+		formatString: ₹#,##0.00
+		lineageTag: 7f964d32-42c9-48cc-9b9e-10733c1258e2
+		summarizeBy: none
+		sourceColumn: Lifetime Revenue
+
+		annotation SummarizationSetBy = User
+
+	/// New (1 order), Repeat (2+ orders) or No orders.
+	column 'Customer Type'
+		dataType: string
+		lineageTag: 84282367-dcd4-4770-a059-81330e678f61
+		summarizeBy: none
+		sourceColumn: Customer Type
+
+		annotation SummarizationSetBy = User
+
+	partition dim_customer = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(ProjectFolder & "\" & SourceFolder & "\dim_customer.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Selected = Table.SelectColumns(Promoted, {"customer_id", "area", "pincode", "registration_date", "segment", "first_order_date", "orders", "revenue", "customer_type"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"customer_id", Int64.Type}, {"area", type text}, {"pincode", type text}, {"registration_date", type date}, {"segment", type text}, {"first_order_date", type date}, {"orders", Int64.Type}, {"revenue", Currency.Type}, {"customer_type", type text}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"customer_id", "Customer Id"}, {"area", "Area"}, {"pincode", "Pincode"}, {"registration_date", "Registration Date"}, {"segment", "Segment"}, {"first_order_date", "First Order Date"}, {"orders", "Lifetime Orders"}, {"revenue", "Lifetime Revenue"}, {"customer_type", "Customer Type"}})
+				in
+				    Renamed
+
+	annotation PBI_ResultType = Table
+
+	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}

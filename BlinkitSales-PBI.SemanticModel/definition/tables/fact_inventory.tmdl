@@ -1,0 +1,65 @@
+/// Stock received and damaged per product and month (5,571 rows, from the monthly inventoryNew file). Source: data/clean/fact_inventory.csv.
+table fact_inventory
+	lineageTag: a0eacde7-7783-43c8-8b58-1becc8d0a521
+
+	/// Foreign key to dim_product.
+	column 'Product Id'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 6b41ef2e-15dd-43d2-9afe-48342c90f0a3
+		summarizeBy: none
+		sourceColumn: Product Id
+
+		annotation SummarizationSetBy = User
+
+	/// First day of the month. Foreign key to the Date table.
+	column 'Month Start'
+		dataType: dateTime
+		formatString: mmm yyyy
+		isHidden
+		lineageTag: e3add21e-b6af-4e91-9bb3-61df0c9f60a0
+		summarizeBy: none
+		sourceColumn: Month Start
+
+		annotation SummarizationSetBy = User
+
+	/// Units received. Source of Stock Received.
+	column 'Units Received'
+		dataType: int64
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: d2e061d5-7f2e-40c2-861c-7091869c1e04
+		summarizeBy: none
+		sourceColumn: Units Received
+
+		annotation SummarizationSetBy = User
+
+	/// Units damaged. Source of Damaged Stock.
+	column 'Units Damaged'
+		dataType: int64
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 8f38724f-236c-4cf9-a538-3679cab7b28e
+		summarizeBy: none
+		sourceColumn: Units Damaged
+
+		annotation SummarizationSetBy = User
+
+	partition fact_inventory = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(ProjectFolder & "\" & SourceFolder & "\fact_inventory.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Selected = Table.SelectColumns(Promoted, {"product_id", "month_start", "stock_received", "damaged_stock"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"product_id", Int64.Type}, {"month_start", type date}, {"stock_received", Int64.Type}, {"damaged_stock", Int64.Type}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"product_id", "Product Id"}, {"month_start", "Month Start"}, {"stock_received", "Units Received"}, {"damaged_stock", "Units Damaged"}})
+				in
+				    Renamed
+
+	annotation PBI_ResultType = Table
+
+	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}

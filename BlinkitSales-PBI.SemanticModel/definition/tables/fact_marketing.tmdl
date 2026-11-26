@@ -1,0 +1,117 @@
+/// One row per campaign record (5,400). No key to orders: attributed revenue is a separate star and is not order revenue. Source: data/clean/fact_marketing.csv.
+table fact_marketing
+	lineageTag: c9eef4a7-721b-4c55-8c27-f8d242571a7d
+
+	/// Campaign name (9 campaigns).
+	column 'Campaign Name'
+		dataType: string
+		lineageTag: aeaa4b96-7962-4e0c-b22b-5bf801e667c7
+		summarizeBy: none
+		sourceColumn: Campaign Name
+
+		annotation SummarizationSetBy = User
+
+	/// Record date. Foreign key to the Date table.
+	column 'Campaign Date'
+		dataType: dateTime
+		formatString: dd-mmm-yyyy
+		isHidden
+		lineageTag: d501949d-c13b-49aa-ae50-25ffd4abed6b
+		summarizeBy: none
+		sourceColumn: Campaign Date
+
+		annotation SummarizationSetBy = User
+
+	/// App, Email, SMS or Social Media.
+	column Channel
+		dataType: string
+		lineageTag: d4e6442d-77ab-44eb-8780-9851d0e12df9
+		summarizeBy: none
+		sourceColumn: Channel
+
+		annotation SummarizationSetBy = User
+
+	/// All, Inactive, New Users or Premium.
+	column 'Target Audience'
+		dataType: string
+		lineageTag: 727a36d0-c9bb-4bd8-9315-218421231628
+		summarizeBy: none
+		sourceColumn: Target Audience
+
+		annotation SummarizationSetBy = User
+
+	/// Impressions served. Source of Total Impressions.
+	column Impressions
+		dataType: int64
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5a54df93-4937-477c-8589-4df12a28c30b
+		summarizeBy: none
+		sourceColumn: Impressions
+
+		annotation SummarizationSetBy = User
+
+	/// Clicks. Source of Total Clicks.
+	column Clicks
+		dataType: int64
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5c359333-c3f3-4af6-81f9-f61bfd65516c
+		summarizeBy: none
+		sourceColumn: Clicks
+
+		annotation SummarizationSetBy = User
+
+	/// Conversions. Source of Total Conversions.
+	column Conversions
+		dataType: int64
+		formatString: #,##0
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 9328e6ec-92e9-4c4c-8b59-ace17069e39b
+		summarizeBy: none
+		sourceColumn: Conversions
+
+		annotation SummarizationSetBy = User
+
+	/// Campaign spend in assumed INR.
+	column Spend
+		dataType: decimal
+		formatString: ₹#,##0.00
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 01b3bcd9-d81a-4626-944a-5485f378b02f
+		summarizeBy: none
+		sourceColumn: Spend
+
+		annotation SummarizationSetBy = User
+
+	/// Revenue attributed to the campaign by the source (not order revenue).
+	column 'Attributed Revenue'
+		dataType: decimal
+		formatString: ₹#,##0.00
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 9dd4968f-2c0e-44fa-a4f4-07651f76a01c
+		summarizeBy: none
+		sourceColumn: Attributed Revenue
+
+		annotation SummarizationSetBy = User
+
+	partition fact_marketing = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(ProjectFolder & "\" & SourceFolder & "\fact_marketing.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Selected = Table.SelectColumns(Promoted, {"campaign_name", "date", "channel", "target_audience", "impressions", "clicks", "conversions", "spend", "attributed_revenue"}),
+				    Typed = Table.TransformColumnTypes(Selected, {{"campaign_name", type text}, {"date", type date}, {"channel", type text}, {"target_audience", type text}, {"impressions", Int64.Type}, {"clicks", Int64.Type}, {"conversions", Int64.Type}, {"spend", Currency.Type}, {"attributed_revenue", Currency.Type}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"campaign_name", "Campaign Name"}, {"date", "Campaign Date"}, {"channel", "Channel"}, {"target_audience", "Target Audience"}, {"impressions", "Impressions"}, {"clicks", "Clicks"}, {"conversions", "Conversions"}, {"spend", "Spend"}, {"attributed_revenue", "Attributed Revenue"}})
+				in
+				    Renamed
+
+	annotation PBI_ResultType = Table
+
+	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
