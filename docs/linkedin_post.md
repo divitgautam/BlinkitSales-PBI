@@ -5,7 +5,13 @@
 2. `docs/approach.png`
 3. `docs/dashboard/01_overview.png`
 4. `docs/dashboard/03_delivery.png`
-5. `docs/dashboard/07_forecast.png`
+5. `docs/ds/rca_lateness_drivers.png` (root cause: no driver explains lateness)
+6. `docs/ds/reorder_after_poor_experience.png` (the key question: does a bad order cost the next one?)
+7. `docs/ds/rca_revenue_bridge.png` (revenue change split into volume, mix and basket value)
+8. `docs/ds/cohort_retention.png` (flat 9% retention in every cohort)
+9. `docs/dashboard/07_forecast.png`
+
+Upload as one multi-image post (or a PDF carousel). If you want fewer images, keep 1, 3, 5, 6 and 7.
 
 Repo: https://github.com/divitgautam/BlinkitSales-PBI (live). About 2,800 characters, under LinkedIn's 3,000 limit; check the count before posting.
 
@@ -40,7 +46,7 @@ Then I looked at it as a data scientist and tested whether any of this actually 
 
 So "₹50.42 L at risk" is revenue exposed to poor experiences, not revenue that will be lost. The next step is a test, not a fix: a marketing holdout needs about 239 units per arm to detect a 10% revenue effect.
 
-How it was made: Python for the audit and for 70 reconciled numbers, then the model (186 measures) and the report generated from code. A layout checker, the Best Practice Analyzer (27 of 27) and a 10-point scorecard ran after every export. It took six rounds to get from 5.0 to 9.75, and one round was lost to a text box that overflowed by a few pixels.
+How it was made: an audit and 70 reconciled numbers in Python, then the model (186 measures) and report generated from code, checked after every export until the scorecard went from 5.0 to 9.75. Behind it sit six notebooks and 29 charts: root cause of lateness, cohorts, RFM and a revenue bridge. A dashboard shows what happened; the analysis shows what is worth testing.
 
 Code, the statistical review and a step-by-step guide: https://github.com/divitgautam/BlinkitSales-PBI
 
