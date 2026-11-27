@@ -156,3 +156,33 @@ NOT fixed: p5 matrix column header still reads "All" (subtitle says "All users";
 - Skipped: sparklines in cards (no confirmed PBIR property; no room for extra charts); "Clear all slicers" button (no ClearAllSlicers example on disk or in the schemas under D:\Wolf\PBI, so the property is unconfirmed).
 - check_report.py: new rules for AA contrast of theme muted text and GOOD/BAD/NEUTRAL, text boxes filling < 60% of the box, matrices filling < 60% of their panel.
 - Refresh needed: yes (fact_marketing audience value and 5 changed measures); open the .pbip, Home > Refresh, Ctrl+S, export the PDF once.
+
+## Round 5 score (2026-11-27, evidence: docs/BlinkitSales-PBI.pdf 08:52 export; PNGs docs/dashboard/01-07 re-rendered at 1600 px)
+BPA 27/27 pass. All numbers on the 7 pages match reconciliation.md and live_checks.md (1.10 Cr, 5,000, 2,201.86, 69.4%/30.6%, 14.5 min, 3.34, 45.8%/46%, 50.42 L, 68.7%, ROAS 1.97/2.05/1.92, 29.49 M, 2.97 M, 5.12 L, 64.52 L, MAPE 2.8%). Alt text present on 186 of 186 visuals (grep of visual.json). Same standard as Airline: Airline had neither sparklines nor a reset button and scored 1.0 on KPI design and interaction, so both are not held against Blinkit.
+
+Confirmed fixed: p4 repeat card shows "1.3 pp vs 70% target" (red); p7 cards 2-5 carry comparing context lines; p6 left panel fuller; p5 matrix fills its panel with no empty block, 11 pt; caption contrast raised.
+NOT fixed / new defects:
+- p5 matrix column header still reads "All" while the subtitle says "Everyone = campaigns aimed at all users" (data/clean/fact_marketing.csv and the TMDL hold "Everyone", so the model was not refreshed before export, or the column is a stale cache). The matrix also shows a vertical scrollbar.
+- NEW p3 "What this tells us": text is larger now and overflows, a dark scrollbar shows, first line runs to the panel edge and the last line ("Action: size the 5-point late-share lever on page 7.") is cut at the bottom.
+- NEW p7 backtest card context line truncated ("Within the 5% target · naive mo...").
+
+| # | Criterion | Score | Evidence |
+|---|---|---|---|
+| 1 | Purpose and message | 1.0 | DAX action titles with numbers on every page. |
+| 2 | Data trust | 1.0 | Reconciles; footer with source, range, currency, refresh date on every page. |
+| 3 | KPI design | 1.0 | Like-for-like deltas on pp1-5, targets on p3/p4/p5, vs-target and vs-LTM context on p4/p7; same as Airline's standard. |
+| 4 | Chart choice and honesty | 0.75 | Honest axes; p5 matrix header "All" still reads as a total (1.82x vs bar 1.92x). |
+| 5 | Layout and hierarchy | 0.75 | p3 text panel overflows with scrollbar; p5 matrix scrollbar. Otherwise stratified, no clipping elsewhere. |
+| 6 | Colour and accessibility | 1.0 | AA contrast, arrows with colour, alt text 186/186, phone layout. |
+| 7 | Declutter, text, format | 0.75 | p3 clipped last line, p7 truncated context line, p5 header. |
+| 8 | Interaction, navigation, devices | 1.0 | Slicer sync pp1-4, both drill-throughs, tooltips, phone confirmed; no reset button (Airline had none). |
+| 9 | Insight and action | 1.0 | p6 ranked findings and Do next; p7 sized levers, MAPE, 80% band. |
+| 10 | Model and engineering | 1.0 | BPA 27/27, reconciled, generators, DAX titles. |
+| | Raw total | 9.25 | |
+| | Gates | max 7 | Gate "text overflows or is truncated" (p3 panel, p7 card line). No wrong numbers, misleading encodings or contrast failures. |
+| | **Final** | **7.0 / 10** | 9.25 once the gate lifts; 10 after fixes 1-3 below. |
+
+### Remaining fixes, ranked
+1. p3 text panel (page-3 function in `_build/build_report.py`): back to 10 pt or enlarge the box / shorten the five paragraphs so no scrollbar or cut line shows.
+2. p7 backtest card context line: shorten to "Within the 5% target" (measure in `measures_spec.py`; check_report change-line width).
+3. p5 matrix: Refresh the model so "Everyone" appears; remove the matrix scrollbar (a little more height or a smaller row padding); re-export once.

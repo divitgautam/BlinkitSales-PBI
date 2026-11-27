@@ -5,8 +5,8 @@ table fact_inventory
 	/// Foreign key to dim_product.
 	column 'Product Id'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		lineageTag: e2c2f929-8451-4c2e-a5c8-2b7788000efa
 		summarizeBy: none
 		sourceColumn: Product Id
@@ -16,8 +16,8 @@ table fact_inventory
 	/// First day of the month. Foreign key to the Date table.
 	column 'Month Start'
 		dataType: dateTime
-		formatString: mmm yyyy
 		isHidden
+		formatString: mmm yyyy
 		lineageTag: 9a3431f0-c036-435e-8220-541f06876620
 		summarizeBy: none
 		sourceColumn: Month Start
@@ -27,8 +27,8 @@ table fact_inventory
 	/// Units received. Source of Stock Received.
 	column 'Units Received'
 		dataType: int64
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: 15ccb98a-a7e2-48af-a5a3-e2250e8f0eb3
 		summarizeBy: none
@@ -39,8 +39,8 @@ table fact_inventory
 	/// Units damaged. Source of Damaged Stock.
 	column 'Units Damaged'
 		dataType: int64
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: c286cf37-57f5-4435-bdd4-66e0a765759a
 		summarizeBy: none
@@ -63,3 +63,4 @@ table fact_inventory
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
+

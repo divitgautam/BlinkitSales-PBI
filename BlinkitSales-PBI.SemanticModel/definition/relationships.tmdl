@@ -21,3 +21,4 @@ relationship fact_inventory_Product
 relationship fact_orders_Customer
 	fromColumn: fact_orders.'Customer Id'
 	toColumn: dim_customer.'Customer Id'
+

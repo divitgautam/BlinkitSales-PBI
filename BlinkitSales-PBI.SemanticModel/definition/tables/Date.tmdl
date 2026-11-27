@@ -42,11 +42,11 @@ table Date
 	/// Month name, e.g. Jan.
 	column Month
 		dataType: string
-		sortByColumn: 'Month No'
 		lineageTag: 480ed252-1b6c-466c-980e-7113b7cdb66a
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Month]
+		sortByColumn: 'Month No'
 
 	/// First day of the month.
 	column 'Month Start'
@@ -60,11 +60,11 @@ table Date
 	/// Month label, e.g. Mar 24.
 	column 'Year Month'
 		dataType: string
-		sortByColumn: 'Year Month Key'
 		lineageTag: 5a75e50d-c7d7-4e7f-9748-1af2c0bda091
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Year Month]
+		sortByColumn: 'Year Month Key'
 
 	/// yyyymm number (sorts Year Month).
 	column 'Year Month Key'
@@ -87,11 +87,11 @@ table Date
 	/// Weekday name, e.g. Mon.
 	column Weekday
 		dataType: string
-		sortByColumn: 'Weekday No'
 		lineageTag: 69c852c7-d53a-4c3f-a872-c234c7ac8166
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Weekday]
+		sortByColumn: 'Weekday No'
 
 	/// FALSE for the first and last month of the order data (Mar 2023 and Nov 2024), which are partial; exclude them from trends and YoY.
 	column 'Is Full Month'
@@ -104,3 +104,4 @@ table Date
 	partition Date = calculated
 		mode: import
 		source = VAR lo = MIN ( MIN ( MIN ( fact_orders[Order Date] ), MIN ( fact_marketing[Campaign Date] ) ), MIN ( fact_inventory[Month Start] ) ) VAR hi = MAX ( MAX ( MAX ( fact_orders[Order Date] ), MAX ( fact_marketing[Campaign Date] ) ), MAX ( fact_inventory[Month Start] ) ) VAR firstMonth = DATE ( YEAR ( MIN ( fact_orders[Order Date] ) ), MONTH ( MIN ( fact_orders[Order Date] ) ), 1 ) VAR lastMonth = DATE ( YEAR ( MAX ( fact_orders[Order Date] ) ), MONTH ( MAX ( fact_orders[Order Date] ) ), 1 ) RETURN ADDCOLUMNS ( CALENDAR ( DATE ( YEAR ( lo ), MONTH ( lo ), 1 ), EOMONTH ( hi, 0 ) ), "Year", YEAR ( [Date] ), "Quarter", "Q" & QUARTER ( [Date] ), "Month No", MONTH ( [Date] ), "Month", FORMAT ( [Date], "MMM", "en-US" ), "Month Start", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ), "Year Month", FORMAT ( [Date], "MMM yy", "en-US" ), "Year Month Key", YEAR ( [Date] ) * 100 + MONTH ( [Date] ), "Weekday No", WEEKDAY ( [Date], 2 ), "Weekday", FORMAT ( [Date], "ddd", "en-US" ), "Is Full Month", NOT ( DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ) = firstMonth || DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ) = lastMonth ) )
+

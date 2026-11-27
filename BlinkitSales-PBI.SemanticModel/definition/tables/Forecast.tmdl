@@ -26,8 +26,8 @@ table Forecast
 	/// Actual monthly revenue (full months only).
 	column Actual
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: 420bfd44-6718-48d5-bd34-5a0494509995
 		summarizeBy: none
@@ -38,8 +38,8 @@ table Forecast
 	/// Forecast monthly revenue; the last actual month repeats here so the lines join.
 	column Forecast
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: be9cd23f-af93-4973-9535-cbe55b2377e0
 		summarizeBy: none
@@ -50,8 +50,8 @@ table Forecast
 	/// Lower end of the 80% band.
 	column 'Low 80'
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: 7709770b-870b-4f37-b384-a2be0c368cc5
 		summarizeBy: none
@@ -62,8 +62,8 @@ table Forecast
 	/// Upper end of the 80% band.
 	column 'High 80'
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: 720df3e6-5377-4300-8afb-f60274c336c1
 		summarizeBy: none
@@ -74,17 +74,17 @@ table Forecast
 	/// Month label, e.g. Nov 24.
 	column 'Month Label' = FORMAT ( Forecast[Month Start], "MMM yy", "en-US" )
 		dataType: string
-		sortByColumn: 'Month Start'
 		lineageTag: 5faa44df-80c7-4c53-b2e4-e5305dce4898
 		summarizeBy: none
+		sortByColumn: 'Month Start'
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Calendar year of the month (used to total 2025).
 	column Year = YEAR ( Forecast[Month Start] )
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 48f13e23-24eb-4392-b01d-e217d6757b92
 		summarizeBy: none
@@ -106,3 +106,4 @@ table Forecast
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
+

@@ -397,6 +397,121 @@ table _Measures
 		displayFolder: 7 Display
 		lineageTag: 913bfef5-a47b-4fef-bc2b-8e2f6595bc37
 
+	/// Card change line for Revenue: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
+	measure 'Δ Revenue' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
+		displayFolder: 7 Display
+		lineageTag: 0053d741-9bb9-4e38-b1a8-ca8ccb8cc287
+
+	/// Colour of the Revenue change line: green up, red down, grey when not comparable.
+	measure 'Δ Revenue Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "#46525F", IF ( c >= p, "#1E7F4B", "#C0392B" ) )
+		displayFolder: 7 Display
+		lineageTag: ec4054bf-70cf-43ee-96ef-00e13cedd578
+
+	/// Card change line for Orders: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
+	measure 'Δ Orders' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
+		displayFolder: 7 Display
+		lineageTag: ac20b905-c2b4-49cd-91c6-aab6c9474d50
+
+	/// Colour of the Orders change line: green up, red down, grey when not comparable.
+	measure 'Δ Orders Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "#46525F", IF ( c >= p, "#1E7F4B", "#C0392B" ) )
+		displayFolder: 7 Display
+		lineageTag: 98c2b9e6-49ec-4255-80b2-4a6600a3c915
+
+	/// Card change line for AOV: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
+	measure 'Δ AOV' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
+		displayFolder: 7 Display
+		lineageTag: 64119214-f3de-467e-8384-f2c533db2ea1
+
+	/// Colour of the AOV change line: green up, red down, grey when not comparable.
+	measure 'Δ AOV Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "#46525F", IF ( c >= p, "#1E7F4B", "#C0392B" ) )
+		displayFolder: 7 Display
+		lineageTag: 4925387d-619a-4fe8-b146-2fdfb4f7fa29
+
+	/// Card change line for Revenue at Risk: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
+	measure 'Δ Revenue at Risk' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Revenue at Risk], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Revenue at Risk], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "No prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
+		displayFolder: 7 Display
+		lineageTag: b003ad2d-0462-4f66-9d2e-ef567b9f2d50
+
+	/// Card change line for On-Time %: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
+	measure 'Δ On-Time %' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [On-Time %], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [On-Time %], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "No prior-year month", IF ( ABS ( c - p ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( c - p ) * 100, "0.0", "en-US" ) & " pp" & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
+		displayFolder: 7 Display
+		lineageTag: 4d068509-ec04-436d-8f39-6db8b0d545e7
+
+	/// Grey for card lines that carry context, not a change.
+	measure 'Δ Neutral Color' = "#46525F"
+		displayFolder: 7 Display
+		lineageTag: d22a3ddf-1104-4f11-bf46-d5dde22138f4
+
+	/// Category in the current filter context (drill-through title).
+	measure 'Selected Category' = SELECTEDVALUE ( dim_product[Category], "All categories" )
+		displayFolder: 7 Display
+		lineageTag: 1912589f-a547-466b-99e4-cfe1512003f7
+
+	/// Campaign in the current filter context (drill-through title).
+	measure 'Selected Campaign' = SELECTEDVALUE ( fact_marketing[Campaign Name], "All campaigns" )
+		displayFolder: 7 Display
+		lineageTag: 3467e818-25a2-49a9-a2b2-1767323ed28e
+
+	/// Footer: source, data period, currency assumption and the refresh date.
+	measure 'Footer Text' = "Blinkit sales (Kaggle, synthetic) · " & FORMAT ( CALCULATE ( MIN ( fact_orders[Order Date] ), REMOVEFILTERS () ), "mmm yyyy", "en-US" ) & " to " & FORMAT ( CALCULATE ( MAX ( fact_orders[Order Date] ), REMOVEFILTERS () ), "mmm yyyy", "en-US" ) & " · INR assumed · refreshed " & FORMAT ( MAX ( 'Refresh Info'[Refreshed] ), "d mmm yyyy", "en-US" )
+		displayFolder: 7 Display
+		lineageTag: ae1b85b4-c2b5-4f6c-b3e3-69f2b847a124
+
+	/// Page 1 headline: revenue, orders, late share and revenue at risk.
+	measure 'Title Overview' = VAR r = [Revenue] RETURN IF ( r >= 10000000, "₹" & FORMAT ( DIVIDE ( r, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( r >= 100000, "₹" & FORMAT ( DIVIDE ( r, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( r, "#,##0", "en-US" ) ) ) & " revenue, " & FORMAT ( [Orders], "#,##0", "en-US" ) & " orders; " & FORMAT ( [Late %], "0%", "en-US" ) & " late, " & FORMAT ( [Revenue at Risk %], "0%", "en-US" ) & " of revenue at risk"
+		displayFolder: 8 Titles
+		lineageTag: 202c861a-be9f-481e-8eed-94fe919d40ea
+
+	/// Page 2 headline: leading category by line value, its share and the top-3 share.
+	measure 'Title Sales' = VAR cats = ALLSELECTED ( dim_product[Category] ) VAR tot = CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) VAR t1 = TOPN ( 1, cats, [Line Value], DESC ) VAR topName = MAXX ( t1, dim_product[Category] ) VAR topShare = DIVIDE ( MAXX ( t1, [Line Value] ), tot ) VAR top3 = DIVIDE ( SUMX ( TOPN ( 3, cats, [Line Value], DESC ), [Line Value] ), tot ) RETURN topName & " leads at " & FORMAT ( topShare, "0.0%", "en-US" ) & " of line value; top 3 hold " & FORMAT ( top3, "0%", "en-US" )
+		displayFolder: 8 Titles
+		lineageTag: c85f2720-8367-49b2-b73c-d45eb2375d19
+
+	/// Monthly revenue chart title: low and high month among full months.
+	measure 'Title Monthly Trend' = VAR m = CALCULATETABLE ( VALUES ( 'Date'[Month Start] ), 'Date'[Is Full Month] = TRUE () ) VAR lo = MINX ( m, [Revenue] ) VAR hi = MAXX ( m, [Revenue] ) RETURN "Monthly revenue stays between " & IF ( lo >= 10000000, "₹" & FORMAT ( DIVIDE ( lo, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( lo >= 100000, "₹" & FORMAT ( DIVIDE ( lo, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( lo, "#,##0", "en-US" ) ) ) & " and " & IF ( hi >= 10000000, "₹" & FORMAT ( DIVIDE ( hi, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( hi >= 100000, "₹" & FORMAT ( DIVIDE ( hi, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( hi, "#,##0", "en-US" ) ) ) & " (full months only)"
+		displayFolder: 8 Titles
+		lineageTag: 61960ddf-9150-4906-a55b-9289de50fcf3
+
+	/// Page 3 headline: on-time share and how late the misses are.
+	measure 'Title Delivery' = FORMAT ( [On-Time %], "0%", "en-US" ) & " of orders arrive on time; the late ones run " & FORMAT ( [Avg Minutes Late (Late Orders)], "0.0", "en-US" ) & " minutes over"
+		displayFolder: 8 Titles
+		lineageTag: 7919852f-3699-4b86-9120-ddf9a6fd44e2
+
+	/// Page 4 headline: mean rating of late vs on-time orders and what the gap says.
+	measure 'Title Experience' = VAR a = [Avg Rating Late] VAR b = [Avg Rating On-Time] VAR gap = a - b RETURN IF ( ISBLANK ( a ) || ISBLANK ( b ), "Too few late or on-time orders to compare ratings", "Late orders rate " & FORMAT ( a, "0.00", "en-US" ) & " vs " & FORMAT ( b, "0.00", "en-US" ) & " on time: " & IF ( ABS ( gap ) < 0.1, "delay does not move rating", IF ( gap < 0, "delay lowers rating", "late orders rate higher" ) ) )
+		displayFolder: 8 Titles
+		lineageTag: 39f86c21-864c-4b96-a657-1dea51c8fc05
+
+	/// Revenue at Risk headline.
+	measure 'Title Revenue at Risk' = VAR v = [Revenue at Risk] RETURN IF ( v >= 10000000, "₹" & FORMAT ( DIVIDE ( v, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( v >= 100000, "₹" & FORMAT ( DIVIDE ( v, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( v, "#,##0", "en-US" ) ) ) & " (" & FORMAT ( [Revenue at Risk %], "0%", "en-US" ) & " of revenue) at risk: late or rated 1-2 stars"
+		displayFolder: 8 Titles
+		lineageTag: 448b54e4-b13c-4882-bdcd-e59d76e3273f
+
+	/// Page 5 headline: portfolio ROAS and the best and worst channel; one channel selected shows that channel's ROAS and spend.
+	measure 'Title Marketing' = VAR ch = ALLSELECTED ( fact_marketing[Channel] ) VAR n = COUNTROWS ( ch ) VAR hi = MAXX ( ch, [ROAS] ) VAR lo = MINX ( ch, [ROAS] ) VAR s = [Marketing Spend] VAR hiName = MAXX ( TOPN ( 1, ch, [ROAS], DESC ), fact_marketing[Channel] ) VAR loName = MAXX ( TOPN ( 1, ch, [ROAS], ASC ), fact_marketing[Channel] ) RETURN IF ( n = 0 || ISBLANK ( [ROAS] ), "No marketing data in this selection", IF ( n = 1, hiName & ": ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x on " & IF ( s >= 10000000, "₹" & FORMAT ( DIVIDE ( s, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( s >= 100000, "₹" & FORMAT ( DIVIDE ( s, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( s, "#,##0", "en-US" ) ) ) & " spend", "ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x: " & hiName & " leads at " & FORMAT ( hi, "0.00", "en-US" ) & "x, " & loName & " trails at " & FORMAT ( lo, "0.00", "en-US" ) & "x" ) )
+		displayFolder: 8 Titles
+		lineageTag: 68161fb5-061b-47a9-a4ce-2549fe827942
+
+	/// Page 6 headline: revenue, late share and ROAS.
+	measure 'Title Insights' = VAR r = [Revenue] RETURN IF ( r >= 10000000, "₹" & FORMAT ( DIVIDE ( r, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( r >= 100000, "₹" & FORMAT ( DIVIDE ( r, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( r, "#,##0", "en-US" ) ) ) & " revenue, " & FORMAT ( [Late %], "0%", "en-US" ) & " late, ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x: five findings, data caveats"
+		displayFolder: 8 Titles
+		lineageTag: 77e2d8e6-3164-48ac-9956-9a5fd2bf6be3
+
+	/// Page 7 headline: 2025 revenue forecast and its change vs the last 12 full months.
+	measure 'Title Forecast' = VAR v = [F25 Revenue] RETURN "2025 revenue forecast " & IF ( v >= 10000000, "₹" & FORMAT ( DIVIDE ( v, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( v >= 100000, "₹" & FORMAT ( DIVIDE ( v, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( v, "#,##0", "en-US" ) ) ) & ", " & FORMAT ( ABS ( [F25 vs LTM %] ), "0%", "en-US" ) & IF ( [F25 vs LTM %] < 0, " below", " above" ) & " the last 12 months"
+		displayFolder: 8 Titles
+		lineageTag: bb32dc35-3ce1-4418-8776-db7577e31e9b
+
+	/// Category drill-through headline (a prompt when no single category is in context).
+	measure 'Title Category Detail' = IF ( DISTINCTCOUNT ( dim_product[Category] ) <> 1, "Select a category to drill through", [Selected Category] & ": " & FORMAT ( [Category Share of All], "0.0%", "en-US" ) & " of line value, " & FORMAT ( [On-Time %], "0%", "en-US" ) & " on time, " & FORMAT ( [Avg Rating], "0.00", "en-US" ) & " stars" )
+		displayFolder: 8 Titles
+		lineageTag: 80276888-f6fb-491e-a724-c7366913b7c8
+
+	/// Campaign drill-through headline (a prompt when no single campaign is in context).
+	measure 'Title Campaign Detail' = VAR s = [Marketing Spend] RETURN IF ( DISTINCTCOUNT ( fact_marketing[Campaign Name] ) <> 1, "Select a campaign to drill through", [Selected Campaign] & ": ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x on " & IF ( s >= 10000000, "₹" & FORMAT ( DIVIDE ( s, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( s >= 100000, "₹" & FORMAT ( DIVIDE ( s, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( s, "#,##0", "en-US" ) ) ) & " spend" )
+		displayFolder: 8 Titles
+		lineageTag: f0458463-76ed-4a12-b205-92cbf1694935
+
 	/// Revenue in ₹ lakh, for chart axes and data labels.
 	measure 'Revenue ₹ L' = DIVIDE ( [Revenue], 100000 )
 		formatString: ₹#,##0.00 \L
@@ -530,50 +645,10 @@ table _Measures
 		displayFolder: 7 Display
 		lineageTag: 0a498074-331b-4440-80c2-5f3f1d0eb9fc
 
-	/// Card change line for Revenue: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
-	measure 'Δ Revenue' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
-		displayFolder: 7 Display
-		lineageTag: 0053d741-9bb9-4e38-b1a8-ca8ccb8cc287
-
-	/// Colour of the Revenue change line: green up, red down, grey when not comparable.
-	measure 'Δ Revenue Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Revenue], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "#46525F", IF ( c >= p, "#1E7F4B", "#C0392B" ) )
-		displayFolder: 7 Display
-		lineageTag: ec4054bf-70cf-43ee-96ef-00e13cedd578
-
-	/// Card change line for Orders: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
-	measure 'Δ Orders' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
-		displayFolder: 7 Display
-		lineageTag: ac20b905-c2b4-49cd-91c6-aab6c9474d50
-
-	/// Colour of the Orders change line: green up, red down, grey when not comparable.
-	measure 'Δ Orders Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Orders], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "#46525F", IF ( c >= p, "#1E7F4B", "#C0392B" ) )
-		displayFolder: 7 Display
-		lineageTag: 98c2b9e6-49ec-4255-80b2-4a6600a3c915
-
-	/// Card change line for AOV: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
-	measure 'Δ AOV' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
-		displayFolder: 7 Display
-		lineageTag: 64119214-f3de-467e-8384-f2c533db2ea1
-
-	/// Colour of the AOV change line: green up, red down, grey when not comparable.
-	measure 'Δ AOV Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [AOV], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "#46525F", IF ( c >= p, "#1E7F4B", "#C0392B" ) )
-		displayFolder: 7 Display
-		lineageTag: 4925387d-619a-4fe8-b146-2fdfb4f7fa29
-
 	/// Card line: repeat rate against the 70% target, in points.
 	measure 'Δ Repeat Rate' = IF ( ABS ( [Repeat Rate] - 0.7 ) < 0.0005, "● ", IF ( [Repeat Rate] < 0.7, "▼ ", "▲ " ) ) & FORMAT ( ABS ( [Repeat Rate] - 0.7 ) * 100, "0.0", "en-US" ) & " pp vs 70% target"
 		displayFolder: 7 Display
 		lineageTag: 0b505f6f-c903-4424-8b79-f4ea9d574944
-
-	/// Colour of the repeat-rate target line: green at or above target, red below.
-	measure 'Δ Repeat Rate Color' = IF ( ABS ( [Repeat Rate] - 0.7 ) < 0.0005, "#46525F", IF ( [Repeat Rate] < 0.7, "#C0392B", "#1E7F4B" ) )
-		displayFolder: 7 Display
-		lineageTag: e0f1adc3-df66-4f52-8b6b-d88485c467ef
-
-	/// Card change line for On-Time %: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
-	measure 'Δ On-Time %' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [On-Time %], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [On-Time %], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "No prior-year month", IF ( ABS ( c - p ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( c - p ) * 100, "0.0", "en-US" ) & " pp" & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
-		displayFolder: 7 Display
-		lineageTag: 4d068509-ec04-436d-8f39-6db8b0d545e7
 
 	/// Colour of the On-Time % change line: green is good, red is bad, grey when not comparable or when direction has no good side.
 	measure 'Δ On-Time % Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [On-Time %], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [On-Time %], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ) || ABS ( c - p ) * 100 < 0.05, "#46525F", IF ( ( c >= p ) = TRUE (), "#1E7F4B", "#C0392B" ) )
@@ -659,11 +734,6 @@ table _Measures
 	measure 'Δ Negative Sentiment % Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Negative Sentiment %], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Negative Sentiment %], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ) || ABS ( c - p ) * 100 < 0.05, "#46525F", IF ( ( c >= p ) = FALSE (), "#1E7F4B", "#C0392B" ) )
 		displayFolder: 7 Display
 		lineageTag: 6e841d8d-5f32-45f8-84a7-a157b73ff0ed
-
-	/// Card change line for Revenue at Risk: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.
-	measure 'Δ Revenue at Risk' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Revenue at Risk], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Revenue at Risk], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "No prior-year month", IF ( ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "● ", IF ( c >= p, "▲ ", "▼ " ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )
-		displayFolder: 7 Display
-		lineageTag: b003ad2d-0462-4f66-9d2e-ef567b9f2d50
 
 	/// Colour of the Revenue at Risk change line: green is good, red is bad, grey when not comparable or when direction has no good side.
 	measure 'Δ Revenue at Risk Color' = VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 VAR c = CALCULATE ( [Revenue at Risk], ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( [Revenue at Risk], ALL ( 'Date' ), 'Date'[Month Start] = pm ) RETURN IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ) || ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05, "#46525F", IF ( ( c >= p ) = FALSE (), "#1E7F4B", "#C0392B" ) )
@@ -790,26 +860,6 @@ table _Measures
 		displayFolder: 7 Display
 		lineageTag: 2dfd9ee2-edce-4221-9774-3bd91e9f0deb
 
-	/// Grey for card lines that carry context, not a change.
-	measure 'Δ Neutral Color' = "#46525F"
-		displayFolder: 7 Display
-		lineageTag: d22a3ddf-1104-4f11-bf46-d5dde22138f4
-
-	/// Category in the current filter context (drill-through title).
-	measure 'Selected Category' = SELECTEDVALUE ( dim_product[Category], "All categories" )
-		displayFolder: 7 Display
-		lineageTag: 1912589f-a547-466b-99e4-cfe1512003f7
-
-	/// Campaign in the current filter context (drill-through title).
-	measure 'Selected Campaign' = SELECTEDVALUE ( fact_marketing[Campaign Name], "All campaigns" )
-		displayFolder: 7 Display
-		lineageTag: 3467e818-25a2-49a9-a2b2-1767323ed28e
-
-	/// Footer: source, data period, currency assumption and the refresh date.
-	measure 'Footer Text' = "Blinkit sales (Kaggle, synthetic) · " & FORMAT ( CALCULATE ( MIN ( fact_orders[Order Date] ), REMOVEFILTERS () ), "mmm yyyy", "en-US" ) & " to " & FORMAT ( CALCULATE ( MAX ( fact_orders[Order Date] ), REMOVEFILTERS () ), "mmm yyyy", "en-US" ) & " · INR assumed · refreshed " & FORMAT ( MAX ( 'Refresh Info'[Refreshed] ), "d mmm yyyy", "en-US" )
-		displayFolder: 7 Display
-		lineageTag: ae1b85b4-c2b5-4f6c-b3e3-69f2b847a124
-
 	/// Actual monthly revenue, ₹ lakh; blank outside its months.
 	measure 'Fcst Actual ₹ L' = DIVIDE ( SUM ( Forecast[Actual] ), 100000 )
 		formatString: ₹#,##0.00 \L
@@ -928,61 +978,6 @@ table _Measures
 		displayFolder: 7 Display
 		lineageTag: 08244e51-fbba-4c9d-ab5f-87286b66dd56
 
-	/// Page 1 headline: revenue, orders, late share and revenue at risk.
-	measure 'Title Overview' = VAR r = [Revenue] RETURN IF ( r >= 10000000, "₹" & FORMAT ( DIVIDE ( r, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( r >= 100000, "₹" & FORMAT ( DIVIDE ( r, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( r, "#,##0", "en-US" ) ) ) & " revenue, " & FORMAT ( [Orders], "#,##0", "en-US" ) & " orders; " & FORMAT ( [Late %], "0%", "en-US" ) & " late, " & FORMAT ( [Revenue at Risk %], "0%", "en-US" ) & " of revenue at risk"
-		displayFolder: 8 Titles
-		lineageTag: 202c861a-be9f-481e-8eed-94fe919d40ea
-
-	/// Page 2 headline: leading category by line value, its share and the top-3 share.
-	measure 'Title Sales' = VAR cats = ALLSELECTED ( dim_product[Category] ) VAR tot = CALCULATE ( [Line Value], ALLSELECTED ( dim_product[Category] ) ) VAR t1 = TOPN ( 1, cats, [Line Value], DESC ) VAR topName = MAXX ( t1, dim_product[Category] ) VAR topShare = DIVIDE ( MAXX ( t1, [Line Value] ), tot ) VAR top3 = DIVIDE ( SUMX ( TOPN ( 3, cats, [Line Value], DESC ), [Line Value] ), tot ) RETURN topName & " leads at " & FORMAT ( topShare, "0.0%", "en-US" ) & " of line value; top 3 hold " & FORMAT ( top3, "0%", "en-US" )
-		displayFolder: 8 Titles
-		lineageTag: c85f2720-8367-49b2-b73c-d45eb2375d19
-
-	/// Monthly revenue chart title: low and high month among full months.
-	measure 'Title Monthly Trend' = VAR m = CALCULATETABLE ( VALUES ( 'Date'[Month Start] ), 'Date'[Is Full Month] = TRUE () ) VAR lo = MINX ( m, [Revenue] ) VAR hi = MAXX ( m, [Revenue] ) RETURN "Monthly revenue stays between " & IF ( lo >= 10000000, "₹" & FORMAT ( DIVIDE ( lo, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( lo >= 100000, "₹" & FORMAT ( DIVIDE ( lo, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( lo, "#,##0", "en-US" ) ) ) & " and " & IF ( hi >= 10000000, "₹" & FORMAT ( DIVIDE ( hi, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( hi >= 100000, "₹" & FORMAT ( DIVIDE ( hi, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( hi, "#,##0", "en-US" ) ) ) & " (full months only)"
-		displayFolder: 8 Titles
-		lineageTag: 61960ddf-9150-4906-a55b-9289de50fcf3
-
-	/// Page 3 headline: on-time share and how late the misses are.
-	measure 'Title Delivery' = FORMAT ( [On-Time %], "0%", "en-US" ) & " of orders arrive on time; the late ones run " & FORMAT ( [Avg Minutes Late (Late Orders)], "0.0", "en-US" ) & " minutes over"
-		displayFolder: 8 Titles
-		lineageTag: 7919852f-3699-4b86-9120-ddf9a6fd44e2
-
-	/// Page 4 headline: mean rating of late vs on-time orders and what the gap says.
-	measure 'Title Experience' = VAR a = [Avg Rating Late] VAR b = [Avg Rating On-Time] VAR gap = a - b RETURN IF ( ISBLANK ( a ) || ISBLANK ( b ), "Too few late or on-time orders to compare ratings", "Late orders rate " & FORMAT ( a, "0.00", "en-US" ) & " vs " & FORMAT ( b, "0.00", "en-US" ) & " on time: " & IF ( ABS ( gap ) < 0.1, "delay does not move rating", IF ( gap < 0, "delay lowers rating", "late orders rate higher" ) ) )
-		displayFolder: 8 Titles
-		lineageTag: 39f86c21-864c-4b96-a657-1dea51c8fc05
-
-	/// Revenue at Risk headline.
-	measure 'Title Revenue at Risk' = VAR v = [Revenue at Risk] RETURN IF ( v >= 10000000, "₹" & FORMAT ( DIVIDE ( v, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( v >= 100000, "₹" & FORMAT ( DIVIDE ( v, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( v, "#,##0", "en-US" ) ) ) & " (" & FORMAT ( [Revenue at Risk %], "0%", "en-US" ) & " of revenue) at risk: late or rated 1-2 stars"
-		displayFolder: 8 Titles
-		lineageTag: 448b54e4-b13c-4882-bdcd-e59d76e3273f
-
-	/// Page 5 headline: portfolio ROAS and the best and worst channel; one channel selected shows that channel's ROAS and spend.
-	measure 'Title Marketing' = VAR ch = ALLSELECTED ( fact_marketing[Channel] ) VAR n = COUNTROWS ( ch ) VAR hi = MAXX ( ch, [ROAS] ) VAR lo = MINX ( ch, [ROAS] ) VAR s = [Marketing Spend] VAR hiName = MAXX ( TOPN ( 1, ch, [ROAS], DESC ), fact_marketing[Channel] ) VAR loName = MAXX ( TOPN ( 1, ch, [ROAS], ASC ), fact_marketing[Channel] ) RETURN IF ( n = 0 || ISBLANK ( [ROAS] ), "No marketing data in this selection", IF ( n = 1, hiName & ": ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x on " & IF ( s >= 10000000, "₹" & FORMAT ( DIVIDE ( s, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( s >= 100000, "₹" & FORMAT ( DIVIDE ( s, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( s, "#,##0", "en-US" ) ) ) & " spend", "ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x: " & hiName & " leads at " & FORMAT ( hi, "0.00", "en-US" ) & "x, " & loName & " trails at " & FORMAT ( lo, "0.00", "en-US" ) & "x" ) )
-		displayFolder: 8 Titles
-		lineageTag: 68161fb5-061b-47a9-a4ce-2549fe827942
-
-	/// Page 6 headline: revenue, late share and ROAS.
-	measure 'Title Insights' = VAR r = [Revenue] RETURN IF ( r >= 10000000, "₹" & FORMAT ( DIVIDE ( r, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( r >= 100000, "₹" & FORMAT ( DIVIDE ( r, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( r, "#,##0", "en-US" ) ) ) & " revenue, " & FORMAT ( [Late %], "0%", "en-US" ) & " late, ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x: five findings, data caveats"
-		displayFolder: 8 Titles
-		lineageTag: 77e2d8e6-3164-48ac-9956-9a5fd2bf6be3
-
-	/// Page 7 headline: 2025 revenue forecast and its change vs the last 12 full months.
-	measure 'Title Forecast' = VAR v = [F25 Revenue] RETURN "2025 revenue forecast " & IF ( v >= 10000000, "₹" & FORMAT ( DIVIDE ( v, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( v >= 100000, "₹" & FORMAT ( DIVIDE ( v, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( v, "#,##0", "en-US" ) ) ) & ", " & FORMAT ( ABS ( [F25 vs LTM %] ), "0%", "en-US" ) & IF ( [F25 vs LTM %] < 0, " below", " above" ) & " the last 12 months"
-		displayFolder: 8 Titles
-		lineageTag: bb32dc35-3ce1-4418-8776-db7577e31e9b
-
-	/// Category drill-through headline (a prompt when no single category is in context).
-	measure 'Title Category Detail' = IF ( DISTINCTCOUNT ( dim_product[Category] ) <> 1, "Select a category to drill through", [Selected Category] & ": " & FORMAT ( [Category Share of All], "0.0%", "en-US" ) & " of line value, " & FORMAT ( [On-Time %], "0%", "en-US" ) & " on time, " & FORMAT ( [Avg Rating], "0.00", "en-US" ) & " stars" )
-		displayFolder: 8 Titles
-		lineageTag: 80276888-f6fb-491e-a724-c7366913b7c8
-
-	/// Campaign drill-through headline (a prompt when no single campaign is in context).
-	measure 'Title Campaign Detail' = VAR s = [Marketing Spend] RETURN IF ( DISTINCTCOUNT ( fact_marketing[Campaign Name] ) <> 1, "Select a campaign to drill through", [Selected Campaign] & ": ROAS " & FORMAT ( [ROAS], "0.00", "en-US" ) & "x on " & IF ( s >= 10000000, "₹" & FORMAT ( DIVIDE ( s, 10000000 ), "0.00", "en-US" ) & " Cr", IF ( s >= 100000, "₹" & FORMAT ( DIVIDE ( s, 100000 ), "0.00", "en-US" ) & " L", "₹" & FORMAT ( s, "#,##0", "en-US" ) ) ) & " spend" )
-		displayFolder: 8 Titles
-		lineageTag: f0458463-76ed-4a12-b205-92cbf1694935
-
 	/// Line value in ₹ lakh with two decimals and no unit text, for the compact category x month heat map.
 	measure 'Line Value ₹ L Plain' = DIVIDE ( [Line Value], 100000 )
 		formatString: 0.00 \L
@@ -1014,6 +1009,11 @@ table _Measures
 		displayFolder: 7 Display
 		lineageTag: 4dafaaf9-51c8-4700-a425-5549192edabc
 
+	/// Colour of the repeat-rate target line: green at or above target, red below.
+	measure 'Δ Repeat Rate Color' = IF ( ABS ( [Repeat Rate] - 0.7 ) < 0.0005, "#46525F", IF ( [Repeat Rate] < 0.7, "#C0392B", "#1E7F4B" ) )
+		displayFolder: 7 Display
+		lineageTag: e0f1adc3-df66-4f52-8b6b-d88485c467ef
+
 	column Hidden
 		dataType: string
 		isHidden
@@ -1028,3 +1028,4 @@ table _Measures
 		source = ROW ( "Hidden", BLANK () )
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS", "REMOVE_UNNECESSARY_COLUMNS"]}
+
