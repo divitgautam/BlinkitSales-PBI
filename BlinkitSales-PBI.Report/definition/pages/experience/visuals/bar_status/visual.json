@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
   "name": "bar_status",
   "position": {
     "x": 436,
@@ -11,7 +11,6 @@
   },
   "visual": {
     "visualType": "clusteredBarChart",
-    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
         "Category": {
@@ -33,25 +32,6 @@
             }
           ]
         },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Avg Rating"
-                }
-              },
-              "queryRef": "_Measures.Avg Rating",
-              "nativeQueryRef": "Avg Rating",
-              "displayName": "Average rating"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -68,6 +48,25 @@
               "queryRef": "_Measures.Orders",
               "nativeQueryRef": "Orders",
               "displayName": "Orders"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Avg Rating"
+                }
+              },
+              "queryRef": "_Measures.Avg Rating",
+              "nativeQueryRef": "Avg Rating",
+              "displayName": "Average rating"
             }
           ]
         }
@@ -87,8 +86,7 @@
             },
             "direction": "Ascending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -288,6 +286,7 @@
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

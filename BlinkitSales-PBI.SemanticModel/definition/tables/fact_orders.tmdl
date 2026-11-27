@@ -15,8 +15,8 @@ table fact_orders
 	/// Foreign key to dim_customer.
 	column 'Customer Id'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		lineageTag: 31cf6f01-fb5c-4f5d-820e-b6044d18ed38
 		summarizeBy: none
 		sourceColumn: Customer Id
@@ -26,8 +26,8 @@ table fact_orders
 	/// Foreign key to dim_product (one item per order).
 	column 'Product Id'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		lineageTag: 735044e4-70f3-4b00-a95d-994521d7baa1
 		summarizeBy: none
 		sourceColumn: Product Id
@@ -37,13 +37,15 @@ table fact_orders
 	/// Order date. Foreign key to the Date table.
 	column 'Order Date'
 		dataType: dateTime
-		formatString: dd-mmm-yyyy
 		isHidden
+		formatString: dd-mmm-yyyy
 		lineageTag: 8701bbf3-c062-463d-9b0d-b971aa4959c3
 		summarizeBy: none
 		sourceColumn: Order Date
 
 		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	/// Hour of day the order was placed, 0-23.
 	column 'Order Hour'
@@ -58,8 +60,8 @@ table fact_orders
 	/// Order header total in assumed INR. Source of Revenue.
 	column 'Order Total'
 		dataType: decimal
-		formatString: ₹#,##0.00
 		isHidden
+		formatString: ₹#,##0.00
 		isAvailableInMdx: false
 		lineageTag: 1cd1d58b-98d9-4cd2-84a1-04af07293547
 		summarizeBy: none
@@ -70,8 +72,8 @@ table fact_orders
 	/// Quantity x unit price. Source of Line Value; does not reconcile to Order Total.
 	column 'Line Amount'
 		dataType: decimal
-		formatString: ₹#,##0.00
 		isHidden
+		formatString: ₹#,##0.00
 		isAvailableInMdx: false
 		lineageTag: 412a6763-6a4e-4fe1-a1d0-4d82f4f2cdc0
 		summarizeBy: none
@@ -82,8 +84,8 @@ table fact_orders
 	/// Units on the item line, 1-3.
 	column Quantity
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: c25c747c-57b0-466f-8b06-b2fdf4fe4377
 		summarizeBy: none
@@ -113,18 +115,18 @@ table fact_orders
 	/// On Time (up to 5 minutes late), Slightly Delayed or Significantly Delayed.
 	column 'Delivery Status'
 		dataType: string
-		sortByColumn: 'Delivery Status Order'
 		lineageTag: a2004a3f-8986-4701-9429-9309534a685b
 		summarizeBy: none
 		sourceColumn: Delivery Status
+		sortByColumn: 'Delivery Status Order'
 
 		annotation SummarizationSetBy = User
 
 	/// Sort order for Delivery Status (from Power Query source, not DAX, to avoid a circular sort-by).
 	column 'Delivery Status Order'
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		lineageTag: 4361fb4d-419c-44a2-beb5-045ba05d7ed3
 		summarizeBy: none
 		sourceColumn: Delivery Status Order
@@ -200,17 +202,17 @@ table fact_orders
 	/// Minutes late in 5-minute bands (Early, 0 to 5, ... 26 to 30).
 	column 'Minutes Late Band' = VAR m = fact_orders[Minutes Late] RETURN SWITCH ( TRUE (), m < 0, "Early", m <= 5, "0 to 5", m <= 10, "6 to 10", m <= 15, "11 to 15", m <= 20, "16 to 20", m <= 25, "21 to 25", "26 to 30" )
 		dataType: string
-		sortByColumn: 'Minutes Late Band Order'
 		lineageTag: 530f5fcf-168e-4fa9-831f-ad0144f05b12
 		summarizeBy: none
+		sortByColumn: 'Minutes Late Band Order'
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Sort order for Minutes Late Band.
 	column 'Minutes Late Band Order' = VAR m = fact_orders[Minutes Late] RETURN SWITCH ( TRUE (), m < 0, 1, m <= 5, 2, m <= 10, 3, m <= 15, 4, m <= 20, 5, m <= 25, 6, 7 )
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		lineageTag: dd331baa-e7d4-4df0-b2cd-0b46b04ac30b
 		summarizeBy: none
 
@@ -219,17 +221,17 @@ table fact_orders
 	/// Why an order counts as a poor experience: late, rated 1-2 stars, both, or neither.
 	column 'Experience Class' = SWITCH ( TRUE (), fact_orders[Is Late] && fact_orders[Rating] <= 2, "Late and low rating", fact_orders[Is Late], "Late only", fact_orders[Rating] <= 2, "Low rating only", "Good experience" )
 		dataType: string
-		sortByColumn: 'Experience Class Order'
 		lineageTag: d91d9be9-af0c-41a1-b04a-a0311fe6c4ee
 		summarizeBy: none
+		sortByColumn: 'Experience Class Order'
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Sort order for Experience Class.
 	column 'Experience Class Order' = SWITCH ( TRUE (), fact_orders[Is Late] && fact_orders[Rating] <= 2, 1, fact_orders[Is Late], 2, fact_orders[Rating] <= 2, 3, 4 )
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		lineageTag: 6cbd7e55-fef9-47a8-a374-2603e3e084f7
 		summarizeBy: none
 
@@ -250,3 +252,4 @@ table fact_orders
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
+

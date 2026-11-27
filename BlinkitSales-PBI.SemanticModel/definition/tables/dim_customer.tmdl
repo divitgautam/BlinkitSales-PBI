@@ -5,9 +5,9 @@ table dim_customer
 	/// Customer key.
 	column 'Customer Id'
 		dataType: int64
-		formatString: 0
-		isKey
 		isHidden
+		isKey
+		formatString: 0
 		lineageTag: cd2a943d-f504-4782-a2cf-52d5e8750001
 		summarizeBy: none
 		sourceColumn: Customer Id
@@ -26,8 +26,8 @@ table dim_customer
 	/// Postal code.
 	column Pincode
 		dataType: string
-		dataCategory: PostalCode
 		lineageTag: 4f71f68e-1d95-451d-9607-2f0d59815921
+		dataCategory: PostalCode
 		summarizeBy: none
 		sourceColumn: Pincode
 
@@ -42,6 +42,8 @@ table dim_customer
 		sourceColumn: Registration Date
 
 		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	/// Stored segment: Regular, Premium, New or Inactive.
 	column Segment
@@ -61,6 +63,8 @@ table dim_customer
 		sourceColumn: First Order Date
 
 		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	/// Orders placed over the whole period (not affected by slicers).
 	column 'Lifetime Orders'
@@ -106,3 +110,4 @@ table dim_customer
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
+

@@ -1,4 +1,4 @@
-# Scorecard: BlinkitSales-PBI · 2026-11-27 · reviewer: Claude (expert rubric v1)
+# Scorecard: BlinkitSales-PBI · round 6 final score 9.75 / 10 (2026-11-27, reviewer: Claude, expert rubric v1)
 
 Evidence: PDF export docs/BlinkitSales-PBI.pdf (7 pages, PNGs in docs/dashboard/), reconciliation.md, live_checks.md,
 bpa_check.py (27/27 pass, 161 measures, 6 relationships). User-confirmed: slicer sync p1-4, category drill-through,
@@ -193,3 +193,27 @@ NOT fixed / new defects:
 - p5 matrix mx_ca: row padding 11 -> 8 (rows + header ~275 px of 290).
 - check_report.py now fails on: text-box overflow (0.55 em glyph, 1.35 line, gap paragraphs cost a line + 4 px), card context lines read from the real measure text in the TMDL, and pivot rows with a padding term. Before the fixes it flagged exactly these three (249 of 234 px, 190 of 184 px, 303 of 290 px).
 - Pending: one re-export to confirm no scrollbars; the "All" vs "Everyone" header needs the model refresh the user handles.
+
+
+## Round 6 score (2026-11-27, evidence: docs/BlinkitSales-PBI.pdf 09:00 export; PNGs docs/dashboard/01-07 re-rendered at 1600 px)
+BPA 27/27 pass, 0 fail. Numbers on all 7 pages match reconciliation.md and live_checks.md (1.10 Cr, 5,000, 2,201.86, 69.4%/30.6%, 14.5 min, 3.34, 45.8%/46%, 50.42 L, 68.7%, ROAS 1.97/2.05/1.92, 29.49 M, 2.97 M, 5.12 L, 64.52 L, MAPE 2.8%).
+
+Confirmed fixed: p5 matrix header reads "Everyone" with no scrollbar; p3 text panel whole (5 paragraphs, last line "Action: ..." visible, no scrollbar); p7 backtest card line "Within the 5% target" whole. No regressions: no clipping, scrolling, truncation or overlaps on pp1-7; footer and nav whole everywhere.
+
+| # | Criterion | Score | Note |
+|---|---|---|---|
+| 1 | Purpose and message | 1.0 | DAX action titles with numbers |
+| 2 | Data trust | 1.0 | Reconciled, footer with source/date |
+| 3 | KPI design | 1.0 | Same standard as Airline (deltas, targets, no sparklines) |
+| 4 | Chart choice and honesty | 1.0 | "Everyone" header removes the total ambiguity |
+| 5 | Layout and hierarchy | 0.75 | p4 sentiment table fills ~2/3 of its panel; p6 left panel and p2 heat map have spare space at the bottom |
+| 6 | Colour and accessibility | 1.0 | AA contrast, alt text 186/186, arrows with colour |
+| 7 | Declutter, text, format | 1.0 | All text whole |
+| 8 | Interaction, navigation, devices | 1.0 | User-confirmed; no reset button (Airline had none) |
+| 9 | Insight and action | 1.0 | |
+| 10 | Model and engineering | 1.0 | BPA 27/27 |
+| | Raw total | 9.75 | |
+| | Gates | none | |
+| | **Final** | **9.75 / 10** | |
+
+Remaining (optional): widen the p4 table to its panel (or add a bar column), shrink p6 left panel / p2 heat map spare space; reset-filters bookmark.

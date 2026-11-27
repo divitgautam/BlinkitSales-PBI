@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
   "name": "bar_cat",
   "position": {
     "x": 788,
@@ -11,7 +11,6 @@
   },
   "visual": {
     "visualType": "clusteredBarChart",
-    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
         "Category": {
@@ -30,25 +29,6 @@
               "queryRef": "dim_product.Category",
               "nativeQueryRef": "Category",
               "active": true
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Line Value ₹ L"
-                }
-              },
-              "queryRef": "_Measures.Line Value ₹ L",
-              "nativeQueryRef": "Line Value ₹ L",
-              "displayName": "Line value"
             }
           ]
         },
@@ -100,6 +80,25 @@
               "displayName": "Avg rating"
             }
           ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Line Value ₹ L"
+                }
+              },
+              "queryRef": "_Measures.Line Value ₹ L",
+              "nativeQueryRef": "Line Value ₹ L",
+              "displayName": "Line value"
+            }
+          ]
         }
       },
       "sortDefinition": {
@@ -117,8 +116,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -338,6 +336,7 @@
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

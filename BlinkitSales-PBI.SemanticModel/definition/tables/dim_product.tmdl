@@ -5,9 +5,9 @@ table dim_product
 	/// Product key.
 	column 'Product Id'
 		dataType: int64
-		formatString: 0
-		isKey
 		isHidden
+		isKey
+		formatString: 0
 		lineageTag: 4a6be8b9-8c79-4a61-82ac-e5898e08197b
 		summarizeBy: none
 		sourceColumn: Product Id
@@ -125,3 +125,4 @@ table dim_product
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
+

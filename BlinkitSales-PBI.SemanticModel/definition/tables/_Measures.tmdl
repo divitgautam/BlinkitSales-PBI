@@ -1028,3 +1028,4 @@ table _Measures
 		source = ROW ( "Hidden", BLANK () )
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS", "REMOVE_UNNECESSARY_COLUMNS"]}
+
