@@ -6,3 +6,4 @@ data/
 docs/HANDOFF.md
 .venv/
 __pycache__/
+docs/guide/
