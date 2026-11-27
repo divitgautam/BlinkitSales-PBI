@@ -1,0 +1,80 @@
+{
+ "sales/mx_heat": {
+  "cols": [
+   "Nov 23",
+   "Dec 23",
+   "Jan 24",
+   "Feb 24",
+   "Mar 24",
+   "Apr 24",
+   "May 24",
+   "Jun 24",
+   "Jul 24",
+   "Aug 24",
+   "Sep 24",
+   "Oct 24"
+  ],
+  "rows": [
+   "Instant & Frozen Food",
+   "Fruits & Vegetables",
+   "Cold Drinks & Juices"
+  ],
+  "values": [
+   "12.34 L"
+  ]
+ },
+ "experience/mx_sent": {
+  "cols": [
+   "Orders",
+   "Negative share",
+   "vs all orders (pp)"
+  ],
+  "rows": [
+   "Customer Service",
+   "Product Quality",
+   "App Experience",
+   "Delivery"
+  ],
+  "values": [
+   "1,234",
+   "45.8%",
+   "+12.3"
+  ],
+  "colvalues": true
+ },
+ "marketing/mx_ca": {
+  "cols": [
+   "All users",
+   "Inactive",
+   "New Users",
+   "Premium"
+  ],
+  "rows": [
+   "Social Media",
+   "Email",
+   "SMS",
+   "App"
+  ],
+  "values": [
+   "1.92"
+  ]
+ },
+ "category_detail/tbl_products": {
+  "cols": [
+   "Line value",
+   "Margin",
+   "On time",
+   "Rating"
+  ],
+  "rows": [
+   "Instant Noodles (P000123456)"
+  ],
+  "values": [
+   "12.34 L",
+   "12.3%",
+   "45.8%",
+   "3.34"
+  ],
+  "colvalues": true
+ }
+}

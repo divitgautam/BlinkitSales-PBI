@@ -1,6 +1,6 @@
 """Shared PBIR helpers (from RetailPulse-PBI): palette, field/literal helpers, Page builder, theme writer.
 Usage: import pbir_kit as k; k.init(report_folder); build Page objects; k.finish(pages)."""
-import json, shutil, sys
+import json, os, shutil, sys
 from pathlib import Path
 
 REPORT = DEF = PAGES = None
@@ -131,6 +131,8 @@ class Page:
         if subtitle:
             vco["subTitle"] = [{"properties": {"show": L(True), "text": L(subtitle), "fontSize": L(9),
                                                "fontColor": C(MUTED)}}]
+        elif title is not None:   # no subtitle: switch it off explicitly, or Desktop adds an auto subtitle that repeats the title
+            vco["subTitle"] = [{"properties": {"show": L(False)}}]
         vco.update(container or {})
         ttl = title if isinstance(title, str) else None
         alt = alt or (f"{ttl}. {subtitle}" if ttl and subtitle else ttl or subtitle)
@@ -250,8 +252,9 @@ class Page:
     def write(self):
         pdir = PAGES / self.name
         if pdir.exists():
-            shutil.rmtree(pdir)
-        (pdir / "visuals").mkdir(parents=True)
+            # a folder that is another process's working directory cannot be removed on Windows: clear its files, keep the empty folder
+            shutil.rmtree(pdir, onexc=lambda fn, path, err: None if fn is os.rmdir else (_ for _ in ()).throw(err))
+        (pdir / "visuals").mkdir(parents=True, exist_ok=True)
         page = {"$schema": PAGE_SCHEMA, "name": self.name, "displayName": self.display, "displayOption": "FitToPage",
                 "height": self.h, "width": self.w,
                 "objects": {"background": [{"properties": {"color": C(BG), "transparency": L(0)}}],
@@ -264,7 +267,7 @@ class Page:
         mobile = self.mobile_positions() if self.page_type != "Tooltip" else {}
         for v in self.visuals:
             d = pdir / "visuals" / v["name"]
-            d.mkdir()
+            d.mkdir(exist_ok=True)
             (d / "visual.json").write_text(json.dumps(v, indent=2, ensure_ascii=False), encoding="utf-8")
             if v["name"] in mobile:
                 x, y, w_, h_ = mobile[v["name"]]

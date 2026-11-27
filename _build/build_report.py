@@ -147,8 +147,13 @@ def fits(lines, w, h, pt, title_pt=12):
 HINTS = {}   # (page, visual) -> category rows the visual must show without scrolling; written to _build/row_hints.json for check_report.py
 
 
-def hint(pg, name, rows):
+PHINTS = {}   # pivot -> sample header / row-label / value texts, so check_report.py can test header widths
+
+
+def hint(pg, name, rows, cols=None, row_labels=None, values=None, colvalues=False):
     HINTS[f"{pg.name}/{name}"] = rows
+    if cols:
+        PHINTS[f"{pg.name}/{name}"] = {"cols": cols, "rows": row_labels, "values": values, **({"colvalues": True} if colvalues else {})}
 
 
 pages = []
@@ -223,17 +228,17 @@ p.add("bar_cat", "clusteredBarChart", M, row2_y, cw, row3_end - row2_y,
       alt="Sorted bar chart of line value by category in lakh rupees; hover for share, margin and on-time rate",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)},
       sort=[(mea("Line Value ₹ L"), "Descending")], tooltip_page="cat_tip")
-top_h = 214
+top_h = 180   # 5 bars x 26 px + 50 px title, no subtitle
 p.add("bar_prod", "clusteredBarChart", rx, row2_y, hw, top_h,
       roles={"Category": [PROD], "Y": [(mea("Line Value ₹ L"), "Line value")]},
-      title="Top 5 products by line value, ₹ lakh", subtitle="Product name and id (names repeat across products)",
+      title="Top 5 products by line value, ₹ lakh", subtitle=None,
       alt="Sorted bar chart of the five products with the highest line value in lakh rupees",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(8), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)},
       sort=[(mea("Line Value ₹ L"), "Descending")], filters=[top_n_filter("top5_products", "dim_product", "Product Label", "Line Value", 5)])
 hint(p, "bar_prod", 5)
 p.add("bar_pay", "clusteredBarChart", rx + hw + G, row2_y, rwid - hw - G, top_h,
       roles={"Category": [PAY], "Y": [(mea("Revenue ₹ L"), "Revenue")]},
-      title="Revenue by payment method, ₹ lakh", subtitle="Order revenue; four methods, sorted",
+      title="Order revenue by payment method, ₹ lakh", subtitle=None,
       alt="Sorted bar chart of order revenue in lakh rupees by payment method: card, cash, UPI and wallet",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GOLD)},
       sort=[(mea("Revenue ₹ L"), "Descending")])
@@ -245,11 +250,12 @@ LAST12 = {"name": "last12", "field": MS, "type": "Advanced", "howCreated": "User
 heat_y = row2_y + top_h + G
 p.add("mx_heat", "pivotTable", rx, heat_y, rwid, row3_end - heat_y,
       roles={"Rows": [CAT], "Columns": [YM], "Values": [(mea("Line Value ₹ L Plain"), "Line value ₹ L")]},
-      title="Line value by category and month, ₹ lakh", subtitle="Last 12 full months (Nov 2023 to Oct 2024)  ·  darker green = more (ColorBrewer YlGn)",
+      title="Line value by category, last 12 full months, ₹ lakh (darker = more)", subtitle=None,
       alt="Heat map of line value in lakh rupees by category for the last 12 full months, darker green means more",
       objects={**COMPACT(8), "grid": [{"properties": {"rowPadding": L(1)}}], "values": [{"properties": {"fontSize": L(8)}}, gradient("Line Value ₹ L Plain", th.SEQ_MIN, th.SEQ_MAX)]},
       filters=[FULL, LAST12])
-hint(p, "mx_heat", 12)
+hint(p, "mx_heat", 11, cols=["Nov 23", "Dec 23", "Jan 24", "Feb 24", "Mar 24", "Apr 24", "May 24", "Jun 24", "Jul 24", "Aug 24", "Sep 24", "Oct 24"],
+     row_labels=["Instant & Frozen Food", "Fruits & Vegetables", "Cold Drinks & Juices"], values=["12.34 L"])
 p.footer(FOOTER)
 fix_footer(p)
 pages.append(p)
@@ -351,7 +357,7 @@ p.add("mx_sent", "pivotTable", M, r3y, hw, row3_end - r3y,
       alt="Table of orders, negative sentiment share and difference from the overall share for each feedback category, coloured blue to red",
       objects={**COMPACT(10), "values": [{"properties": {"fontSize": L(10)}}, gradient("Negative Sentiment vs All (pp)", th.DIV_LOW, th.DIV_HIGH, th.DIV_MID)]},
       sort=[(mea("Orders"), "Descending")])
-hint(p, "mx_sent", 4)
+hint(p, "mx_sent", 4, cols=["Orders", "Negative share", "vs all orders (pp)"], row_labels=["Customer Service", "Product Quality", "App Experience", "Delivery"], values=["1,234", "45.8%", "+12.3"], colvalues=True)
 p.add("bar_rar", "clusteredBarChart", M + hw + G, r3y, hw, row3_end - r3y,
       roles={"Category": [XCLASS], "Y": [(mea("Revenue at Risk ₹ L"), "Revenue at Risk")]},
       title=mea("Title Revenue at Risk"), subtitle="Revenue of orders in each poor-experience class, ₹ lakh (good experience left out)",
@@ -385,7 +391,7 @@ p.cards([
 ])
 r2h = 290
 r3y = row2_y + r2h + G
-c1, c2 = 400, 380
+c1, c2 = 380, 440   # c2: row header + four audience headers at 9 pt need ~350 px of the 416 px inside the matrix
 c3w = W - 2 * M - c1 - c2 - 2 * G
 ROAS = mea("ROAS")
 p.add("bar_channel", "clusteredBarChart", M, row2_y, c1, r2h,
@@ -395,16 +401,16 @@ p.add("bar_channel", "clusteredBarChart", M, row2_y, c1, r2h,
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
 p.add("mx_ca", "pivotTable", M + c1 + G, row2_y, c2, r2h,
       roles={"Rows": [CHAN], "Columns": [AUD], "Values": [(ROAS, "ROAS")]},
-      title="ROAS by channel and audience", subtitle="Darker = higher ROAS; All audiences is its own group",
+      title="ROAS by channel and audience", subtitle="Darker = higher ROAS; All users = campaigns aimed at everyone",
       alt="Heat map of ROAS for each channel and target audience; all cells are between about 1.6 and 2.3",
-      objects={**COMPACT(10), "values": [{"properties": {"fontSize": L(10)}}, gradient("ROAS", th.SEQ_MIN, th.SEQ_MAX)]})
+      objects={**COMPACT(9), "columnHeaders": [{"properties": {"fontSize": L(9), "wordWrap": L(True)}}], "values": [{"properties": {"fontSize": L(9)}}, gradient("ROAS", th.SEQ_MIN, th.SEQ_MAX)]})
 p.add("bar_campaign", "clusteredBarChart", M + c1 + c2 + 2 * G, row2_y, c3w, r2h,
       roles={"Category": [CAMP], "Y": [(ROAS, "ROAS")]},
       title="ROAS by campaign, right-click to drill through", subtitle=None,
       alt="Sorted bar chart of ROAS for the nine marketing campaigns",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(8), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
 hint(p, "bar_campaign", 9)
-hint(p, "mx_ca", 4)
+hint(p, "mx_ca", 4, cols=["All users", "Inactive", "New Users", "Premium"], row_labels=["Social Media", "Email", "SMS", "App"], values=["1.92"])
 hw = (W - 2 * M - G) // 2
 p.add("line_spend", "lineChart", M, r3y, hw, row3_end - r3y,
       roles={"Category": [MS], "Y": [(mea("Marketing Spend ₹ L"), "Spend")]},
@@ -544,7 +550,7 @@ p.add("tbl_products", "pivotTable", M, r3y, W - 2 * M, row3_end - r3y,
       roles={"Rows": [PROD], "Values": [(mea("Line Value ₹ L"), "Line value"), (mea("Avg Margin %"), "Margin"), (mea("On-Time %"), "On time"), (mea("Avg Rating"), "Rating")]},
       title="Top 8 products in the category", subtitle="By line value", alt="Table of the category's eight top products with line value, margin, on-time rate and rating",
       objects={**COMPACT(9), "grid": [{"properties": {"rowPadding": L(1)}}]}, sort=[(mea("Line Value ₹ L"), "Descending")], filters=[top_n_filter("top8_cat_products", "dim_product", "Product Label", "Line Value", 8)])
-hint(p, "tbl_products", 8)
+hint(p, "tbl_products", 8, cols=["Line value", "Margin", "On time", "Rating"], row_labels=["Instant Noodles (P000123456)"], values=["12.34 L", "12.3%", "45.8%", "3.34"], colvalues=True)
 p.footer(FOOTER, nav=False)
 fix_footer(p)
 pages.append(p)
@@ -618,4 +624,5 @@ HINTS.update({"overview/bar_cat": 11, "overview/bar_exp": 4, "sales/bar_cat": 11
               "experience/bar_ctype": 2, "marketing/bar_channel": 4, "experience/bar_rar": 3, "category_detail/bar_cat_status": 3,
               "campaign_detail/bar_camp_channel": 4, "campaign_detail/bar_camp_aud": 4})
 (Path(__file__).parent / "row_hints.json").write_text(json.dumps(HINTS, indent=1), encoding="utf-8")
+(Path(__file__).parent / "pivot_hints.json").write_text(json.dumps(PHINTS, indent=1, ensure_ascii=False), encoding="utf-8")
 k.finish(pages)

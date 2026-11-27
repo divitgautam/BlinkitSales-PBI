@@ -1,13 +1,13 @@
 /// Stock received and damaged per product and month (5,571 rows, from the monthly inventoryNew file). Source: data/clean/fact_inventory.csv.
 table fact_inventory
-	lineageTag: 4e26b5a1-b32f-4101-8b30-f4d8f2c0b1dc
+	lineageTag: 73d4f30d-7e9d-4113-a99f-132b07b9e9d0
 
 	/// Foreign key to dim_product.
 	column 'Product Id'
 		dataType: int64
-		isHidden
 		formatString: 0
-		lineageTag: 55c6d9de-2f50-4afb-a50f-16cfb124aa59
+		isHidden
+		lineageTag: 4d14cdcc-8efb-498c-a60b-84370a8200f0
 		summarizeBy: none
 		sourceColumn: Product Id
 
@@ -16,9 +16,9 @@ table fact_inventory
 	/// First day of the month. Foreign key to the Date table.
 	column 'Month Start'
 		dataType: dateTime
-		isHidden
 		formatString: mmm yyyy
-		lineageTag: 39c5bc78-26dc-4a5f-9181-f892ac382ecb
+		isHidden
+		lineageTag: ad810a66-67b3-4e4e-82d2-f77d97bdd15d
 		summarizeBy: none
 		sourceColumn: Month Start
 
@@ -27,10 +27,10 @@ table fact_inventory
 	/// Units received. Source of Stock Received.
 	column 'Units Received'
 		dataType: int64
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: f6f1ed08-763e-4b36-a0fe-b2f84923ed09
+		lineageTag: 5c4e3198-9896-4530-a9f1-02a4bdc5770d
 		summarizeBy: none
 		sourceColumn: Units Received
 
@@ -39,10 +39,10 @@ table fact_inventory
 	/// Units damaged. Source of Damaged Stock.
 	column 'Units Damaged'
 		dataType: int64
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: af1486c0-c0d3-49df-a9d6-e7850d454ce4
+		lineageTag: 7068b776-845d-429a-84d7-6cdf57f1b9b6
 		summarizeBy: none
 		sourceColumn: Units Damaged
 
@@ -63,4 +63,3 @@ table fact_inventory
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
-

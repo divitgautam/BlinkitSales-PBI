@@ -114,7 +114,9 @@ add("Avg Monthly Revenue at Risk", "AVERAGEX ( CALCULATETABLE ( VALUES ( 'Date'[
     "Mean revenue at risk per full month in the selection.")
 # 7 Display: card text, change lines
 P = "7 Display"
-UP, DOWN = "▲ ", "▼ "
+UP, DOWN, FLAT = "▲ ", "▼ ", "● "
+# a change that rounds to zero in the unit shown (under 0.05 pp / 0.05 % / 0.005) is "no change": flat marker, neutral grey, never green or red
+FLAT_PP, FLAT_REL, FLAT_ABS = "ABS ( c - p ) * 100 < 0.05", "ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05", "ABS ( c - p ) < 0.005"
 GOOD, BAD, NEUTRAL = "#1E7F4B", "#C0392B", "#5B6B7F"       # WCAG AA on white
 add("Card Revenue", f"VAR v = [Revenue] RETURN {inr('v')}", None, P, "Revenue for cards, in crore or lakh.")
 add("Card Revenue at Risk", f"VAR v = [Revenue at Risk] RETURN {inr('v')}", None, P, "Revenue at Risk for cards, in crore or lakh.")
@@ -161,9 +163,9 @@ for nm, cur in (("Revenue", "[Revenue]"), ("Orders", "[Orders]"), ("AOV", "[AOV]
             f"VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 "
             f"VAR c = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = pm ) ")
     add(f"Δ {nm}", head + f'RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok, FORMAT ( m, "mmm yy", "en-US" ) & ": no prior-year month", '
-        f'IF ( c >= p, "{UP}", "{DOWN}" ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )',
+        f'IF ( {FLAT_REL}, "{FLAT}", IF ( c >= p, "{UP}", "{DOWN}" ) ) & FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" ) & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )',
         None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
-    add(f"Δ {nm} Color", head + f'RETURN IF ( NOT ok, "{NEUTRAL}", IF ( c >= p, "{GOOD}", "{BAD}" ) )', None, P,
+    add(f"Δ {nm} Color", head + f'RETURN IF ( NOT ok || {FLAT_REL}, "{NEUTRAL}", IF ( c >= p, "{GOOD}", "{BAD}" ) )', None, P,
         f"Colour of the {nm} change line: green up, red down, grey when not comparable.")
 add("Δ Repeat Rate", f'{fm("[Repeat Customers]", "#,##0")} & " of " & {fm("[Customers Ordering]", "#,##0")} & " · target 70%"', None, P, "Card line: repeat customers over customers ordering.")
 # generic like-for-like change lines: last full month in the selection vs the same month a year earlier (arrow, size, both months named)
@@ -172,13 +174,14 @@ def yoy(nm, cur, mode, good, unit=""):
     head = (f"VAR m = [Last Full Month] VAR pm = EDATE ( m, -12 ) "
             f"VAR ok = NOT ISBLANK ( m ) && CALCULATE ( COUNTROWS ( 'Date' ), ALL ( 'Date' ), 'Date'[Month Start] = pm, 'Date'[Is Full Month] = TRUE () ) > 0 "
             f"VAR c = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = pm ) ")
+    flat = {"rel": FLAT_REL, "pp": FLAT_PP, "abs": FLAT_ABS}[mode]
     size = {"rel": 'FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" )',
             "pp": 'FORMAT ( ABS ( c - p ) * 100, "0.0", "en-US" ) & " pp"',
             "abs": f'FORMAT ( ABS ( c - p ), "0.00", "en-US" )' + (f' & " {unit}"' if unit else "")}[mode]
     add(f"Δ {nm}", head + f'RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "No prior-year month", '
-        f'IF ( c >= p, "{UP}", "{DOWN}" ) & {size} & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )',
+        f'IF ( {flat}, "{FLAT}", IF ( c >= p, "{UP}", "{DOWN}" ) ) & {size} & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )',
         None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
-    colour = (f'IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "{NEUTRAL}", IF ( ( c >= p ) = {"TRUE ()" if good == "up" else "FALSE ()"}, "{GOOD}", "{BAD}" ) )'
+    colour = (f'IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ) || {flat}, "{NEUTRAL}", IF ( ( c >= p ) = {"TRUE ()" if good == "up" else "FALSE ()"}, "{GOOD}", "{BAD}" ) )'
               if good in ("up", "down") else f'"{NEUTRAL}"')
     add(f"Δ {nm} Color", head + f"RETURN {colour}", None, P, f"Colour of the {nm} change line: green is good, red is bad, grey when not comparable or when direction has no good side.")
 
@@ -277,5 +280,5 @@ card("CTR", fm("[CTR]", "0.00%"), "Click-through rate for cards.")
 card("Conversion Rate", fm("[Conversion Rate]", "0.0%"), "Conversion rate for cards.")
 
 add("Δ Lever Exposure", f'{fm("DIVIDE ( [Lever Exposure Removed], [LTM Revenue] )", "0.0%")} & " of 12-month revenue"', None, P, "Card line: combined exposure removed as a share of last-12-month revenue.")
-add("Δ F25 Revenue", f'IF ( [F25 vs LTM %] < 0, "{DOWN}", "{UP}" ) & {fm("ABS ( [F25 vs LTM %] )", "0.0%")} & " vs last 12 months"', None, P, "Card line: 2025 forecast vs the last 12 full months.")
-add("Δ F25 Revenue Color", f'IF ( [F25 vs LTM %] < 0, "{BAD}", "{GOOD}" )', None, P, "Colour of the forecast change line.")
+add("Δ F25 Revenue", f'IF ( ABS ( [F25 vs LTM %] ) < 0.0005, "{FLAT}", IF ( [F25 vs LTM %] < 0, "{DOWN}", "{UP}" ) ) & {fm("ABS ( [F25 vs LTM %] )", "0.0%")} & " vs last 12 months"', None, P, "Card line: 2025 forecast vs the last 12 full months.")
+add("Δ F25 Revenue Color", f'IF ( ABS ( [F25 vs LTM %] ) < 0.0005, "{NEUTRAL}", IF ( [F25 vs LTM %] < 0, "{BAD}", "{GOOD}" ) )', None, P, "Colour of the forecast change line.")

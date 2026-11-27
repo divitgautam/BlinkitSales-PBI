@@ -1,14 +1,14 @@
 /// When the model was last refreshed (calculated at refresh time), for the report footer.
 table 'Refresh Info'
 	isHidden
-	lineageTag: e8851b27-f0ff-4725-bc73-d1d232382203
+	lineageTag: 151020cd-0ff2-4b6c-a166-31ea13bd46d7
 
 	column Refreshed
 		dataType: dateTime
-		isHidden
 		formatString: dd-mmm-yyyy
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: db785b1f-9f53-4fc1-8cbb-d5ef630364a0
+		lineageTag: c1a622d8-6100-4761-9180-80a5bc97c3cb
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Refreshed]
@@ -18,4 +18,3 @@ table 'Refresh Info'
 		source = ROW ( "Refreshed", NOW () )
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
-

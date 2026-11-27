@@ -1,14 +1,14 @@
 /// One row per customer in the customer file (2,500; 2,172 have orders). Name, email, phone and address are not loaded. Lifetime figures come from the orders table. Source: data/clean/dim_customer.csv.
 table dim_customer
-	lineageTag: 305bad58-d00c-4c5f-852f-95ff7d0975c7
+	lineageTag: 5935c99d-2845-470d-b0a2-4a7241347391
 
 	/// Customer key.
 	column 'Customer Id'
 		dataType: int64
-		isHidden
-		isKey
 		formatString: 0
-		lineageTag: 79acab71-6524-4a52-a34f-945b428f9437
+		isKey
+		isHidden
+		lineageTag: b38e652f-d3b6-405b-953c-d1198d0e3375
 		summarizeBy: none
 		sourceColumn: Customer Id
 
@@ -17,7 +17,7 @@ table dim_customer
 	/// Customer area.
 	column Area
 		dataType: string
-		lineageTag: cbb8069d-6277-4aab-b2cb-928aa8872552
+		lineageTag: d97d8202-6b6e-44b5-85e6-94f60c6e9308
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -26,8 +26,8 @@ table dim_customer
 	/// Postal code.
 	column Pincode
 		dataType: string
-		lineageTag: 1521ed4c-6bed-4873-9fdb-7545dde406d7
 		dataCategory: PostalCode
+		lineageTag: 36f7ba2a-6691-4115-96bd-72647e829bc1
 		summarizeBy: none
 		sourceColumn: Pincode
 
@@ -37,7 +37,7 @@ table dim_customer
 	column 'Registration Date'
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
-		lineageTag: 8dca97d5-e71b-4b27-936d-72ae982fd5e9
+		lineageTag: 4da42b9d-d44f-4990-8354-822c711521ba
 		summarizeBy: none
 		sourceColumn: Registration Date
 
@@ -46,7 +46,7 @@ table dim_customer
 	/// Stored segment: Regular, Premium, New or Inactive.
 	column Segment
 		dataType: string
-		lineageTag: 3fcad46e-bcf4-4a0c-a046-ce59fadbc6ce
+		lineageTag: c225552c-cbf0-4b67-9719-45e993c210b6
 		summarizeBy: none
 		sourceColumn: Segment
 
@@ -56,7 +56,7 @@ table dim_customer
 	column 'First Order Date'
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
-		lineageTag: 410caacd-1d79-4c1d-bc0c-ab441ad18e2e
+		lineageTag: 3c3b5051-1e5f-40b2-ae6b-75b74b123b04
 		summarizeBy: none
 		sourceColumn: First Order Date
 
@@ -66,7 +66,7 @@ table dim_customer
 	column 'Lifetime Orders'
 		dataType: int64
 		formatString: 0
-		lineageTag: 4076f4fd-08cf-4072-a5e2-6df29cc4d559
+		lineageTag: c6c894cc-5ade-4e7e-93b9-2fcb65445153
 		summarizeBy: none
 		sourceColumn: Lifetime Orders
 
@@ -76,7 +76,7 @@ table dim_customer
 	column 'Lifetime Revenue'
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: ffdac8db-a0a8-48d5-aba6-2ac93dbd9bd9
+		lineageTag: 14205aa2-4ecf-4cf7-a3ae-77ad63786c8a
 		summarizeBy: none
 		sourceColumn: Lifetime Revenue
 
@@ -85,7 +85,7 @@ table dim_customer
 	/// New (1 order), Repeat (2+ orders) or No orders.
 	column 'Customer Type'
 		dataType: string
-		lineageTag: 925bd64e-8e3c-46f8-bd0e-3f4898186daa
+		lineageTag: eb9fbdf8-b6d0-4412-b519-0745ba6673f2
 		summarizeBy: none
 		sourceColumn: Customer Type
 
@@ -106,4 +106,3 @@ table dim_customer
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
-

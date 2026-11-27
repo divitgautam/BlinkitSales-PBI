@@ -1,14 +1,14 @@
 /// One row per product (268). Brand is almost one per product and product names repeat, so use Product Label or Category. Source: data/clean/dim_product.csv.
 table dim_product
-	lineageTag: 759e9969-8b5b-4d01-ac84-120197b5cc2a
+	lineageTag: ab8908c4-5f52-46b2-a4f3-1a52d7126096
 
 	/// Product key.
 	column 'Product Id'
 		dataType: int64
-		isHidden
-		isKey
 		formatString: 0
-		lineageTag: ad9a4d5e-826b-4870-bdfc-f1026769fb4b
+		isKey
+		isHidden
+		lineageTag: 0a59863b-d191-4159-bbb2-f49e618f9c11
 		summarizeBy: none
 		sourceColumn: Product Id
 
@@ -17,7 +17,7 @@ table dim_product
 	/// Product name (51 distinct names across 268 products).
 	column 'Product Name'
 		dataType: string
-		lineageTag: ad2eaa31-fb45-479a-8745-923aacf1b86f
+		lineageTag: b8df2b09-c26a-4603-b070-eac320290c70
 		summarizeBy: none
 		sourceColumn: Product Name
 
@@ -26,7 +26,7 @@ table dim_product
 	/// Product name plus id; unique, use it in visuals.
 	column 'Product Label'
 		dataType: string
-		lineageTag: 3f603995-178f-4714-a060-f61cd40a660f
+		lineageTag: 8eb4f73f-cb5e-47d4-8ffc-2762153692cd
 		summarizeBy: none
 		sourceColumn: Product Label
 
@@ -35,7 +35,7 @@ table dim_product
 	/// Product category (11 categories).
 	column Category
 		dataType: string
-		lineageTag: 32adf2c1-9307-4e28-9646-a1a07797e81d
+		lineageTag: 1178f038-6098-44b6-9c27-9307a24fde5b
 		summarizeBy: none
 		sourceColumn: Category
 
@@ -44,7 +44,7 @@ table dim_product
 	/// Brand (about one per product).
 	column Brand
 		dataType: string
-		lineageTag: fb1b0a09-b18d-454c-b174-555c32aea815
+		lineageTag: 8bf98b01-9a9a-409c-904a-b0cb3cb5ede8
 		summarizeBy: none
 		sourceColumn: Brand
 
@@ -54,7 +54,7 @@ table dim_product
 	column Price
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: 6a53f86d-917e-4b87-8795-84cfa1137c72
+		lineageTag: 88b56ee3-581e-451d-a6e7-fd60c33949f0
 		summarizeBy: none
 		sourceColumn: Price
 
@@ -64,7 +64,7 @@ table dim_product
 	column MRP
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: bc9089a9-7328-4784-a9ad-b6bd77ae6a10
+		lineageTag: 9c498001-fd42-41c0-955a-11800755ebcc
 		summarizeBy: none
 		sourceColumn: MRP
 
@@ -74,7 +74,7 @@ table dim_product
 	column 'Margin Percentage'
 		dataType: decimal
 		formatString: 0.0
-		lineageTag: 272c3e60-5530-4954-b057-053a9738ea89
+		lineageTag: 384f0b5d-f037-4fb3-9917-2e21aada25da
 		summarizeBy: none
 		sourceColumn: Margin Percentage
 
@@ -84,7 +84,7 @@ table dim_product
 	column 'Shelf Life Days'
 		dataType: int64
 		formatString: 0
-		lineageTag: 2ac77220-5cdd-4d2d-ab6d-c5a15da04729
+		lineageTag: f95713f2-45ba-4c49-9200-f29344d184de
 		summarizeBy: none
 		sourceColumn: Shelf Life Days
 
@@ -94,7 +94,7 @@ table dim_product
 	column 'Min Stock Level'
 		dataType: int64
 		formatString: 0
-		lineageTag: 5c3fcf97-2650-44dc-8f50-3443bfc15bb8
+		lineageTag: 3eed9770-4550-4bc1-a6ea-26eb6c4380cf
 		summarizeBy: none
 		sourceColumn: Min Stock Level
 
@@ -104,7 +104,7 @@ table dim_product
 	column 'Max Stock Level'
 		dataType: int64
 		formatString: 0
-		lineageTag: d15b5c80-480d-4dac-8d2c-47cb6468d8eb
+		lineageTag: 13d86b05-c44b-4662-82fc-8da34afe3fa5
 		summarizeBy: none
 		sourceColumn: Max Stock Level
 
@@ -125,4 +125,3 @@ table dim_product
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
-

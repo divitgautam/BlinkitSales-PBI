@@ -111,3 +111,11 @@ NEW: page 1 of the PDF is exported zoomed and clipped (4th card cut, right panel
 3. p5 matrix: header "All" to "All audiences" (rename column display name in the matrix builder / model column `displayName`; check prepare.py output reached the model). Remove duplicate subtitle "ROAS by Campaign Name" on the campaign visual (set subtitle/title off in its builder).
 4. p2 "0.0 pp" neutral colour (change-line measure in `measures_spec.py`); fill empty lower halves p3/p6 or shrink panels.
 5. Reset-filters bookmark; verify alt text and caption contrast.
+
+## Round 4 changes (2026-11-27)
+1. p5 matrix: audience value renamed "All users" (prepare.py, data dictionary, tables_spec); matrix widened 380 to 440 px (channel bar 380, campaign bar 404), 9 pt, column-header word wrap on. Width math: row header ~82 px + four columns ~71 px = ~350 px of 416 px inside the visual.
+2. p2 heat map: 11 category rows + header need ~298 px; visual is 300 px (was 266). Top 5 products and payment shrunk to 180 px (5 bars x 26 + 50), their subtitles folded into the titles; heat subtitle folded into its title.
+3. p5 campaign chart: the pbir kit now writes an explicit subTitle show=false on every titled visual without a subtitle (removes Desktop's auto subtitle "ROAS by Campaign Name").
+4. Change lines: a change under 0.05 pp / 0.05 % / 0.005 shows a flat marker and neutral grey (all yoy() lines, Revenue/Orders/AOV, F25 forecast line).
+5. check_report.py new rules: (a) pivot header text vs column width and total width (pivot_hints.json, written by build_report); (b) pivot rows x row height + header + chrome vs visual height; (c) title = subtitle, and titled visuals without an explicit subtitle setting. On the old geometry they failed: mx_ca needs ~433 px of 380; mx_heat needs ~310 px of 266; bar_campaign has no explicit subtitle setting. All pass now.
+Checks: prepare, make_semantic_model, reconcile (70 values), bpa 27/27, check_measures, build_report, check_report, pbi report validate all pass. Refresh needed (data and measures changed).

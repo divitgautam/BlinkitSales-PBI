@@ -1,37 +1,19 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "mx_heat",
   "position": {
     "x": 468,
-    "y": 416,
+    "y": 382,
     "z": 19000,
-    "height": 266,
+    "height": 300,
     "width": 796,
     "tabOrder": 19000
   },
   "visual": {
     "visualType": "pivotTable",
+    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Date"
-                    }
-                  },
-                  "Property": "Year Month"
-                }
-              },
-              "queryRef": "Date.Year Month",
-              "nativeQueryRef": "Year Month",
-              "active": true
-            }
-          ]
-        },
         "Rows": {
           "projections": [
             {
@@ -47,6 +29,25 @@
               },
               "queryRef": "dim_product.Category",
               "nativeQueryRef": "Category",
+              "active": true
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Date"
+                    }
+                  },
+                  "Property": "Year Month"
+                }
+              },
+              "queryRef": "Date.Year Month",
+              "nativeQueryRef": "Year Month",
               "active": true
             }
           ]
@@ -109,6 +110,13 @@
                               "Literal": {
                                 "Value": "'#FFFFCC'"
                               }
+                            },
+                            "nullColoringStrategy": {
+                              "strategy": {
+                                "Literal": {
+                                  "Value": "'noColor'"
+                                }
+                              }
                             }
                           },
                           "max": {
@@ -166,7 +174,15 @@
       ],
       "total": [
         {
-          "properties": {}
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
         }
       ],
       "subTotals": [
@@ -217,7 +233,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Line value by category and month, ₹ lakh'"
+                  "Value": "'Line value by category, last 12 full months, ₹ lakh (darker = more)'"
                 }
               }
             },
@@ -255,32 +271,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Last 12 full months (Nov 2023 to Oct 2024)  ·  darker green = more (ColorBrewer YlGn)'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "9D"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#58665F'"
-                    }
-                  }
+                  "Value": "false"
                 }
               }
             }
@@ -300,8 +291,7 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   },
   "filterConfig": {
     "filters": [
@@ -318,6 +308,7 @@
           }
         },
         "type": "Categorical",
+        "howCreated": "User",
         "filter": {
           "Version": 2,
           "From": [
@@ -356,8 +347,7 @@
               }
             }
           ]
-        },
-        "howCreated": "User"
+        }
       },
       {
         "name": "last12",
@@ -372,6 +362,7 @@
           }
         },
         "type": "Advanced",
+        "howCreated": "User",
         "filter": {
           "Version": 2,
           "From": [
@@ -405,8 +396,7 @@
               }
             }
           ]
-        },
-        "howCreated": "User"
+        }
       }
     ]
   }

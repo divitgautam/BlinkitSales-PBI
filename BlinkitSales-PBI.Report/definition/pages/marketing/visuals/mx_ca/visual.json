@@ -1,37 +1,19 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "mx_ca",
   "position": {
-    "x": 428,
+    "x": 408,
     "y": 190,
     "z": 19000,
     "height": 290,
-    "width": 380,
+    "width": 440,
     "tabOrder": 19000
   },
   "visual": {
     "visualType": "pivotTable",
+    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_marketing"
-                    }
-                  },
-                  "Property": "Target Audience"
-                }
-              },
-              "queryRef": "fact_marketing.Target Audience",
-              "nativeQueryRef": "Target Audience",
-              "active": true
-            }
-          ]
-        },
         "Rows": {
           "projections": [
             {
@@ -47,6 +29,25 @@
               },
               "queryRef": "fact_marketing.Channel",
               "nativeQueryRef": "Channel",
+              "active": true
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_marketing"
+                    }
+                  },
+                  "Property": "Target Audience"
+                }
+              },
+              "queryRef": "fact_marketing.Target Audience",
+              "nativeQueryRef": "Target Audience",
               "active": true
             }
           ]
@@ -79,7 +80,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "9D"
                 }
               }
             }
@@ -108,6 +109,13 @@
                             "color": {
                               "Literal": {
                                 "Value": "'#FFFFCC'"
+                              }
+                            },
+                            "nullColoringStrategy": {
+                              "strategy": {
+                                "Literal": {
+                                  "Value": "'noColor'"
+                                }
                               }
                             }
                           },
@@ -144,7 +152,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "9D"
                 }
               }
             }
@@ -157,7 +165,14 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "9D"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -166,7 +181,15 @@
       ],
       "total": [
         {
-          "properties": {}
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
         }
       ],
       "subTotals": [
@@ -249,7 +272,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Darker = higher ROAS; All audiences is its own group'"
+                  "Value": "'Darker = higher ROAS; All users = campaigns aimed at everyone'"
                 }
               }
             },
@@ -287,7 +310,6 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   }
 }

@@ -1,6 +1,6 @@
 /// Calendar of whole months from Mar 2023 to Nov 2024, shared by orders, marketing and inventory; marked as the date table.
 table Date
-	lineageTag: afaa3511-5612-406a-af39-b7e74f1783fd
+	lineageTag: ef1a33a8-c811-4075-8f60-919aed597771
 	dataCategory: Time
 
 	/// Calendar date (key).
@@ -8,7 +8,7 @@ table Date
 		dataType: dateTime
 		isKey
 		formatString: dd-mmm-yyyy
-		lineageTag: 7a23b434-6887-4222-ac32-f83f3aac28d6
+		lineageTag: 4a473ba8-0d68-4a36-9ca6-cde86059f8e7
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Date]
@@ -17,7 +17,7 @@ table Date
 	column Year
 		dataType: int64
 		formatString: 0
-		lineageTag: 4be64e59-5f6c-40b9-b20e-b343bf9f992c
+		lineageTag: 376b206e-1f0c-4403-becd-eb6942558424
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Year]
@@ -25,7 +25,7 @@ table Date
 	/// Calendar quarter, Q1-Q4.
 	column Quarter
 		dataType: string
-		lineageTag: 023ed5fb-bc5e-46fc-bee0-ffb792d2f8ed
+		lineageTag: 01fc8fc8-febb-45d2-9e1d-cfeed7d6cc6f
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Quarter]
@@ -34,7 +34,7 @@ table Date
 	column 'Month No'
 		dataType: int64
 		formatString: 0
-		lineageTag: 56f237c3-e024-4cce-a06f-02a8d7be43f1
+		lineageTag: b448fd7d-9115-4867-b23d-8022478023a2
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Month No]
@@ -42,17 +42,17 @@ table Date
 	/// Month name, e.g. Jan.
 	column Month
 		dataType: string
-		lineageTag: 611156ac-a3ca-4faf-bf33-4c886481b854
+		sortByColumn: 'Month No'
+		lineageTag: 35e72665-3c07-4d6d-8fac-426127f0e53e
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Month]
-		sortByColumn: 'Month No'
 
 	/// First day of the month.
 	column 'Month Start'
 		dataType: dateTime
 		formatString: mmm yyyy
-		lineageTag: d286ba31-52fe-42f6-9341-93cd60c8a197
+		lineageTag: f2aed18a-cd11-4e7e-b4a7-31bf4047f342
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Month Start]
@@ -60,17 +60,17 @@ table Date
 	/// Month label, e.g. Mar 24.
 	column 'Year Month'
 		dataType: string
-		lineageTag: 215abdae-6ef2-4c2b-ad3a-89fa587d1db8
+		sortByColumn: 'Year Month Key'
+		lineageTag: 1e53786f-7080-4758-9cd8-fdc1acfdfb0f
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Year Month]
-		sortByColumn: 'Year Month Key'
 
 	/// yyyymm number (sorts Year Month).
 	column 'Year Month Key'
 		dataType: int64
 		formatString: 0
-		lineageTag: 0bedb09d-33ee-40c1-8cff-5d625da516f2
+		lineageTag: 4a9d072a-ae42-49e1-a031-15ae3abb86a8
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Year Month Key]
@@ -79,7 +79,7 @@ table Date
 	column 'Weekday No'
 		dataType: int64
 		formatString: 0
-		lineageTag: 7e85d484-9546-48fe-a15a-98a87fd52944
+		lineageTag: cb777b88-d21e-4264-b3e4-99e4b134c960
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Weekday No]
@@ -87,16 +87,16 @@ table Date
 	/// Weekday name, e.g. Mon.
 	column Weekday
 		dataType: string
-		lineageTag: d3f3ba73-732c-4943-8590-337559c853d8
+		sortByColumn: 'Weekday No'
+		lineageTag: 08ef8645-5356-4fde-8623-b880a7acc8f6
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Weekday]
-		sortByColumn: 'Weekday No'
 
 	/// FALSE for the first and last month of the order data (Mar 2023 and Nov 2024), which are partial; exclude them from trends and YoY.
 	column 'Is Full Month'
 		dataType: boolean
-		lineageTag: 3bbd3834-2e7c-4507-81cc-cd872dcb8ed8
+		lineageTag: 290f43a8-3a14-41dc-93fe-6a07980ab382
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Is Full Month]
@@ -104,4 +104,3 @@ table Date
 	partition Date = calculated
 		mode: import
 		source = VAR lo = MIN ( MIN ( MIN ( fact_orders[Order Date] ), MIN ( fact_marketing[Campaign Date] ) ), MIN ( fact_inventory[Month Start] ) ) VAR hi = MAX ( MAX ( MAX ( fact_orders[Order Date] ), MAX ( fact_marketing[Campaign Date] ) ), MAX ( fact_inventory[Month Start] ) ) VAR firstMonth = DATE ( YEAR ( MIN ( fact_orders[Order Date] ) ), MONTH ( MIN ( fact_orders[Order Date] ) ), 1 ) VAR lastMonth = DATE ( YEAR ( MAX ( fact_orders[Order Date] ) ), MONTH ( MAX ( fact_orders[Order Date] ) ), 1 ) RETURN ADDCOLUMNS ( CALENDAR ( DATE ( YEAR ( lo ), MONTH ( lo ), 1 ), EOMONTH ( hi, 0 ) ), "Year", YEAR ( [Date] ), "Quarter", "Q" & QUARTER ( [Date] ), "Month No", MONTH ( [Date] ), "Month", FORMAT ( [Date], "MMM", "en-US" ), "Month Start", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ), "Year Month", FORMAT ( [Date], "MMM yy", "en-US" ), "Year Month Key", YEAR ( [Date] ) * 100 + MONTH ( [Date] ), "Weekday No", WEEKDAY ( [Date], 2 ), "Weekday", FORMAT ( [Date], "ddd", "en-US" ), "Is Full Month", NOT ( DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ) = firstMonth || DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ) = lastMonth ) )
-

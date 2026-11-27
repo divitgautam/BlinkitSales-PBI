@@ -11,7 +11,9 @@ CH_LABEL, CH_DELTA, DELTA_PAD = 6.0, 5.6, 48   # card label 10 pt; change line 9
 CH_NAV, NAV_PAD, NAV_MIN_H = 4.9, 36, 32       # page-navigator tab: 8 pt text plus button padding; a 28 px pill clipped its labels
 CH_FOOT, FOOT_PAD = 5.2, 40                    # footer text 8 pt bold; observed cut-off of a 112-character footer in a 540 px box
 BAR_ROW, BAR_CHROME, BAR_CHROME_NOSUB = 26, 75, 50   # bar chart: min px per category before a scrollbar appears; title+subtitle+padding+axis
-PIV_CHROME = 62                                # pivot: title+subtitle+header; row px = 1.333 x font pt + 5
+PIV_CHROME, PIV_CHROME_NOSUB, PIV_PAD, PIV_CELL = 62, 50, 2, 8   # pivot: title(+subtitle) chrome; default row padding px; per-cell horizontal padding px
+PIV_ROW_EXTRA = 8                              # pivot row px = 1.333 x font pt + 2 x row padding + 8 (about 22 px at 8 pt with padding 2; the heat map scrolled at ~18.5 px/row in a 204 px body)
+CW_REG, CW_BOLD = 0.52, 0.58                   # glyph width as a share of the font px (pt x 1.333); regular / bold
 SPEC = Path(os.environ.get("CHECK_SPEC", ROOT / "_build" / "measures_spec.py")).read_text(encoding="utf-8")   # CHECK_SPEC: test against another spec version
 
 
@@ -34,6 +36,7 @@ def delta_chars(measure):
     return 2 + size + 17
 PAGE_BOTTOM, FOOT_BOTTOM, MARGIN = 38, 4, 16   # content must end 38 px above the page bottom (footer zone); footer 4 px above it
 ROW_PX, CHROME_PX, SCROLLBAR_PX = 18, 62, 14   # px per category row, title + subtitle, horizontal scrollbar
+PHINTS = json.loads((ROOT / "_build" / "pivot_hints.json").read_text(encoding="utf-8")) if (ROOT / "_build" / "pivot_hints.json").exists() else {}
 HINTS = json.loads((ROOT / "_build" / "row_hints.json").read_text(encoding="utf-8")) if (ROOT / "_build" / "row_hints.json").exists() else {}
 bad = []
 names = {}
@@ -89,9 +92,23 @@ for pdir in sorted(d for d in PAGES.iterdir() if d.is_dir()):
             need = (BAR_CHROME if has_sub else BAR_CHROME_NOSUB) + BAR_ROW * hk
             if need > h: bad.append(f"{pg['name']}/{n_}: {hk} bars need ~{need}px, visual is {h}px (would scroll)")
         elif hk and vt == "pivotTable":
-            fs = float(v["visual"].get("objects", {}).get("values", [{}])[0].get("properties", {}).get("fontSize", {}).get("expr", {}).get("Literal", {}).get("Value", "10D").rstrip("D"))
-            need = PIV_CHROME + (fs * 1.333 + 5) * (hk + 1)
-            if need > h: bad.append(f"{pg['name']}/{n_}: {hk} rows at {fs:.0f} pt need ~{need:.0f}px, visual is {h}px (would scroll)")
+            ob = v["visual"].get("objects", {})
+            lit = lambda grp, key, dflt: float(ob.get(grp, [{}])[0].get("properties", {}).get(key, {}).get("expr", {}).get("Literal", {}).get("Value", dflt).rstrip("D"))
+            fs, fh, pad = lit("values", "fontSize", "10D"), lit("columnHeaders", "fontSize", "10D"), lit("grid", "rowPadding", f"{PIV_PAD}D")
+            need = (PIV_CHROME if has_sub else PIV_CHROME_NOSUB) + (fs * 1.333 + 2 * pad + PIV_ROW_EXTRA) * (hk + 1)
+            if need > h: bad.append(f"{pg['name']}/{n_}: {hk} rows + header at {fs:.0f} pt need ~{need:.0f}px, visual is {h}px (would scroll)")
+            ph = PHINTS.get(f"{pg['name']}/{n_}")
+            if ph:   # (a) column header text must fit its column; all columns plus the row header must fit the visual width
+                wrap = ob.get("columnHeaders", [{}])[0].get("properties", {}).get("wordWrap", {}).get("expr", {}).get("Literal", {}).get("Value") == "true"
+                bw = lambda t: len(t) * CW_BOLD * fh * 1.333
+                cols = []
+                for i, c_ in enumerate(ph["cols"]):
+                    val = ph["values"][i if ph.get("colvalues") else 0]
+                    hdr = max((len(x_) for x_ in c_.split()), default=0) * CW_BOLD * fh * 1.333 if wrap else bw(c_)
+                    cols.append(max(hdr, len(val) * CW_REG * fs * 1.333) + PIV_CELL)
+                rowhdr = max(len(r_) for r_ in ph["rows"]) * CW_REG * fs * 1.333 + PIV_CELL
+                tot = rowhdr + sum(cols) + 24
+                if tot > w: bad.append(f"{pg['name']}/{n_}: row header + {len(cols)} columns need ~{tot:.0f}px of {w} (headers {ph['cols']}; widest column {max(cols):.0f}px) - a header would truncate or scroll")
         vco = v["visual"].get("visualContainerObjects", {})
         t = vco.get("title", [{}])[0].get("properties", {})
         st = vco.get("subTitle", [{}])[0].get("properties", {})
@@ -105,6 +122,12 @@ for pdir in sorted(d for d in PAGES.iterdir() if d.is_dir()):
         s2 = st.get("text", {}).get("expr", {}).get("Literal", {}).get("Value", "").strip("'")
         if s2 and len(s2) * CH_SUB > w - 24:
             bad.append(f"{pg['name']}/{v['name']}: subtitle {len(s2)} chars needs {len(s2) * CH_SUB:.0f}px of {w - 24}")
+        ttl_s = txt.get("Literal", {}).get("Value", "").strip("'") if "Literal" in txt else ""
+        if ttl_s and s2 and re.sub(r"\W+", " ", ttl_s).lower() == re.sub(r"\W+", " ", s2).lower():
+            bad.append(f"{pg['name']}/{v['name']}: title and subtitle say the same ('{s2}')")
+        sub_off = st.get("show", {}).get("expr", {}).get("Literal", {}).get("Value") == "false"
+        if txt and not s2 and not sub_off and vt not in ("textbox", "cardVisual", "slicer", "image", "pageNavigator") and not n_.startswith(("hdr_", "ftr_")):
+            bad.append(f"{pg['name']}/{v['name']}: title with no explicit subtitle setting; Desktop adds an auto subtitle (e.g. 'ROAS by Campaign Name') that repeats the title - set subTitle show=false")
         if not any("altText" in x_.get("properties", {}) for x_ in vco.get("general", [])):
             bad.append(f"{pg['name']}/{v['name']}: no alt text")
         n = v["name"]
