@@ -7,7 +7,7 @@
 4. `docs/dashboard/03_delivery.png`
 5. `docs/dashboard/07_forecast.png`
 
-Repo: https://github.com/divitgautam/BlinkitSales-PBI (create it first, then check the link works). About 2,100 characters, under LinkedIn's 3,000 limit.
+Repo: https://github.com/divitgautam/BlinkitSales-PBI (live). About 2,800 characters, under LinkedIn's 3,000 limit; check the count before posting.
 
 ---
 
@@ -31,11 +31,18 @@ What it shows:
 - Categories are evenly spread: Dairy & Breakfast leads with 12.9%.
 - Every channel returns 1.9x to 2.05x per rupee spent. Channel mix is not the lever.
 
-A naive forecast beat five other models in a rolling backtest (error 2.8%): about ₹64.5 L for 2025. Cutting late deliveries by 5 points would take ₹2.64 L of revenue out of the at-risk group.
+A naive forecast beat five other models in a rolling backtest (error 2.8%): about ₹64.5 L for 2025.
+
+Then I looked at it as a data scientist and tested whether any of this actually costs money. On this data, nothing I could measure:
+- A poor experience shows no clear effect on the next order: 60-day reorder is 16.9% after one and 18.4% after a good one (odds ratio 0.90, CI 0.77 to 1.05). That is not proof of no effect; the interval still allows a real drop.
+- Distance, hour, area and category explain none of the lateness. About 30% of orders are late everywhere.
+- Marketing revenue does not move with spend (elasticity -0.01). ROAS only falls because spend rises.
+
+So "₹50.42 L at risk" is revenue exposed to poor experiences, not revenue that will be lost. The next step is a test, not a fix: a marketing holdout needs about 239 units per arm to detect a 10% revenue effect.
 
 How it was made: Python for the audit and for 70 reconciled numbers, then the model (186 measures) and the report generated from code. A layout checker, the Best Practice Analyzer (27 of 27) and a 10-point scorecard ran after every export. It took six rounds to get from 5.0 to 9.75, and one round was lost to a text box that overflowed by a few pixels.
 
-Code, notes and a step-by-step guide: https://github.com/divitgautam/BlinkitSales-PBI
+Code, the statistical review and a step-by-step guide: https://github.com/divitgautam/BlinkitSales-PBI
 
 What would you check first in a dataset like this?
 

@@ -39,6 +39,26 @@ A naive last-full-month model won a rolling-origin backtest (MAPE 2.8%). Baselin
 
 Values are not additive across types; confidence is low because delay and rating are unrelated in this data. See `docs/forecast_levers.md`.
 
+### Data science review: what the data can and cannot support
+
+After the dashboard I tested 15 questions with proper statistics (`analysis/ds_review.py`, write-up in
+[docs/data_science_review.md](docs/data_science_review.md)). Most expected relationships are absent, which is the
+strongest sign the data was generated at random:
+
+| Question | Result |
+|---|---|
+| Does a late delivery lower the rating? | No: +0.04 stars (95% CI −0.03 to +0.11); none of 18 drivers is significant |
+| Does a poor experience stop the next order? | Not detectably: 60-day reorder 16.9% vs 18.4%, odds ratio 0.90 (CI 0.77 to 1.05, p = 0.19); a null result with real uncertainty, not proof of no effect |
+| What makes deliveries late? | Nothing measured: about 30% late at every distance (+0.05 min/km, p = 0.64), hour, area or category |
+| Does more marketing spend bring more revenue? | No: elasticity −0.01 (CI −0.04 to 0.01); ROAS falls with spend only because revenue stays flat |
+| Is there trend or seasonality? | No (p = 0.11 over 19 months); months vary within ±11% |
+
+So the "revenue at risk" figure is revenue *exposed* to poor experiences, not revenue that will be lost. The
+recommendations become tests rather than fixes: a marketing incrementality holdout (239 units per arm for a 10% revenue
+effect), a day-90 win-back test (about 1,000 per arm for +5 points of reorder; the 2,172 customers here can detect
+about +4.8), and better data capture first (order items, repeating store and rider IDs, valid registration dates).
+All ₹ sizings in the review are illustrative.
+
 ## The report
 
 | Page | Dashboard |
