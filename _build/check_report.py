@@ -12,8 +12,9 @@ CH_NAV, NAV_PAD, NAV_MIN_H = 4.9, 36, 32       # page-navigator tab: 8 pt text p
 CH_FOOT, FOOT_PAD = 5.2, 40                    # footer text 8 pt bold; observed cut-off of a 112-character footer in a 540 px box
 BAR_ROW, BAR_CHROME, BAR_CHROME_NOSUB = 26, 75, 50   # bar chart: min px per category before a scrollbar appears; title+subtitle+padding+axis
 PIV_CHROME, PIV_CHROME_NOSUB, PIV_PAD, PIV_CELL = 62, 50, 2, 8   # pivot: title(+subtitle) chrome; default row padding px; per-cell horizontal padding px
-PIV_ROW_EXTRA = 8                              # pivot row px = 1.333 x font pt + 2 x row padding + 8 (about 22 px at 8 pt with padding 2; the heat map scrolled at ~18.5 px/row in a 204 px body)
+PIV_ROW_EXTRA = 8                              # pivot row px = 1.333 x font pt + 2 x row padding + 8 (round 5: an 11 pt matrix with padding 11 scrolled in 290 px, so each padding px above 2 adds 0.4 px more, see pivot_row(); about 22 px at 8 pt with padding 2; the heat map scrolled at ~18.5 px/row in a 204 px body)
 CW_REG, CW_BOLD = 0.52, 0.58                   # glyph width as a share of the font px (pt x 1.333); regular / bold
+TMDL = (ROOT / "BlinkitSales-PBI.SemanticModel" / "definition" / "tables" / "_Measures.tmdl").read_text(encoding="utf-8")
 SPEC = Path(os.environ.get("CHECK_SPEC", ROOT / "_build" / "measures_spec.py")).read_text(encoding="utf-8")   # CHECK_SPEC: test against another spec version
 
 
@@ -26,9 +27,15 @@ def footer_chars():
     return sum(widths.get(m, len(m)) for m in lits)
 
 
+def pivot_row(fs, pad):
+    return fs * 1.333 + 2 * pad + PIV_ROW_EXTRA + 0.4 * max(0, pad - 2)
+
+
 def delta_chars(measure):
     """Longest change line of a card: arrow + size + ' Oct 24 vs Oct 23'. Looked up from the yoy() table in measures_spec."""
     nm = measure.replace("Δ ", "")
+    tm = re.search(r"measure '" + re.escape(measure) + r"' = \"([^\"]*)\"\s*$", TMDL, re.M)   # a pure-text line: measure its real length
+    if tm: return len(tm.group(1))
     m = re.search(r'\("' + re.escape(nm) + r'", "[^"]*", "(rel|pp|abs)", "[a-z]+", "([^"]*)"\)', SPEC)
     if nm in ("Revenue", "Orders", "AOV"): return 2 + 5 + 17
     if not m: return 27
@@ -113,7 +120,7 @@ for pdir in sorted(d for d in PAGES.iterdir() if d.is_dir()):
             ob = v["visual"].get("objects", {})
             lit = lambda grp, key, dflt: float(ob.get(grp, [{}])[0].get("properties", {}).get(key, {}).get("expr", {}).get("Literal", {}).get("Value", dflt).rstrip("D"))
             fs, fh, pad = lit("values", "fontSize", "10D"), lit("columnHeaders", "fontSize", "10D"), lit("grid", "rowPadding", f"{PIV_PAD}D")
-            need = (PIV_CHROME if has_sub else PIV_CHROME_NOSUB) + (fs * 1.333 + 2 * pad + PIV_ROW_EXTRA) * (hk + 1)
+            need = (PIV_CHROME if has_sub else PIV_CHROME_NOSUB) + pivot_row(fs, pad) * (hk + 1)
             if need > h: bad.append(f"{pg['name']}/{n_}: {hk} rows + header at {fs:.0f} pt need ~{need:.0f}px, visual is {h}px (would scroll)")
             ph = PHINTS.get(f"{pg['name']}/{n_}")
             if ph:   # (a) column header text must fit its column; all columns plus the row header must fit the visual width
@@ -132,12 +139,21 @@ for pdir in sorted(d for d in PAGES.iterdir() if d.is_dir()):
             px = max(float(r_["textStyle"].get("fontSize", "10pt").rstrip("pt")) for q_ in paras for r_ in q_["textRuns"] if r_["value"]) * 1.333
             per = max(1, int((w - 28) / (CW_REG * px)))
             used = 20 + sum(-(-max(1, sum(len(r_["value"]) for r_ in q_["textRuns"])) // per) * (float(q_["textRuns"][0]["textStyle"].get("fontSize", "10pt").rstrip("pt")) * 1.333) * 1.35 for q_ in paras)
+            # overflow: blended glyph 0.55 em (bold lead-ins are wider), line 1.35, each gap paragraph costs its own line + 4 px, 10 px top padding, 10 px safety margin
+            cwb, need = 0.55, 10
+            for i_, q_ in enumerate(paras):
+                fpx = float(q_["textRuns"][-1]["textStyle"].get("fontSize", "10pt").rstrip("pt")) * 1.333
+                n_chars = sum(len(r_["value"]) for r_ in q_["textRuns"])
+                ln_ = -(-n_chars // max(1, int((w - 28) / (cwb * fpx)))) if n_chars else 1
+                need += ln_ * fpx * 1.35 + (4 if not n_chars else 0)
+            if paras and not any(r_["value"] for r_ in paras[-1]["textRuns"]): need -= paras[-1]["textRuns"][0]["textStyle"].get("fontSize", "6pt") and float(paras[-1]["textRuns"][0]["textStyle"]["fontSize"].rstrip("pt")) * 1.333 * 1.35 + 4   # trailing gap is free
+            if need > h - 10: bad.append(f"{pg['name']}/{n_}: text needs ~{need:.0f}px of {h - 10}px (scrollbar or cut last line)")
             if used < 0.6 * h: bad.append(f"{pg['name']}/{n_}: text fills ~{used / h:.0%} of its {w}x{h} box (empty panel; raise the font or resize)")
         if vt == "pivotTable" and hk and pg.get("type") != "Tooltip":   # a matrix that is short for its panel leaves an empty block
             ob_ = v["visual"].get("objects", {})
             fs_ = float(ob_.get("values", [{}])[0].get("properties", {}).get("fontSize", {}).get("expr", {}).get("Literal", {}).get("Value", "10D").rstrip("D"))
             pad_ = float(ob_.get("grid", [{}])[0].get("properties", {}).get("rowPadding", {}).get("expr", {}).get("Literal", {}).get("Value", f"{PIV_PAD}D").rstrip("D"))
-            body = (fs_ * 1.333 + 2 * pad_ + PIV_ROW_EXTRA) * (hk + 1) + (PIV_CHROME if has_sub else PIV_CHROME_NOSUB)
+            body = pivot_row(fs_, pad_) * (hk + 1) + (PIV_CHROME if has_sub else PIV_CHROME_NOSUB)
             if body < 0.6 * h: bad.append(f"{pg['name']}/{n_}: {hk} rows fill ~{body / h:.0%} of the {h}px panel (empty block; shrink the panel or add padding)")
         vco = v["visual"].get("visualContainerObjects", {})
         t = vco.get("title", [{}])[0].get("properties", {})

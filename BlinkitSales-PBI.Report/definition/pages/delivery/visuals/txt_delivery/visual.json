@@ -41,7 +41,7 @@
                     }
                   },
                   {
-                    "value": "69.4% of orders arrive within 5 minutes; 30.6% are late, by 14.5 minutes on average.",
+                    "value": "69.4% arrive within 5 minutes; 30.6% are late by 14.5 min.",
                     "textStyle": {
                       "fontSize": "11pt",
                       "color": "#13241A"
@@ -70,7 +70,7 @@
                     }
                   },
                   {
-                    "value": "21% of orders are slightly late (6-15 minutes) and 10% significantly (16-30).",
+                    "value": "21% are 6-15 minutes late, 10% are 16-30 minutes late.",
                     "textStyle": {
                       "fontSize": "11pt",
                       "color": "#13241A"

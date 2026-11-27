@@ -1,12 +1,12 @@
 /// Monthly revenue on full months (Apr 2023 to Oct 2024, Actual) and the forecast to Dec 2025 with an 80% band. Disconnected from Date by design. Source: data/clean/forecast.csv written by _build/forecast.py.
 table Forecast
-	lineageTag: 2935d757-93b4-4a5d-96eb-804d3fede8f6
+	lineageTag: 07045316-5d46-4a25-b4cd-424f09849456
 
 	/// First day of the month.
 	column 'Month Start'
 		dataType: dateTime
 		formatString: mmm yyyy
-		lineageTag: 7030c352-2573-4b24-903e-bafeb7c71617
+		lineageTag: b3f7c14d-1623-41a7-8bc4-9d58fe2beea5
 		summarizeBy: none
 		sourceColumn: Month Start
 
@@ -17,7 +17,7 @@ table Forecast
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 8429bbb4-9687-4edc-a72f-5c2048fcde7f
+		lineageTag: 00c5f911-a7d1-4ab1-bbf9-7bae1cbf7d49
 		summarizeBy: none
 		sourceColumn: Kind
 
@@ -26,10 +26,10 @@ table Forecast
 	/// Actual monthly revenue (full months only).
 	column Actual
 		dataType: decimal
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 420bfd44-6718-48d5-bd34-5a0494509995
+		lineageTag: b4661bf6-f13a-4029-933d-9c1d571e0aa2
 		summarizeBy: none
 		sourceColumn: Actual
 
@@ -38,10 +38,10 @@ table Forecast
 	/// Forecast monthly revenue; the last actual month repeats here so the lines join.
 	column Forecast
 		dataType: decimal
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: be9cd23f-af93-4973-9535-cbe55b2377e0
+		lineageTag: 85868a33-9066-46c6-b670-d33c1e8003ff
 		summarizeBy: none
 		sourceColumn: Forecast
 
@@ -50,10 +50,10 @@ table Forecast
 	/// Lower end of the 80% band.
 	column 'Low 80'
 		dataType: decimal
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 7709770b-870b-4f37-b384-a2be0c368cc5
+		lineageTag: a4561f5e-21ce-46ee-bd36-dfb70b84af54
 		summarizeBy: none
 		sourceColumn: Low 80
 
@@ -62,10 +62,10 @@ table Forecast
 	/// Upper end of the 80% band.
 	column 'High 80'
 		dataType: decimal
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 720df3e6-5377-4300-8afb-f60274c336c1
+		lineageTag: 72082c87-71dc-4f42-8a60-f5d3cde124b1
 		summarizeBy: none
 		sourceColumn: High 80
 
@@ -74,19 +74,19 @@ table Forecast
 	/// Month label, e.g. Nov 24.
 	column 'Month Label' = FORMAT ( Forecast[Month Start], "MMM yy", "en-US" )
 		dataType: string
-		lineageTag: 5faa44df-80c7-4c53-b2e4-e5305dce4898
-		summarizeBy: none
 		sortByColumn: 'Month Start'
+		lineageTag: 0c0ab0bb-bab5-40ca-ba44-67a01a5791d8
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Calendar year of the month (used to total 2025).
 	column Year = YEAR ( Forecast[Month Start] )
 		dataType: int64
-		isHidden
 		formatString: 0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 48f13e23-24eb-4392-b01d-e217d6757b92
+		lineageTag: 38b7fad3-a594-4b9b-92b6-8d8b7931443f
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -106,4 +106,3 @@ table Forecast
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
-

@@ -230,7 +230,7 @@ add("Card Backtest", f'"{FACTS.get("backtest_mape", 0):.1f}%"', None, P, "Backte
 add("Card Lever Exposure", f"VAR v = [Lever Exposure Removed] RETURN {inr('v')}", None, P, "Annual exposure removed by the two experience levers, for cards.")
 add("Δ F25 Range", f'IF ( [LTM Revenue] >= [F25 Low] && [LTM Revenue] <= [F25 High], "Last 12 months inside range", IF ( [LTM Revenue] > [F25 High], "Last 12 months above range", "Last 12 months below range" ) )', None, P, "Card line: where the last-12-month revenue sits against the 2025 80% range.")
 add("Δ F25 vs LTM", f'VAR g = [F25 Revenue] - [LTM Revenue] RETURN IF ( g < 0, "-", "+" ) & {inr("ABS ( g )")} & " vs " & {inr("[LTM Revenue]")} & " (12 mo)"', None, P, "Card line: the gap between the 2025 forecast and the last 12 full months, in rupees.")
-add("Δ Backtest", f'"{"Within" if FACTS.get("backtest_mape", 99) <= 5 else "Above"} the 5% target · naive model"', None, P, "Card line: backtest error against a 5% target.")
+add("Δ Backtest", f'"{"Within" if FACTS.get("backtest_mape", 99) <= 5 else "Above"} the 5% target"', None, P, "Card line: backtest error against a 5% target.")
 # 8 Titles: action titles that follow the slicers (every title stays within 70 characters, counting ₹ as one)
 TT = "8 Titles"
 add("Title Overview",

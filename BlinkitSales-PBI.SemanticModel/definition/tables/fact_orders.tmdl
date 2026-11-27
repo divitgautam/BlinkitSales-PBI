@@ -1,12 +1,12 @@
 /// One row per order (5,000): order header, its single item line, delivery and customer feedback merged 1:1. Revenue = Order Total. Source: data/clean/fact_orders.csv.
 table fact_orders
-	lineageTag: a726bf76-4b29-48de-9dac-0d66ca3fa2fb
+	lineageTag: 6fd83e37-d0d1-433d-868b-20b8ebf67108
 
 	/// Order identifier (unique).
 	column 'Order Id'
 		dataType: int64
 		formatString: 0
-		lineageTag: 9569c6eb-a51c-4f46-b4d8-aaa75e904691
+		lineageTag: 4e02260b-e812-42c1-9860-6ae146d8a8e7
 		summarizeBy: none
 		sourceColumn: Order Id
 
@@ -15,9 +15,9 @@ table fact_orders
 	/// Foreign key to dim_customer.
 	column 'Customer Id'
 		dataType: int64
-		isHidden
 		formatString: 0
-		lineageTag: e98867a9-be1c-46ac-a92b-81ba726c5cbe
+		isHidden
+		lineageTag: 31cf6f01-fb5c-4f5d-820e-b6044d18ed38
 		summarizeBy: none
 		sourceColumn: Customer Id
 
@@ -26,9 +26,9 @@ table fact_orders
 	/// Foreign key to dim_product (one item per order).
 	column 'Product Id'
 		dataType: int64
-		isHidden
 		formatString: 0
-		lineageTag: f89c3a55-432c-4951-b6ae-3825513504e2
+		isHidden
+		lineageTag: 735044e4-70f3-4b00-a95d-994521d7baa1
 		summarizeBy: none
 		sourceColumn: Product Id
 
@@ -37,9 +37,9 @@ table fact_orders
 	/// Order date. Foreign key to the Date table.
 	column 'Order Date'
 		dataType: dateTime
-		isHidden
 		formatString: dd-mmm-yyyy
-		lineageTag: 4c3bda75-d913-4a98-b9bf-bfd4851eabd0
+		isHidden
+		lineageTag: 8701bbf3-c062-463d-9b0d-b971aa4959c3
 		summarizeBy: none
 		sourceColumn: Order Date
 
@@ -49,7 +49,7 @@ table fact_orders
 	column 'Order Hour'
 		dataType: int64
 		formatString: 0
-		lineageTag: 98e2bd07-a6ac-40df-85cf-8ec4174b4700
+		lineageTag: fba73892-a0ca-462c-a330-8d0fe8c86611
 		summarizeBy: none
 		sourceColumn: Order Hour
 
@@ -58,10 +58,10 @@ table fact_orders
 	/// Order header total in assumed INR. Source of Revenue.
 	column 'Order Total'
 		dataType: decimal
-		isHidden
 		formatString: ₹#,##0.00
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: b7dd605d-a987-4681-8b63-c1c2730bbd0e
+		lineageTag: 1cd1d58b-98d9-4cd2-84a1-04af07293547
 		summarizeBy: none
 		sourceColumn: Order Total
 
@@ -70,10 +70,10 @@ table fact_orders
 	/// Quantity x unit price. Source of Line Value; does not reconcile to Order Total.
 	column 'Line Amount'
 		dataType: decimal
-		isHidden
 		formatString: ₹#,##0.00
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 6149ae26-e6d0-4407-a736-9fe88ec0f47f
+		lineageTag: 412a6763-6a4e-4fe1-a1d0-4d82f4f2cdc0
 		summarizeBy: none
 		sourceColumn: Line Amount
 
@@ -82,10 +82,10 @@ table fact_orders
 	/// Units on the item line, 1-3.
 	column Quantity
 		dataType: int64
-		isHidden
 		formatString: 0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 6a20fe9a-6a19-49ef-8880-dda8483fed1d
+		lineageTag: c25c747c-57b0-466f-8b06-b2fdf4fe4377
 		summarizeBy: none
 		sourceColumn: Quantity
 
@@ -95,7 +95,7 @@ table fact_orders
 	column 'Unit Price'
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: 5b61e29b-913a-440c-89f3-056c75662e2a
+		lineageTag: 91bcb677-bc5c-4029-a6da-28988ca0906b
 		summarizeBy: none
 		sourceColumn: Unit Price
 
@@ -104,7 +104,7 @@ table fact_orders
 	/// Card, Cash, UPI or Wallet.
 	column 'Payment Method'
 		dataType: string
-		lineageTag: 83d01035-0b30-4eff-844e-aed34e2a9e36
+		lineageTag: 3adadaac-c420-4e69-8f09-631f8e806fea
 		summarizeBy: none
 		sourceColumn: Payment Method
 
@@ -113,19 +113,19 @@ table fact_orders
 	/// On Time (up to 5 minutes late), Slightly Delayed or Significantly Delayed.
 	column 'Delivery Status'
 		dataType: string
-		lineageTag: 703f1c1e-11dc-4eae-84e5-d874a4561a2f
+		sortByColumn: 'Delivery Status Order'
+		lineageTag: a2004a3f-8986-4701-9429-9309534a685b
 		summarizeBy: none
 		sourceColumn: Delivery Status
-		sortByColumn: 'Delivery Status Order'
 
 		annotation SummarizationSetBy = User
 
 	/// Sort order for Delivery Status (from Power Query source, not DAX, to avoid a circular sort-by).
 	column 'Delivery Status Order'
 		dataType: int64
-		isHidden
 		formatString: 0
-		lineageTag: d527800b-def4-49a9-98dc-898ac5d5678d
+		isHidden
+		lineageTag: 4361fb4d-419c-44a2-beb5-045ba05d7ed3
 		summarizeBy: none
 		sourceColumn: Delivery Status Order
 
@@ -135,7 +135,7 @@ table fact_orders
 	column 'Minutes Late'
 		dataType: int64
 		formatString: 0
-		lineageTag: 976dc952-fec1-40bc-8593-9d2ecfaed6a9
+		lineageTag: 939bef5f-1683-4601-89e1-a384882e174b
 		summarizeBy: none
 		sourceColumn: Minutes Late
 
@@ -144,7 +144,7 @@ table fact_orders
 	/// TRUE when the status is not On Time (more than 5 minutes late).
 	column 'Is Late'
 		dataType: boolean
-		lineageTag: adeddc17-bec8-465e-a1c0-33bd24c7ddbc
+		lineageTag: 39a9e2dd-7dc9-4c26-9d58-63285cf720f3
 		summarizeBy: none
 		sourceColumn: Is Late
 
@@ -154,7 +154,7 @@ table fact_orders
 	column 'Distance Km'
 		dataType: decimal
 		formatString: 0.00
-		lineageTag: 5657d416-0447-4121-a4ca-d2299367d438
+		lineageTag: dc4415d1-a426-4d23-93bd-0c7978388ca0
 		summarizeBy: none
 		sourceColumn: Distance Km
 
@@ -164,7 +164,7 @@ table fact_orders
 	column Rating
 		dataType: int64
 		formatString: 0
-		lineageTag: f2747011-ade3-4bfe-9fd2-179f61254c62
+		lineageTag: 6b67adb8-5596-4953-a176-8e0a61eee846
 		summarizeBy: none
 		sourceColumn: Rating
 
@@ -173,7 +173,7 @@ table fact_orders
 	/// Feedback sentiment: Positive, Neutral or Negative.
 	column Sentiment
 		dataType: string
-		lineageTag: 0892a5f4-dbb4-4e8d-8176-c4a709fcb679
+		lineageTag: d0e1a3b4-e899-45e5-a519-7670372b32f0
 		summarizeBy: none
 		sourceColumn: Sentiment
 
@@ -182,7 +182,7 @@ table fact_orders
 	/// Delivery, Customer Service, Product Quality or App Experience.
 	column 'Feedback Category'
 		dataType: string
-		lineageTag: cee113e6-9f22-4c0e-b217-4cbb387cce1f
+		lineageTag: 492a7cce-47c8-44a2-8a6a-b07d4c097d1d
 		summarizeBy: none
 		sourceColumn: Feedback Category
 
@@ -191,7 +191,7 @@ table fact_orders
 	/// TRUE when the order was late or rated 1-2 stars. Basis of Revenue at Risk.
 	column 'Poor Experience'
 		dataType: boolean
-		lineageTag: 7bbad601-8760-492b-adff-07639d3b5d5e
+		lineageTag: e7e8eb80-dcdb-46b8-a480-96f89766fdf6
 		summarizeBy: none
 		sourceColumn: Poor Experience
 
@@ -200,18 +200,18 @@ table fact_orders
 	/// Minutes late in 5-minute bands (Early, 0 to 5, ... 26 to 30).
 	column 'Minutes Late Band' = VAR m = fact_orders[Minutes Late] RETURN SWITCH ( TRUE (), m < 0, "Early", m <= 5, "0 to 5", m <= 10, "6 to 10", m <= 15, "11 to 15", m <= 20, "16 to 20", m <= 25, "21 to 25", "26 to 30" )
 		dataType: string
-		lineageTag: d8ad6238-e152-4a7b-b565-26287d69fdd8
-		summarizeBy: none
 		sortByColumn: 'Minutes Late Band Order'
+		lineageTag: 530f5fcf-168e-4fa9-831f-ad0144f05b12
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Sort order for Minutes Late Band.
 	column 'Minutes Late Band Order' = VAR m = fact_orders[Minutes Late] RETURN SWITCH ( TRUE (), m < 0, 1, m <= 5, 2, m <= 10, 3, m <= 15, 4, m <= 20, 5, m <= 25, 6, 7 )
 		dataType: int64
-		isHidden
 		formatString: 0
-		lineageTag: 990e0ba9-47f5-46e3-8c23-23c9dcc0960d
+		isHidden
+		lineageTag: dd331baa-e7d4-4df0-b2cd-0b46b04ac30b
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -219,18 +219,18 @@ table fact_orders
 	/// Why an order counts as a poor experience: late, rated 1-2 stars, both, or neither.
 	column 'Experience Class' = SWITCH ( TRUE (), fact_orders[Is Late] && fact_orders[Rating] <= 2, "Late and low rating", fact_orders[Is Late], "Late only", fact_orders[Rating] <= 2, "Low rating only", "Good experience" )
 		dataType: string
-		lineageTag: 62a39fed-8151-438e-bf04-03cc5edbbe1b
-		summarizeBy: none
 		sortByColumn: 'Experience Class Order'
+		lineageTag: d91d9be9-af0c-41a1-b04a-a0311fe6c4ee
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Sort order for Experience Class.
 	column 'Experience Class Order' = SWITCH ( TRUE (), fact_orders[Is Late] && fact_orders[Rating] <= 2, 1, fact_orders[Is Late], 2, fact_orders[Rating] <= 2, 3, 4 )
 		dataType: int64
-		isHidden
 		formatString: 0
-		lineageTag: 7408039e-748c-4955-8d9c-ba2da37c79da
+		isHidden
+		lineageTag: 6cbd7e55-fef9-47a8-a374-2603e3e084f7
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -250,4 +250,3 @@ table fact_orders
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
-

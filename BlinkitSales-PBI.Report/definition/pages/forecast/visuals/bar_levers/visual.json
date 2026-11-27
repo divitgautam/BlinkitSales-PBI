@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "bar_levers",
   "position": {
     "x": 16,
@@ -11,6 +11,7 @@
   },
   "visual": {
     "visualType": "clusteredBarChart",
+    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
         "Category": {
@@ -32,25 +33,6 @@
             }
           ]
         },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Lever Value % of Revenue"
-                }
-              },
-              "queryRef": "_Measures.Lever Value % of Revenue",
-              "nativeQueryRef": "Lever Value % of Revenue",
-              "displayName": "% of last-12-month revenue"
-            }
-          ]
-        },
         "Y": {
           "projections": [
             {
@@ -67,6 +49,25 @@
               "queryRef": "_Measures.Lever Value ₹ L",
               "nativeQueryRef": "Lever Value ₹ L",
               "displayName": "Annual value"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Lever Value % of Revenue"
+                }
+              },
+              "queryRef": "_Measures.Lever Value % of Revenue",
+              "nativeQueryRef": "Lever Value % of Revenue",
+              "displayName": "% of last-12-month revenue"
             }
           ]
         }
@@ -86,7 +87,8 @@
             },
             "direction": "Descending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "objects": {
@@ -272,8 +274,7 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   },
   "filterConfig": {
     "filters": [
@@ -290,6 +291,7 @@
           }
         },
         "type": "Categorical",
+        "howCreated": "User",
         "filter": {
           "Version": 2,
           "From": [
@@ -332,8 +334,7 @@
               }
             }
           ]
-        },
-        "howCreated": "User"
+        }
       }
     ]
   }

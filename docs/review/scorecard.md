@@ -186,3 +186,10 @@ NOT fixed / new defects:
 1. p3 text panel (page-3 function in `_build/build_report.py`): back to 10 pt or enlarge the box / shorten the five paragraphs so no scrollbar or cut line shows.
 2. p7 backtest card context line: shorten to "Within the 5% target" (measure in `measures_spec.py`; check_report change-line width).
 3. p5 matrix: Refresh the model so "Everyone" appears; remove the matrix scrollbar (a little more height or a smaller row padding); re-export once.
+
+## Round 6 changes (2026-11-27, no re-export yet)
+- p3 text panel: paragraphs 1 and 2 cut to one line each (about 40 px saved) at 11 pt, box unchanged (618x244).
+- p7 backtest context line: "Within the 5% target" (was 34 chars, 190 px needed in 184 px).
+- p5 matrix mx_ca: row padding 11 -> 8 (rows + header ~275 px of 290).
+- check_report.py now fails on: text-box overflow (0.55 em glyph, 1.35 line, gap paragraphs cost a line + 4 px), card context lines read from the real measure text in the TMDL, and pivot rows with a padding term. Before the fixes it flagged exactly these three (249 of 234 px, 190 of 184 px, 303 of 290 px).
+- Pending: one re-export to confirm no scrollbars; the "All" vs "Everyone" header needs the model refresh the user handles.
