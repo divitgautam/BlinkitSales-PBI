@@ -82,3 +82,32 @@ Not fixed: scrolling on three visuals, nav label clip, reset button, campaign dr
 8. Reset filters: not done. The "Clear all slicers" button action could not be verified against the PBIR schema here, and a wrong action type would break the report; use Ctrl+click on slicers or the slicer clear icon.
 9. check_report.py calibrated: footer text width from the Footer Text measure, nav height >= 32, change-line width per measure (5.6 px/char, 48 px padding), bar rows 26 px each plus 75/50 px chrome, pivot rows 1.333 x pt + 5, every bar/pivot must have a row hint. On the round-2 build (old spec and geometry) it fails: footer on all pages, nav on 7 pages, p1 rating line, p2 Top 5 and payment, p5 campaign; it passes on the new build.
 Needs Refresh in Desktop (footer measure, Δ Avg Rating, Δ Repeat Rate changed; "All audiences"), then export and re-score.
+
+## Round 3 score (2026-11-27, evidence: docs/BlinkitSales-PBI.pdf 07:56 export; PNGs docs/dashboard/01-07 re-rendered)
+BPA: 0 failures (all rules pass). Numbers read off pages match reconciliation.md and live_checks.md (1.10 Cr, 5,000, 2,201.86, 69.4/30.6%, 14.5 min, 3.34/3.37/3.33, 45.8%/46%, 50.42 L, 68.7% = 1,492 of 2,172, ROAS 1.97 / 2.05 / 1.92, 29.49 M, 2.97 M, 5.12 L, 64.52 L, MAPE 2.8%).
+
+Round-2 items: footer FIXED (date readable pp2-7); nav pills FIXED (labels whole); p2 Top 5 and payment FIXED (5 and 4 bars, no scrollbar); p5 campaign chart FIXED (9 bars); p1 rating line cannot be seen because page 1 is clipped; targets FIXED (p3 75%, p4 70%, p5 2.0x shown in label/line); line axes FIXED (not from zero, labelled). NOT fixed: p5 matrix header still "All" (subtitle explains); p2 heat map still has a scrollbar and cuts the last row (Snacks & Munchies, 11 of 12 rows).
+NEW: page 1 of the PDF is exported zoomed and clipped (4th card cut, right panel and bottom row, footer and nav missing); pp2-7 are fine. p5 campaign visual shows a duplicate auto subtitle "ROAS by Campaign Name".
+
+| # | Criterion | Score | Evidence |
+|---|---|---|---|
+| 1 | Purpose and message | 1.0 | DAX action titles with numbers on every page. |
+| 2 | Data trust | 0.75 | Reconciles; footer readable pp2-7 but missing on the clipped p1. |
+| 3 | KPI design | 0.75 | Targets now on p3-p5 and like-for-like deltas; no sparklines; p2 "0.0 pp" shows a green up arrow; p7 cards 2-4 context only. |
+| 4 | Chart choice and honesty | 0.75 | Line axes labelled; p5 matrix "All" column still reads as a total (1.82x vs bar 1.92x). |
+| 5 | Layout and hierarchy | 0.75 | p1 clipped; p2 heat map scrolls; empty lower halves p3 text panel and p6 left panel. |
+| 6 | Colour and accessibility | 0.75 | Unchanged; alt text not verifiable from PDF; small grey captions. |
+| 7 | Declutter, text, format | 0.75 | Footer/nav/rating line fixed; p1 cut text, p5 duplicate subtitle, matrix header. |
+| 8 | Interaction, navigation, devices | 0.75 | Slicers, both drill-throughs, tooltips, phone confirmed; no reset button (documented). |
+| 9 | Insight and action | 1.0 | p6 findings, p7 sized levers, MAPE and band. |
+| 10 | Model and engineering | 1.0 | BPA clean, reconciled, DAX titles. |
+| | Raw total | 8.25 | |
+| | Gates | max 7 | Page text clipped / scrolling visual (p1 clip, p2 heat map). No wrong numbers or misleading encodings. |
+| | **Final** | **7.0 / 10** | About 9.5 after fixes 1-2. |
+
+### Remaining fixes, ranked
+1. Re-export p1 properly (Ctrl+0 / fit page on page 1 before File > Export PDF); if it persists, check page-1 size and `page.json` display option in the page-1 function of `_build/build_report.py`. Cap 7 lifts.
+2. p2 heat map: shrink rows or give 12 rows room (page-2 function in `build_report.py`, `row_hints.json`), or limit to 10 categories; no scrollbar.
+3. p5 matrix: header "All" to "All audiences" (rename column display name in the matrix builder / model column `displayName`; check prepare.py output reached the model). Remove duplicate subtitle "ROAS by Campaign Name" on the campaign visual (set subtitle/title off in its builder).
+4. p2 "0.0 pp" neutral colour (change-line measure in `measures_spec.py`); fill empty lower halves p3/p6 or shrink panels.
+5. Reset-filters bookmark; verify alt text and caption contrast.

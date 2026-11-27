@@ -5,8 +5,8 @@ table 'Refresh Info'
 
 	column Refreshed
 		dataType: dateTime
-		formatString: dd-mmm-yyyy
 		isHidden
+		formatString: dd-mmm-yyyy
 		isAvailableInMdx: false
 		lineageTag: db785b1f-9f53-4fc1-8cbb-d5ef630364a0
 		summarizeBy: none
@@ -18,3 +18,4 @@ table 'Refresh Info'
 		source = ROW ( "Refreshed", NOW () )
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
+

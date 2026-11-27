@@ -98,6 +98,45 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1530.6230313495503,
+            "y": 293.84134086100084
+          },
+          "nodeIndex": "Forecast",
+          "nodeLineageTag": "38a292cb-047b-46f7-a470-666adf574bc5",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1814.6230313495503,
+            "y": 293.84134086100084
+          },
+          "nodeIndex": "Levers",
+          "nodeLineageTag": "a7a26af6-b5f3-420b-a97c-72a38b16ca95",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2098.6230313495503,
+            "y": 329.84134086100084
+          },
+          "nodeIndex": "Refresh Info",
+          "nodeLineageTag": "e8851b27-f0ff-4725-bc73-d1d232382203",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",

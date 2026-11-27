@@ -14,8 +14,8 @@ table fact_marketing
 	/// Record date. Foreign key to the Date table.
 	column 'Campaign Date'
 		dataType: dateTime
-		formatString: dd-mmm-yyyy
 		isHidden
+		formatString: dd-mmm-yyyy
 		lineageTag: 6c4db2ad-282f-4a68-a28a-280cdee54b69
 		summarizeBy: none
 		sourceColumn: Campaign Date
@@ -43,8 +43,8 @@ table fact_marketing
 	/// Impressions served. Source of Total Impressions.
 	column Impressions
 		dataType: int64
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: a07ec7a4-5cf0-4316-bcc6-bd05232f7452
 		summarizeBy: none
@@ -55,8 +55,8 @@ table fact_marketing
 	/// Clicks. Source of Total Clicks.
 	column Clicks
 		dataType: int64
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: b1283929-8f87-4ee9-b30e-5342a964f648
 		summarizeBy: none
@@ -67,8 +67,8 @@ table fact_marketing
 	/// Conversions. Source of Total Conversions.
 	column Conversions
 		dataType: int64
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: c9ca32d7-ecc2-4d94-a0a7-3fb5c3760e4a
 		summarizeBy: none
@@ -79,8 +79,8 @@ table fact_marketing
 	/// Campaign spend in assumed INR.
 	column Spend
 		dataType: decimal
-		formatString: ₹#,##0.00
 		isHidden
+		formatString: ₹#,##0.00
 		isAvailableInMdx: false
 		lineageTag: 63c5b9cc-de63-478b-bd4b-0d21fffc2124
 		summarizeBy: none
@@ -91,8 +91,8 @@ table fact_marketing
 	/// Revenue attributed to the campaign by the source (not order revenue).
 	column 'Attributed Revenue'
 		dataType: decimal
-		formatString: ₹#,##0.00
 		isHidden
+		formatString: ₹#,##0.00
 		isAvailableInMdx: false
 		lineageTag: 86e1febd-b355-418f-a34b-cf6cf47ae8b6
 		summarizeBy: none
@@ -115,3 +115,4 @@ table fact_marketing
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
+

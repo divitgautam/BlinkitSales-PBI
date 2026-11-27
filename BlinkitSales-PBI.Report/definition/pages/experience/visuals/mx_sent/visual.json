@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
   "name": "mx_sent",
   "position": {
     "x": 16,
@@ -11,7 +11,6 @@
   },
   "visual": {
     "visualType": "pivotTable",
-    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
         "Rows": {
@@ -98,8 +97,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -138,13 +136,6 @@
                             "color": {
                               "Literal": {
                                 "Value": "'#92C5DE'"
-                              }
-                            },
-                            "nullColoringStrategy": {
-                              "strategy": {
-                                "Literal": {
-                                  "Value": "'noColor'"
-                                }
                               }
                             }
                           },
@@ -215,15 +206,7 @@
       ],
       "total": [
         {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
+          "properties": {}
         }
       ],
       "subTotals": [
@@ -344,6 +327,7 @@
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

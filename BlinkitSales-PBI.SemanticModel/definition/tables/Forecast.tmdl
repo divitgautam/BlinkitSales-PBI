@@ -12,6 +12,8 @@ table Forecast
 
 		annotation SummarizationSetBy = User
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	/// Actual or Forecast row.
 	column Kind
 		dataType: string
@@ -26,8 +28,8 @@ table Forecast
 	/// Actual monthly revenue (full months only).
 	column Actual
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: 1baa36f0-8de0-4a3c-8ae3-a98d27e25eae
 		summarizeBy: none
@@ -38,8 +40,8 @@ table Forecast
 	/// Forecast monthly revenue; the last actual month repeats here so the lines join.
 	column Forecast
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: b89e48cc-08a0-4f31-bce3-f290e30e5799
 		summarizeBy: none
@@ -50,8 +52,8 @@ table Forecast
 	/// Lower end of the 80% band.
 	column 'Low 80'
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: 20b29614-8e72-4fd9-b6a5-cf8489095447
 		summarizeBy: none
@@ -62,8 +64,8 @@ table Forecast
 	/// Upper end of the 80% band.
 	column 'High 80'
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: 6b2dc1d8-363a-427a-96dc-5932a17bf70a
 		summarizeBy: none
@@ -74,17 +76,17 @@ table Forecast
 	/// Month label, e.g. Nov 24.
 	column 'Month Label' = FORMAT ( Forecast[Month Start], "MMM yy", "en-US" )
 		dataType: string
-		sortByColumn: 'Month Start'
 		lineageTag: a57fc04d-95d5-44ef-993c-c198705aff1a
 		summarizeBy: none
+		sortByColumn: 'Month Start'
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Calendar year of the month (used to total 2025).
 	column Year = YEAR ( Forecast[Month Start] )
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 516d738b-49bf-43b1-9358-ebfd02029157
 		summarizeBy: none
@@ -106,3 +108,4 @@ table Forecast
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
+
