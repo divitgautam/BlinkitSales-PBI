@@ -39,3 +39,34 @@ tooltips, phone layout, heat map/sentiment colours. Not confirmed: campaign dril
 6. **p5 matrix**: audience "All" renamed "All audiences" in prepare.py (clean data); subtitle explains it; heat map cells now carry "L" (format `0.00 \L`).
 7. Reset-filters button: not added (the kit has no bookmark or clear-slicers support and it cannot be tested without Desktop); campaign drill-through still to confirm by hand.
 New checks in `check_report.py`: page margins, card label width, change-line width, card bottom padding vs change line, nav tab width, rows vs height for bar charts and tables (`_build/row_hints.json` from `build_report.py`).
+
+## Round 2 score (2026-11-27, evidence: docs/BlinkitSales-PBI.pdf 07:36 export after Refresh + Ctrl+0; PNGs docs/dashboard/01-07)
+BPA 27/27 pass (185 measures, 6 relationships). Numbers read off the pages match reconciliation.md and live_checks.md
+(1.10 Cr, 5,000, 2,201.86, 69.4%/30.6%, 14.5 min, 3.34, 45.8%/46%, 68.7% = 1,492 of 2,172, ROAS 1.97, 29.49 M, 2.97 M, 5.12 L).
+
+| # | Criterion | Score | Evidence |
+|---|---|---|---|
+| 1 | Purpose and message | 1.0 | Action titles with numbers on all pages; p4 visual title now "46% of revenue". |
+| 2 | Data trust | 0.75 | All numbers reconcile; footer is cut to "refreshed 2..." on every page, so the refresh date is not readable. |
+| 3 | KPI design | 0.75 | Like-for-like change lines on p1-p5 and p7 card 1, colour by direction; no targets; p7 cards 2-4 and p4 repeat card have context text only; p2 "0.0 pp" shows a green up arrow; p1 rating card truncated ("Oct ..."). |
+| 4 | Chart choice and honesty | 0.75 | Exposure card now 5.12 L combined (fixed). p5 matrix column still reads "All" (App 1.82x vs bar 1.92x; subtitle explains); lines on p1/p5/p7 use a thin band with half the plot empty. |
+| 5 | Layout and hierarchy | 0.75 | p1 no longer clipped (fixed). Scrollbars remain: p2 Top 5 products (3 of 5 visible), p2 payment (3 of 4), p5 campaigns (8 of 9). Nav labels are clipped at the bottom of every pill. Empty lower halves on p6 left panel and p3 text panel. |
+| 6 | Colour and accessibility | 0.75 | Unchanged: brand green, RdBu/YlGn, status colours with arrows; small grey captions borderline; alt text not verifiable from PDF. |
+| 7 | Declutter, text, format | 0.75 | Units and "L" in heat map cells fixed; footer, nav pills and p1 rating change line truncated. |
+| 8 | Interaction, navigation, devices | 0.75 | Slicers, drill-through, tooltips, phone confirmed; campaign drill-through unconfirmed; no reset button. |
+| 9 | Insight and action | 1.0 | p6 findings and p7 levers consistent with cards. |
+| 10 | Model and engineering | 1.0 | BPA 27/27, reconciled, DAX titles. |
+| | Raw total | 8.25 | |
+| | Gates | max 7 | Truncated text and scrolling visuals (footer, nav, p1 card) cap at 7. No wrong numbers or misleading encodings remain. |
+| | **Final** | **7.0 / 10** | Reaches about 9.5 once fixes 1-3 are done. |
+
+Round-1 items confirmed fixed: p4 title 46%; p1 clipping; p7 exposure 5.12 L; card caption overlap and change lines; p5 ROAS card and labels; p2 heat map shows 12 months with L units; p2 no longer cuts months.
+Not fixed: scrolling on three visuals, nav label clip, reset button, campaign drill-through confirmation, p5 "All" header.
+
+### Remaining fixes, ranked
+1. Footer text box (footer helper in `_build/build_report.py`/`pbir_kit.py`): widen it to the space before the nav (about 840 px) or shorten to "Blinkit (synthetic) · Mar 2023-Nov 2024 · INR assumed · refreshed <date>" so the refresh date shows.
+2. Nav pills (nav function in `pbir_kit.py`): raise height (about 26 px) or reduce font/padding so labels are not clipped.
+3. Scrolling visuals: p2 Top 5 products and payment visuals (page-2 function in `build_report.py`, heights and `row_hints.json`; payment needs about 4 rows of room), p5 campaign chart (9 rows, more height or a 9 pt font). Extend the `check_report.py` row check to fail on any list visual with fewer visible rows than data.
+4. p1 rating card change line truncated ("0.01 pts Oct 24 vs Oct ..."): shorten the change-line format or use "vs Oct 23" in the card helper.
+5. p5 matrix: rename the "All" column header (check that prepare.py rename reached the model; the PDF still shows "All"); flat lines: set a tighter y-axis min only if labelled, or use smaller chart height.
+6. Reset-filters bookmark and confirm campaign drill-through; verify alt text and caption contrast.
