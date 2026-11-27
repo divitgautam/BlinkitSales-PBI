@@ -174,8 +174,31 @@ sections.append(section(9, "Forecast and levers (the notebooks stage)",
                                 "Confidence is low because delay and rating are unrelated in this data. <code>reconcile.py</code> re-derives every lever independently.", "warn") +
                         img(DASH / "07_forecast.png", "full", "width:80%")))
 
+# ------------------------------------------------------------------ 10 data science review
+DS = DOCS / "ds"
+sections.append(section(10, "Data science review",
+                        "After the dashboard, <code>analysis/ds_review.py</code> tests 15 questions with proper statistics (CIs, p-values, effect sizes). "
+                        "Full write-up: <code>docs/data_science_review.md</code>.",
+                        rows(("Does a late delivery lower the rating?", "No: +0.04 stars (95% CI -0.03 to +0.11); none of 18 drivers significant (ordinal logit)"),
+                             ("Does a poor experience stop the next order?", "Not detectably: 60-day reorder 16.9% vs 18.4%, OR 0.90 (CI 0.77 to 1.05, p = 0.19); first-order Cox HR 0.94 (0.85 to 1.04)"),
+                             ("What makes deliveries late?", "Nothing measured: about 30% late at every distance (+0.05 min/km, p = 0.64), hour, weekday, area or category"),
+                             ("Does more marketing spend bring more revenue?", "No: elasticity -0.01 (CI -0.04 to 0.01); ROAS falls with spend only because revenue stays flat"),
+                             ("Are segments, retention or concentration meaningful?", "They look random: segment p = 0.98, retention flat at 8 to 10%, Gini 0.366 vs 0.361 under random assignment"),
+                             ("Is there trend or seasonality?", "No (p = 0.11 over 19 months); months vary within ±11%"),
+                             columns=["Question", "Result"]) +
+                        callout("What this changes.", "Most expected relationships are absent, the strongest sign the data was generated at random. "
+                                "\"Revenue at risk\" is revenue exposed to poor experiences, not revenue that will be lost. The reorder result is a null with real "
+                                "uncertainty: the interval still allows up to about a 23% cut in reorder odds, so it is not proof of no effect.", "warn") +
+                        "<h3>Recommendations: test before fixing</h3>" +
+                        rows(("1", "Fix data capture: order items, repeating store and rider IDs, valid registration dates", "Prerequisite"),
+                             ("2", "Marketing incrementality holdout", "239 units per arm for a 10% revenue effect (953 for 5%)"),
+                             ("3", "Day-90 win-back test on reorder (baseline 17.75%)", "1,011 per arm for +5 points; 2,172 customers here detect about +4.8"),
+                             ("4", "Discount-depth and ETA-calibration tests", "Sized in the review; illustrative only"),
+                             columns=["#", "Recommendation", "Sample size (α = 0.05, power 0.8)"]) +
+                        f"<div style='display:flex;gap:12px'>{img(DS / 'spend_revenue.png', 'full', 'width:49%')}{img(DS / 'roas_ci.png', 'full', 'width:49%')}</div>"))
+
 # ------------------------------------------------------------------ 10 quality loop
-sections.append(section(10, "Quality loop: six scoring rounds",
+sections.append(section(11, "Quality loop: six scoring rounds",
                         "Each round: score the exported PDF against the 10-criterion scorecard, fix the top items in the generators, run the checks, re-export.",
                         rows(("1", "5.0", "Starting build: title percentage wrong, page 1 clipped on export, overlapping card captions, scrolling visuals, no targets"),
                              ("2", "7.0", "Fixed the title share (45.8%), page margins, card geometry, p5 ROAS labels, combined lever; gate for remaining clipping and scrollbars"),
@@ -187,10 +210,10 @@ sections.append(section(10, "Quality loop: six scoring rounds",
                         callout("Root causes that cost rounds.", "Desktop's cache held old data (delete <code>cache.abf</code> with Desktop closed), and the layout checker was too lenient "
                                 "at first. It now measures text boxes, card lines, matrix headers and rows, contrast and empty space, so a layout bug fails before the export, not after.") +
                         "<p>Remaining optional polish: widen the page 4 sentiment table, trim spare space on pages 2 and 6, add a reset-filters bookmark. "
-                        "Not confirmed by hand: the campaign drill-through. Detail: <code>docs/review/scorecard.md</code>.</p>"))
+                        "All interactions were confirmed by hand, including both drill-throughs. Detail: <code>docs/review/scorecard.md</code>.</p>"))
 
 # ------------------------------------------------------------------ 11 publishing
-sections.append(section(11, "Publishing", "Every finished project gets a README, a LinkedIn post with images and a guide.",
+sections.append(section(12, "Publishing", "Every finished project gets a README, a LinkedIn post with images and a guide.",
                         f'<div class="two"><div>' +
                         rows(("README.md", "Brief answered, findings, quality, caveats, reproduce steps"),
                              ("docs/linkedin_post.md", "Post text and image order"),
@@ -204,7 +227,7 @@ sections.append(section(11, "Publishing", "Every finished project gets a README,
                         f'{img(DOCS / "key_insights.png", "portrait")}</div>'))
 
 # ------------------------------------------------------------------ 12 reproduce
-sections.append(section(12, "How to reproduce", "From a fresh clone to the same report and numbers.",
+sections.append(section(13, "How to reproduce", "From a fresh clone to the same report and numbers.",
                         flow([("1 · Data", "Download the Kaggle dataset into data/raw"), ("2 · Python", "pip install -r requirements.txt"),
                               ("3 · Prepare", "prepare.py, reconcile.py, forecast.py"), ("4 · Generate", "make_semantic_model.py, build_report.py (Desktop closed)"),
                               ("5 · Open", "BlinkitSales-PBI.pbip, set the two parameters"), ("6 · Refresh", "Home > Refresh, save"),
@@ -224,6 +247,6 @@ lessons = [
     "<b>Honest forecasts.</b> The simplest model won the backtest; the report shows the backtest, the band and the caveat.",
     "<b>Keep personal data out of git from the first commit</b>, and keep the handoff note out of the repo.",
 ]
-sections.append(section(13, "Lessons learned", "What carries over to the next project.", "<ol class='lessons'>" + "".join(f"<li>{x}</li>" for x in lessons) + "</ol>"))
+sections.append(section(14, "Lessons learned", "What carries over to the next project.", "<ol class='lessons'>" + "".join(f"<li>{x}</li>" for x in lessons) + "</ol>"))
 
 g.render(TH, "BlinkitSales-PBI Project Guide", "BlinkitSales-PBI · Project guide", sections, HTML, PDF)
