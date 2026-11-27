@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Card On-Time %",
               "nativeQueryRef": "Card On-Time %",
-              "displayName": "On-time orders"
+              "displayName": "On-time orders (target 75%)"
             }
           ]
         }
@@ -139,7 +139,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'On-time orders card'"
+                  "Value": "'On-time orders (target 75%) card'"
                 }
               }
             }

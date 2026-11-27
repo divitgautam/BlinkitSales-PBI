@@ -13,5 +13,9 @@
  "delivery/col_band": 8,
  "experience/bar_status": 3,
  "experience/bar_ctype": 2,
- "marketing/bar_channel": 4
+ "marketing/bar_channel": 4,
+ "experience/bar_rar": 3,
+ "category_detail/bar_cat_status": 3,
+ "campaign_detail/bar_camp_channel": 4,
+ "campaign_detail/bar_camp_aud": 4
 }

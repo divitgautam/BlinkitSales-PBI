@@ -1,13 +1,37 @@
 """Static layout check of the generated PBIR report: bounds, overlaps, title and subtitle widths, alt text, tab order.
 Run: python _build/check_report.py   (after build_report.py)"""
-import json
+import json, os, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.stdout.reconfigure(encoding="utf-8")
 PAGES = ROOT / "BlinkitSales-PBI.Report" / "definition" / "pages"
 CH_TITLE, CH_SUB = 7.7, 6.3          # px per character at 11 pt bold and 9 pt
-CH_LABEL, CH_DELTA, DELTA_MAX = 6.0, 6.0, 27   # card label 10 pt, change line 9 pt (longest generated line is 27 characters)
-CH_NAV, NAV_PAD = 4.9, 36                      # page-navigator tab: 8 pt text plus button padding
+CH_LABEL, CH_DELTA, DELTA_PAD = 6.0, 5.6, 48   # card label 10 pt; change line 9 pt bold; the line box loses ~48 px to padding (observed: 27 chars cut in a 198 px card)
+CH_NAV, NAV_PAD, NAV_MIN_H = 4.9, 36, 32       # page-navigator tab: 8 pt text plus button padding; a 28 px pill clipped its labels
+CH_FOOT, FOOT_PAD = 5.2, 40                    # footer text 8 pt bold; observed cut-off of a 112-character footer in a 540 px box
+BAR_ROW, BAR_CHROME, BAR_CHROME_NOSUB = 26, 75, 50   # bar chart: min px per category before a scrollbar appears; title+subtitle+padding+axis
+PIV_CHROME = 62                                # pivot: title+subtitle+header; row px = 1.333 x font pt + 5
+SPEC = Path(os.environ.get("CHECK_SPEC", ROOT / "_build" / "measures_spec.py")).read_text(encoding="utf-8")   # CHECK_SPEC: test against another spec version
+
+
+def footer_chars():
+    """Rendered length of the Footer Text measure: its string literals plus the width of each date format."""
+    blk = SPEC[SPEC.index('add("Footer Text",') + 17:]
+    blk = blk[:blk.index("None, P")]
+    lits = [m for m in re.findall(r'"([^"]*)"', blk) if m != "en-US"]
+    widths = {"d mmm yyyy": 11, "mmm yyyy": 8}
+    return sum(widths.get(m, len(m)) for m in lits)
+
+
+def delta_chars(measure):
+    """Longest change line of a card: arrow + size + ' Oct 24 vs Oct 23'. Looked up from the yoy() table in measures_spec."""
+    nm = measure.replace("Δ ", "")
+    m = re.search(r'\("' + re.escape(nm) + r'", "[^"]*", "(rel|pp|abs)", "[a-z]+", "([^"]*)"\)', SPEC)
+    if nm in ("Revenue", "Orders", "AOV"): return 2 + 5 + 17
+    if not m: return 27
+    size = {"rel": 5, "pp": 6, "abs": 4 + (len(m.group(2)) + 1 if m.group(2) else 0)}[m.group(1)]
+    return 2 + size + 17
 PAGE_BOTTOM, FOOT_BOTTOM, MARGIN = 38, 4, 16   # content must end 38 px above the page bottom (footer zone); footer 4 px above it
 ROW_PX, CHROME_PX, SCROLLBAR_PX = 18, 62, 14   # px per category row, title + subtitle, horizontal scrollbar
 HINTS = json.loads((ROOT / "_build" / "row_hints.json").read_text(encoding="utf-8")) if (ROOT / "_build" / "row_hints.json").exists() else {}
@@ -38,23 +62,36 @@ for pdir in sorted(d for d in PAGES.iterdir() if d.is_dir()):
         if vt == "cardVisual" and not n_.startswith(("ftr_", "hdr_")) and pg.get("type") != "Tooltip":
             vc = v["visual"].get("visualContainerObjects", {})
             if n_.endswith("_d"):
-                if DELTA_MAX * CH_DELTA > w - 14: bad.append(f"{pg['name']}/{n_}: change line (up to {DELTA_MAX} chars) needs {DELTA_MAX * CH_DELTA:.0f}px of {w - 14}")
+                dm = v["visual"]["query"]["queryState"]["Data"]["projections"][0]["field"]["Measure"]["Property"]
+                dn = delta_chars(dm)
+                if dn * CH_DELTA > w - DELTA_PAD: bad.append(f"{pg['name']}/{n_}: change line '{dm}' (up to {dn} chars) needs {dn * CH_DELTA:.0f}px of {w - DELTA_PAD}")
             else:
                 lab = v["visual"]["query"]["queryState"]["Data"]["projections"][0].get("displayName", "")
                 if len(lab) * CH_LABEL > w - 34: bad.append(f"{pg['name']}/{n_}: card label '{lab}' needs {len(lab) * CH_LABEL:.0f}px of {w - 34}")
                 if n_ + "_d" in {x_["name"] for x_ in vis}:
                     pad = vc.get("padding", [{}])[0].get("properties", {}).get("bottom", {}).get("expr", {}).get("Literal", {}).get("Value", "0D")
                     if float(pad.rstrip("DL")) < 24: bad.append(f"{pg['name']}/{n_}: bottom padding {pad} leaves the value under the change line (need 24+)")
+        if n_ == "ftr_text":
+            fc = int(os.environ.get("FOOT_CHARS", footer_chars()))
+            if fc * CH_FOOT + FOOT_PAD > w: bad.append(f"{pg['name']}/{n_}: footer text ({fc} chars) needs {fc * CH_FOOT + FOOT_PAD:.0f}px of {w}")
+            nav = next((o for o in vis if o["name"] == "ftr_nav"), None)
+            if nav and x + w > nav["position"]["x"] + 0.5: bad.append(f"{pg['name']}/{n_}: footer text box overlaps the navigator")
         if vt == "pageNavigator":
+            if h < NAV_MIN_H: bad.append(f"{pg['name']}/{n_}: navigator is {h}px high, labels clip below {NAV_MIN_H}")
             tabs = [names[k] for k in json.loads((PAGES / "pages.json").read_text(encoding="utf-8"))["pageOrder"] if k in names]
             need = max(len(t) for t in tabs) * CH_NAV + NAV_PAD
             if need * len(tabs) > w: bad.append(f"{pg['name']}/{n_}: {len(tabs)} tabs need {need:.0f}px each ({need * len(tabs):.0f}px), nav is {w}px wide")
         hk = HINTS.get(f"{pg['name']}/{n_}")
-        if hk and vt in ("clusteredBarChart", "clusteredColumnChart", "pivotTable"):
-            if vt == "clusteredColumnChart": pass
-            else:
-                need = CHROME_PX + ROW_PX * (hk + (1 if vt == "pivotTable" else 0)) + (SCROLLBAR_PX if vt == "pivotTable" else 0)
-                if need > h: bad.append(f"{pg['name']}/{n_}: {hk} rows need ~{need}px, visual is {h}px (would scroll)")
+        has_sub = bool(v["visual"].get("visualContainerObjects", {}).get("subTitle", [{}])[0].get("properties", {}).get("text"))
+        if vt in ("clusteredBarChart", "pivotTable") and pg.get("type") != "Tooltip" and not hk:
+            bad.append(f"{pg['name']}/{n_}: list visual without a row count in row_hints.json (add hint() in build_report.py)")
+        if hk and vt == "clusteredBarChart":
+            need = (BAR_CHROME if has_sub else BAR_CHROME_NOSUB) + BAR_ROW * hk
+            if need > h: bad.append(f"{pg['name']}/{n_}: {hk} bars need ~{need}px, visual is {h}px (would scroll)")
+        elif hk and vt == "pivotTable":
+            fs = float(v["visual"].get("objects", {}).get("values", [{}])[0].get("properties", {}).get("fontSize", {}).get("expr", {}).get("Literal", {}).get("Value", "10D").rstrip("D"))
+            need = PIV_CHROME + (fs * 1.333 + 5) * (hk + 1)
+            if need > h: bad.append(f"{pg['name']}/{n_}: {hk} rows at {fs:.0f} pt need ~{need:.0f}px, visual is {h}px (would scroll)")
         vco = v["visual"].get("visualContainerObjects", {})
         t = vco.get("title", [{}])[0].get("properties", {})
         st = vco.get("subTitle", [{}])[0].get("properties", {})

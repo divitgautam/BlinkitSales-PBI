@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Δ ROAS",
               "nativeQueryRef": "Δ ROAS",
-              "displayName": "ROAS (₹ per ₹1 spent) change"
+              "displayName": "ROAS (target 2.0x) change"
             }
           ]
         }
@@ -236,7 +236,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'ROAS (₹ per ₹1 spent) change'"
+                  "Value": "'ROAS (target 2.0x) change'"
                 }
               }
             }

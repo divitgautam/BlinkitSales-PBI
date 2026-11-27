@@ -165,7 +165,7 @@ for nm, cur in (("Revenue", "[Revenue]"), ("Orders", "[Orders]"), ("AOV", "[AOV]
         None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
     add(f"Δ {nm} Color", head + f'RETURN IF ( NOT ok, "{NEUTRAL}", IF ( c >= p, "{GOOD}", "{BAD}" ) )', None, P,
         f"Colour of the {nm} change line: green up, red down, grey when not comparable.")
-add("Δ Repeat Rate", f'{fm("[Repeat Customers]", "#,##0")} & " of " & {fm("[Customers Ordering]", "#,##0")} & " customers"', None, P, "Card line: repeat customers over customers ordering.")
+add("Δ Repeat Rate", f'{fm("[Repeat Customers]", "#,##0")} & " of " & {fm("[Customers Ordering]", "#,##0")} & " · target 70%"', None, P, "Card line: repeat customers over customers ordering.")
 # generic like-for-like change lines: last full month in the selection vs the same month a year earlier (arrow, size, both months named)
 def yoy(nm, cur, mode, good, unit=""):
     """mode rel: % change; pp: percentage points of a ratio; abs: absolute difference (unit appended). good: up, down or none (colour)."""
@@ -174,7 +174,7 @@ def yoy(nm, cur, mode, good, unit=""):
             f"VAR c = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = m ) VAR p = CALCULATE ( {cur}, ALL ( 'Date' ), 'Date'[Month Start] = pm ) ")
     size = {"rel": 'FORMAT ( ABS ( DIVIDE ( c - p, p ) ), "0.0%", "en-US" )',
             "pp": 'FORMAT ( ABS ( c - p ) * 100, "0.0", "en-US" ) & " pp"',
-            "abs": f'FORMAT ( ABS ( c - p ), "0.00", "en-US" ) & " {unit}"'}[mode]
+            "abs": f'FORMAT ( ABS ( c - p ), "0.00", "en-US" )' + (f' & " {unit}"' if unit else "")}[mode]
     add(f"Δ {nm}", head + f'RETURN IF ( ISBLANK ( m ), "No full month selected", IF ( NOT ok || ISBLANK ( c ) || ISBLANK ( p ), "No prior-year month", '
         f'IF ( c >= p, "{UP}", "{DOWN}" ) & {size} & " " & FORMAT ( m, "mmm yy", "en-US" ) & " vs " & FORMAT ( pm, "mmm yy", "en-US" ) ) )',
         None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
@@ -186,7 +186,7 @@ def yoy(nm, cur, mode, good, unit=""):
 for nm, cur, mode, good, unit in (
         ("On-Time %", "[On-Time %]", "pp", "up", ""), ("Late %", "[Late %]", "pp", "down", ""), ("Slightly Delayed %", "[Slightly Delayed %]", "pp", "down", ""),
         ("Significantly Delayed %", "[Significantly Delayed %]", "pp", "down", ""), ("Avg Minutes Late", "[Avg Minutes Late (Late Orders)]", "abs", "down", "min"),
-        ("Avg Rating", "[Avg Rating]", "abs", "up", "pts"), ("Low Rating %", "[Low Rating %]", "pp", "down", ""),
+        ("Avg Rating", "[Avg Rating]", "abs", "up", ""), ("Low Rating %", "[Low Rating %]", "pp", "down", ""),
         ("Poor Experience Rate", "[Poor Experience Rate]", "pp", "down", ""), ("Negative Sentiment %", "[Negative Sentiment %]", "pp", "down", ""),
         ("Revenue at Risk", "[Revenue at Risk]", "rel", "down", ""), ("Line Value", "[Line Value]", "rel", "up", ""), ("Units Sold", "[Units Sold]", "rel", "up", ""),
         ("Avg Margin %", "[Avg Margin %]", "pp", "up", ""), ("Revenue per Customer", "[Revenue per Customer]", "rel", "up", ""),
@@ -198,8 +198,8 @@ add("Δ Neutral Color", f'"{NEUTRAL}"', None, P, "Grey for card lines that carry
 add("Selected Category", 'SELECTEDVALUE ( dim_product[Category], "All categories" )', None, P, "Category in the current filter context (drill-through title).")
 add("Selected Campaign", f'SELECTEDVALUE ( {MK}[Campaign Name], "All campaigns" )', None, P, "Campaign in the current filter context (drill-through title).")
 add("Footer Text",
-    f'"Source: Blinkit sales (Kaggle, synthetic) · orders " & FORMAT ( CALCULATE ( MIN ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & " to " '
-    f'& FORMAT ( CALCULATE ( MAX ( {O}[Order Date] ), REMOVEFILTERS () ), "d mmm yyyy", "en-US" ) & " · INR assumed · refreshed " & FORMAT ( MAX ( \'Refresh Info\'[Refreshed] ), "d mmm yyyy", "en-US" )',
+    f'"Blinkit sales (Kaggle, synthetic) · " & FORMAT ( CALCULATE ( MIN ( {O}[Order Date] ), REMOVEFILTERS () ), "mmm yyyy", "en-US" ) & " to " '
+    f'& FORMAT ( CALCULATE ( MAX ( {O}[Order Date] ), REMOVEFILTERS () ), "mmm yyyy", "en-US" ) & " · INR assumed · refreshed " & FORMAT ( MAX ( \'Refresh Info\'[Refreshed] ), "d mmm yyyy", "en-US" )',
     None, P, "Footer: source, data period, currency assumption and the refresh date.")
 # ---- 9 Forecast (disconnected Forecast and Levers tables)
 FC = "9 Forecast"

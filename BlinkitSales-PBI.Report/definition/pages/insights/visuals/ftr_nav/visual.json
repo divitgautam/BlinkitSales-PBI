@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ftr_nav",
   "position": {
-    "x": 564,
-    "y": 686,
+    "x": 584,
+    "y": 682,
     "z": 6000,
-    "height": 28,
-    "width": 700,
+    "height": 32,
+    "width": 680,
     "tabOrder": 6000
   },
   "visual": {

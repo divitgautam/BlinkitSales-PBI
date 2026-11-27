@@ -70,3 +70,15 @@ Not fixed: scrolling on three visuals, nav label clip, reset button, campaign dr
 4. p1 rating card change line truncated ("0.01 pts Oct 24 vs Oct ..."): shorten the change-line format or use "vs Oct 23" in the card helper.
 5. p5 matrix: rename the "All" column header (check that prepare.py rename reached the model; the PDF still shows "All"); flat lines: set a tighter y-axis min only if labelled, or use smaller chart height.
 6. Reset-filters bookmark and confirm campaign drill-through; verify alt text and caption contrast.
+
+## Round 3 changes (2026-11-27, not yet re-exported or re-scored)
+1. Footer: text shortened to "Blinkit sales (Kaggle, synthetic) · Mar 2023 to Nov 2024 · INR assumed · refreshed <date>" (about 96 characters); box 560 px.
+2. Navigator: pills 32 px high (were 28, labels clipped), footer and nav moved up 4 px; nav 680 px wide, 7 tabs.
+3. No scrolling: p2 Top 5 products and payment visuals 214 px high (heat map shrinks to 266 px, still fits 11 rows); p5 campaign chart 290 px high, subtitle moved into the title (9 bars).
+4. p1 rating change line shortened to "▲ 0.01 Oct 24 vs Oct 23" (unit "pts" dropped; the card label says 1-5).
+5. p5 matrix "All": data/clean already holds "All audiences" and the model was regenerated; the PDF still showed "All" because the model was not refreshed, so Refresh fixes it.
+6. Targets (assumptions, not company data): on-time orders target 75% (label p3), ROAS target 2.0x (label p5), repeat customers target 70% (p4 line "1,492 of 2,172 · target 70%"). Stock damage target 3.5% not shown: no card carries damage. p7 cards keep their context lines.
+7. Line charts on p1, p5 (two) and p7 no longer start at zero or fix the top, so the series fills the plot; subtitles say "axis not from zero". Bars stay at zero.
+8. Reset filters: not done. The "Clear all slicers" button action could not be verified against the PBIR schema here, and a wrong action type would break the report; use Ctrl+click on slicers or the slicer clear icon.
+9. check_report.py calibrated: footer text width from the Footer Text measure, nav height >= 32, change-line width per measure (5.6 px/char, 48 px padding), bar rows 26 px each plus 75/50 px chrome, pivot rows 1.333 x pt + 5, every bar/pivot must have a row hint. On the round-2 build (old spec and geometry) it fails: footer on all pages, nav on 7 pages, p1 rating line, p2 Top 5 and payment, p5 campaign; it passes on the new build.
+Needs Refresh in Desktop (footer measure, Δ Avg Rating, Δ Repeat Rate changed; "All audiences"), then export and re-score.

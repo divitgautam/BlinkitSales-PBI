@@ -3,9 +3,9 @@
   "name": "line_spend",
   "position": {
     "x": 16,
-    "y": 474,
+    "y": 492,
     "z": 21000,
-    "height": 208,
+    "height": 190,
     "width": 618,
     "tabOrder": 21000
   },
@@ -123,13 +123,6 @@
                   "Value": "9D"
                 }
               }
-            },
-            "start": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
             }
           }
         }
@@ -231,7 +224,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Full months only; its own scale from zero (no dual axis)'"
+                  "Value": "'Full months only; own scale, axis not from zero (no dual axis)'"
                 }
               }
             },

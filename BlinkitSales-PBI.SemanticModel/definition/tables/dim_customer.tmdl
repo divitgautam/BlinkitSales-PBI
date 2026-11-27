@@ -1,6 +1,6 @@
 /// One row per customer in the customer file (2,500; 2,172 have orders). Name, email, phone and address are not loaded. Lifetime figures come from the orders table. Source: data/clean/dim_customer.csv.
 table dim_customer
-	lineageTag: e677874b-38a5-454b-9dad-a6553ef7afb6
+	lineageTag: 305bad58-d00c-4c5f-852f-95ff7d0975c7
 
 	/// Customer key.
 	column 'Customer Id'
@@ -8,7 +8,7 @@ table dim_customer
 		formatString: 0
 		isKey
 		isHidden
-		lineageTag: 4bb1e557-f384-40a9-bf29-fa2c7a9180c1
+		lineageTag: 79acab71-6524-4a52-a34f-945b428f9437
 		summarizeBy: none
 		sourceColumn: Customer Id
 
@@ -17,7 +17,7 @@ table dim_customer
 	/// Customer area.
 	column Area
 		dataType: string
-		lineageTag: 1113ca7f-af26-489d-bbc0-88cc12d06006
+		lineageTag: cbb8069d-6277-4aab-b2cb-928aa8872552
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -27,7 +27,7 @@ table dim_customer
 	column Pincode
 		dataType: string
 		dataCategory: PostalCode
-		lineageTag: cd2397d9-9b47-4f6f-aa60-5ff4151ac27e
+		lineageTag: 1521ed4c-6bed-4873-9fdb-7545dde406d7
 		summarizeBy: none
 		sourceColumn: Pincode
 
@@ -37,7 +37,7 @@ table dim_customer
 	column 'Registration Date'
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
-		lineageTag: 8405b0b4-ebf2-4850-90e9-b8316123d4be
+		lineageTag: 8dca97d5-e71b-4b27-936d-72ae982fd5e9
 		summarizeBy: none
 		sourceColumn: Registration Date
 
@@ -46,7 +46,7 @@ table dim_customer
 	/// Stored segment: Regular, Premium, New or Inactive.
 	column Segment
 		dataType: string
-		lineageTag: 5ac3746f-5e4b-41b3-a120-c774a7a68b4c
+		lineageTag: 3fcad46e-bcf4-4a0c-a046-ce59fadbc6ce
 		summarizeBy: none
 		sourceColumn: Segment
 
@@ -56,7 +56,7 @@ table dim_customer
 	column 'First Order Date'
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
-		lineageTag: eb06c692-8214-40f8-80b3-761974b960ef
+		lineageTag: 410caacd-1d79-4c1d-bc0c-ab441ad18e2e
 		summarizeBy: none
 		sourceColumn: First Order Date
 
@@ -66,7 +66,7 @@ table dim_customer
 	column 'Lifetime Orders'
 		dataType: int64
 		formatString: 0
-		lineageTag: a2c3f80d-178d-4448-93e4-040a71f9009f
+		lineageTag: 4076f4fd-08cf-4072-a5e2-6df29cc4d559
 		summarizeBy: none
 		sourceColumn: Lifetime Orders
 
@@ -76,7 +76,7 @@ table dim_customer
 	column 'Lifetime Revenue'
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: 667ac919-22f6-4d48-aed4-c12e6e68f73e
+		lineageTag: ffdac8db-a0a8-48d5-aba6-2ac93dbd9bd9
 		summarizeBy: none
 		sourceColumn: Lifetime Revenue
 
@@ -85,7 +85,7 @@ table dim_customer
 	/// New (1 order), Repeat (2+ orders) or No orders.
 	column 'Customer Type'
 		dataType: string
-		lineageTag: f8e9c155-5d29-4666-922a-683510780f28
+		lineageTag: 925bd64e-8e3c-46f8-bd0e-3f4898186daa
 		summarizeBy: none
 		sourceColumn: Customer Type
 

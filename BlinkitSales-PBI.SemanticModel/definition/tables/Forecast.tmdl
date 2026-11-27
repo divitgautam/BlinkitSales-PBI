@@ -1,12 +1,12 @@
 /// Monthly revenue on full months (Apr 2023 to Oct 2024, Actual) and the forecast to Dec 2025 with an 80% band. Disconnected from Date by design. Source: data/clean/forecast.csv written by _build/forecast.py.
 table Forecast
-	lineageTag: 92e09b45-d332-4c30-a040-ec4c06da9a3e
+	lineageTag: 38a292cb-047b-46f7-a470-666adf574bc5
 
 	/// First day of the month.
 	column 'Month Start'
 		dataType: dateTime
 		formatString: mmm yyyy
-		lineageTag: baf60b80-1e92-4aa0-8918-ddbdd85ed699
+		lineageTag: 1804b9aa-9fff-48bd-9280-e98f6e713312
 		summarizeBy: none
 		sourceColumn: Month Start
 
@@ -17,7 +17,7 @@ table Forecast
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 6ba6639a-65cc-4eef-a3c7-2f4bc694b2c3
+		lineageTag: 2c42027e-5f59-413e-a868-6cade8eb9651
 		summarizeBy: none
 		sourceColumn: Kind
 
@@ -29,7 +29,7 @@ table Forecast
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 75a49071-e110-44bf-8586-0091a148b81d
+		lineageTag: 1baa36f0-8de0-4a3c-8ae3-a98d27e25eae
 		summarizeBy: none
 		sourceColumn: Actual
 
@@ -41,7 +41,7 @@ table Forecast
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 4705293d-102f-4858-a077-13a90c4b152a
+		lineageTag: b89e48cc-08a0-4f31-bce3-f290e30e5799
 		summarizeBy: none
 		sourceColumn: Forecast
 
@@ -53,7 +53,7 @@ table Forecast
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: aaf78976-c531-4d11-a384-79d0860ae56b
+		lineageTag: 20b29614-8e72-4fd9-b6a5-cf8489095447
 		summarizeBy: none
 		sourceColumn: Low 80
 
@@ -65,7 +65,7 @@ table Forecast
 		formatString: #,##0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 0d65a334-489e-4d0b-b194-776a63efe296
+		lineageTag: 6b2dc1d8-363a-427a-96dc-5932a17bf70a
 		summarizeBy: none
 		sourceColumn: High 80
 
@@ -75,7 +75,7 @@ table Forecast
 	column 'Month Label' = FORMAT ( Forecast[Month Start], "MMM yy", "en-US" )
 		dataType: string
 		sortByColumn: 'Month Start'
-		lineageTag: dca06105-2d43-4164-b726-66cae0da50d3
+		lineageTag: a57fc04d-95d5-44ef-993c-c198705aff1a
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -86,7 +86,7 @@ table Forecast
 		formatString: 0
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: b70e6fff-7bb0-4efd-80ad-ca1dd94d97ae
+		lineageTag: 516d738b-49bf-43b1-9358-ebfd02029157
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic

@@ -5,7 +5,7 @@
     "x": 820,
     "y": 190,
     "z": 20000,
-    "height": 272,
+    "height": 290,
     "width": 444,
     "tabOrder": 20000
   },
@@ -172,7 +172,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'ROAS by campaign'"
+                  "Value": "'ROAS by campaign, right-click to drill through'"
                 }
               }
             },
@@ -198,44 +198,6 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "subTitle": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Nine campaigns  ·  right-click to drill through'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "9D"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#58665F'"
-                    }
-                  }
                 }
               }
             }

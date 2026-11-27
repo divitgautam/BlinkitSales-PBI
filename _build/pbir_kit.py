@@ -213,8 +213,8 @@ class Page:
 
     def footer(self, field, nav=True):
         """Source / refresh / caveat line, plus a page navigator on the right."""
-        fy = self.h - 34
-        self.add("ftr_text", "cardVisual", M, fy, 780 if nav else self.w - 2 * M, 28, roles={"Data": [(field, "Source")]},
+        fy = self.h - 38   # 32 px high: an 8 pt navigator label clipped in a 28 px pill
+        self.add("ftr_text", "cardVisual", M, fy, 780 if nav else self.w - 2 * M, 32, roles={"Data": [(field, "Source")]},
                  alt="Report footer: data source, refresh date and caveat",
                  objects={**PLAIN_CARD,
                           "label": [{"properties": {"show": L(False)}, "selector": {"id": "default"}}],
@@ -222,7 +222,7 @@ class Page:
                  container={**NO_CHROME, "padding": [{"properties": {"top": L(0), "bottom": L(0), "left": L(0), "right": L(0)}}]})
         if nav:
             zero = {"expr": {"Literal": {"Value": "0L"}}}
-            self.add("ftr_nav", "pageNavigator", self.w - M - 460, fy, 460, 28, alt="Page navigation",
+            self.add("ftr_nav", "pageNavigator", self.w - M - 460, fy, 460, 32, alt="Page navigation",
                      objects={"text": [{"properties": {"fontSize": L(8), "topMargin": zero, "bottomMargin": zero,
                                                        **({"fontColor": C(WHITE)} if s == "selected" else {})}, "selector": {"id": s}}
                                        for s in ("default", "hover", "press", "selected")],

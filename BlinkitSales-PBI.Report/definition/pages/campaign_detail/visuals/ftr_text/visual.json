@@ -3,10 +3,10 @@
   "name": "ftr_text",
   "position": {
     "x": 16,
-    "y": 686,
+    "y": 682,
     "z": 17000,
-    "height": 28,
-    "width": 540,
+    "height": 32,
+    "width": 560,
     "tabOrder": 17000
   },
   "visual": {

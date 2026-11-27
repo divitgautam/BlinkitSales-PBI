@@ -113,9 +113,9 @@ def fix_footer(pg):
     """Wider page navigator (seven tab labels) and a footer text that stops where it starts."""
     for v in pg.visuals:
         if v["name"] == "ftr_text":
-            v["position"]["width"] = 540
+            v["position"]["width"] = 560
         if v["name"] == "ftr_nav":
-            v["position"]["x"], v["position"]["width"] = W - M - 700, 700
+            v["position"]["x"], v["position"]["width"] = W - M - 680, 680
 
 
 def slicer(pg, name, field, label, x, w, group=None):
@@ -175,7 +175,7 @@ p.add("line_rev", "lineChart", M, row2_y, lw, r2h,
       roles={"Category": [MS], "Y": [(mea("Revenue ₹ L"), "Revenue")]},
       title=mea("Title Monthly Trend"), subtitle="₹ lakh per month  ·  Mar 2023 and Nov 2024 are partial months and are left out",
       alt="Line chart of monthly revenue in lakh rupees for the 19 full months, Apr 2023 to Oct 2024, roughly flat",
-      objects={**SCALAR_X, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9), "start": L(0)}}],
+      objects={**SCALAR_X, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9)}}],
                "dataPoint": [{"properties": {"fill": C(GREEN)}}], "lineStyles": [{"properties": {"strokeWidth": L(3), "showMarker": L(True)}}]},
       sort=[(MS, "Ascending")], filters=[FULL])
 p.add("bar_exp", "clusteredBarChart", M, r3y, lw, row3_end - r3y,
@@ -223,7 +223,7 @@ p.add("bar_cat", "clusteredBarChart", M, row2_y, cw, row3_end - row2_y,
       alt="Sorted bar chart of line value by category in lakh rupees; hover for share, margin and on-time rate",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)},
       sort=[(mea("Line Value ₹ L"), "Descending")], tooltip_page="cat_tip")
-top_h = 170
+top_h = 214
 p.add("bar_prod", "clusteredBarChart", rx, row2_y, hw, top_h,
       roles={"Category": [PROD], "Y": [(mea("Line Value ₹ L"), "Line value")]},
       title="Top 5 products by line value, ₹ lakh", subtitle="Product name and id (names repeat across products)",
@@ -263,7 +263,7 @@ p.header("Delivery", "On time = up to 5 minutes late  ·  slightly delayed 6-15 
          title_measure=mea("Title Delivery"), title_w=x0 - 70)
 std_slicers(p)
 p.cards([
-    ("card_ontime", mea("Card On-Time %"), "On-time orders", D("On-Time %"), DC("On-Time %")),
+    ("card_ontime", mea("Card On-Time %"), "On-time orders (target 75%)", D("On-Time %"), DC("On-Time %")),
     ("card_late", mea("Card Late %"), "Late orders", D("Late %"), DC("Late %")),
     ("card_slight", mea("Card Slightly Delayed %"), "Slightly delayed", D("Slightly Delayed %"), DC("Slightly Delayed %")),
     ("card_sig", mea("Card Significantly Delayed %"), "Significantly delayed", D("Significantly Delayed %"), DC("Significantly Delayed %")),
@@ -378,12 +378,12 @@ slicer(p, "slc_month", YM, "Month", x0 + 296, 130, "Month")
 p.cards([
     ("card_spend", mea("Card Marketing Spend"), "Marketing spend", D("Marketing Spend"), DC("Marketing Spend")),
     ("card_mrev", mea("Card Marketing Revenue"), "Attributed revenue", D("Marketing Revenue"), DC("Marketing Revenue")),
-    ("card_roas", mea("Card ROAS"), "ROAS (₹ per ₹1 spent)", D("ROAS"), DC("ROAS")),
+    ("card_roas", mea("Card ROAS"), "ROAS (target 2.0x)", D("ROAS"), DC("ROAS")),
     ("card_impr", mea("Card Impressions"), "Impressions", D("Impressions"), DC("Impressions")),
     ("card_clicks", mea("Card Clicks"), "Clicks", D("Clicks"), DC("Clicks")),
     ("card_conv", mea("Card Conversions"), "Conversions", D("Conversions"), DC("Conversions")),
 ])
-r2h = 272
+r2h = 290
 r3y = row2_y + r2h + G
 c1, c2 = 400, 380
 c3w = W - 2 * M - c1 - c2 - 2 * G
@@ -400,7 +400,7 @@ p.add("mx_ca", "pivotTable", M + c1 + G, row2_y, c2, r2h,
       objects={**COMPACT(10), "values": [{"properties": {"fontSize": L(10)}}, gradient("ROAS", th.SEQ_MIN, th.SEQ_MAX)]})
 p.add("bar_campaign", "clusteredBarChart", M + c1 + c2 + 2 * G, row2_y, c3w, r2h,
       roles={"Category": [CAMP], "Y": [(ROAS, "ROAS")]},
-      title="ROAS by campaign", subtitle="Nine campaigns  ·  right-click to drill through",
+      title="ROAS by campaign, right-click to drill through", subtitle=None,
       alt="Sorted bar chart of ROAS for the nine marketing campaigns",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(8), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
 hint(p, "bar_campaign", 9)
@@ -408,16 +408,16 @@ hint(p, "mx_ca", 4)
 hw = (W - 2 * M - G) // 2
 p.add("line_spend", "lineChart", M, r3y, hw, row3_end - r3y,
       roles={"Category": [MS], "Y": [(mea("Marketing Spend ₹ L"), "Spend")]},
-      title="Marketing spend by month, ₹ lakh", subtitle="Full months only; its own scale from zero (no dual axis)",
+      title="Marketing spend by month, ₹ lakh", subtitle="Full months only; own scale, axis not from zero (no dual axis)",
       alt="Line chart of monthly marketing spend in lakh rupees, flat at about 8 lakh",
-      objects={**SCALAR_X, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9), "start": L(0)}}],
+      objects={**SCALAR_X, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9)}}],
                "dataPoint": [{"properties": {"fill": C(GOLD)}}], "lineStyles": [{"properties": {"strokeWidth": L(3), "showMarker": L(True)}}]},
       sort=[(MS, "Ascending")], filters=[FULL])
 p.add("line_mrev", "lineChart", M + hw + G, r3y, hw, row3_end - r3y,
       roles={"Category": [MS], "Y": [(mea("Marketing Revenue ₹ L"), "Attributed revenue")]},
-      title="Attributed revenue by month, ₹ lakh", subtitle="Full months only; its own scale from zero",
+      title="Attributed revenue by month, ₹ lakh", subtitle="Full months only; own scale, axis not from zero",
       alt="Line chart of monthly attributed marketing revenue in lakh rupees, flat at about 16 lakh",
-      objects={**SCALAR_X, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9), "start": L(0)}}],
+      objects={**SCALAR_X, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9)}}],
                "dataPoint": [{"properties": {"fill": C(GREEN)}}], "lineStyles": [{"properties": {"strokeWidth": L(3), "showMarker": L(True)}}]},
       sort=[(MS, "Ascending")], filters=[FULL])
 p.footer(FOOTER)
@@ -480,7 +480,7 @@ p.add("line_forecast", "lineChart", M, row2_y, W - 2 * M, r2h,
       title="Revenue is forecast flat at the last full month's level, ₹ lakh a month",
       subtitle="Actual Apr 2023 to Oct 2024, forecast Nov 2024 to Dec 2025, dashed lines = 80% band  ·  partial months left out",
       alt="Line chart of monthly revenue in lakh rupees: 19 actual months, then a flat forecast to December 2025 with a dashed 80 percent band",
-      objects={**SCALAR_X, **LEGEND_TOP, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9), "start": L(0), "end": L(8)}}],
+      objects={**SCALAR_X, **LEGEND_TOP, "valueAxis": [{"properties": {"showAxisTitle": L(False), "gridlineShow": L(True), "fontSize": L(9)}}],
                "dataPoint": [series_color_by_measure(FA, GREEN), series_color_by_measure(FF, GOLD), series_color_by_measure(FL, th.BAND), series_color_by_measure(FH, th.BAND)],
                "lineStyles": line_styles((FA, 3, True), (FF, 3, True), (FL, 1, False, True), (FH, 1, False, True))},
       sort=[(FMONTH, "Ascending")])
@@ -615,6 +615,7 @@ missing = [(pg.name, v["name"]) for pg in pages for v in pg.visuals
            if not any("altText" in x.get("properties", {}) for x in v.get("visual", {}).get("visualContainerObjects", {}).get("general", []))]
 assert not missing, f"visuals without alt text: {missing}"
 HINTS.update({"overview/bar_cat": 11, "overview/bar_exp": 4, "sales/bar_cat": 11, "delivery/col_band": 8, "experience/bar_status": 3,
-              "experience/bar_ctype": 2, "marketing/bar_channel": 4})
+              "experience/bar_ctype": 2, "marketing/bar_channel": 4, "experience/bar_rar": 3, "category_detail/bar_cat_status": 3,
+              "campaign_detail/bar_camp_channel": 4, "campaign_detail/bar_camp_aud": 4})
 (Path(__file__).parent / "row_hints.json").write_text(json.dumps(HINTS, indent=1), encoding="utf-8")
 k.finish(pages)

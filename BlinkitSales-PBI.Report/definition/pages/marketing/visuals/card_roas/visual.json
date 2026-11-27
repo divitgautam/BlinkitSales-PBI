@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Card ROAS",
               "nativeQueryRef": "Card ROAS",
-              "displayName": "ROAS (₹ per ₹1 spent)"
+              "displayName": "ROAS (target 2.0x)"
             }
           ]
         }
@@ -139,7 +139,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'ROAS (₹ per ₹1 spent) card'"
+                  "Value": "'ROAS (target 2.0x) card'"
                 }
               }
             }

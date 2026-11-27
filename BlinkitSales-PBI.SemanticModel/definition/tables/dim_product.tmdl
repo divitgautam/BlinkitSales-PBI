@@ -1,6 +1,6 @@
 /// One row per product (268). Brand is almost one per product and product names repeat, so use Product Label or Category. Source: data/clean/dim_product.csv.
 table dim_product
-	lineageTag: e6d0ac69-3474-4d97-a39d-02312428bac1
+	lineageTag: 759e9969-8b5b-4d01-ac84-120197b5cc2a
 
 	/// Product key.
 	column 'Product Id'
@@ -8,7 +8,7 @@ table dim_product
 		formatString: 0
 		isKey
 		isHidden
-		lineageTag: 471c1830-c61f-4f1f-8767-e27b4677b262
+		lineageTag: ad9a4d5e-826b-4870-bdfc-f1026769fb4b
 		summarizeBy: none
 		sourceColumn: Product Id
 
@@ -17,7 +17,7 @@ table dim_product
 	/// Product name (51 distinct names across 268 products).
 	column 'Product Name'
 		dataType: string
-		lineageTag: d3fd4de3-61b4-46bc-a250-9793ce1b72ba
+		lineageTag: ad2eaa31-fb45-479a-8745-923aacf1b86f
 		summarizeBy: none
 		sourceColumn: Product Name
 
@@ -26,7 +26,7 @@ table dim_product
 	/// Product name plus id; unique, use it in visuals.
 	column 'Product Label'
 		dataType: string
-		lineageTag: a24656c2-6059-4d3e-95ef-2079e5bdadec
+		lineageTag: 3f603995-178f-4714-a060-f61cd40a660f
 		summarizeBy: none
 		sourceColumn: Product Label
 
@@ -35,7 +35,7 @@ table dim_product
 	/// Product category (11 categories).
 	column Category
 		dataType: string
-		lineageTag: 900c597e-dd2f-4801-ab00-d788caa9097c
+		lineageTag: 32adf2c1-9307-4e28-9646-a1a07797e81d
 		summarizeBy: none
 		sourceColumn: Category
 
@@ -44,7 +44,7 @@ table dim_product
 	/// Brand (about one per product).
 	column Brand
 		dataType: string
-		lineageTag: c21a7746-56d9-49bc-bcbc-ca927c1d5bce
+		lineageTag: fb1b0a09-b18d-454c-b174-555c32aea815
 		summarizeBy: none
 		sourceColumn: Brand
 
@@ -54,7 +54,7 @@ table dim_product
 	column Price
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: 20cba2ce-7de1-4ca9-b7f9-5349e4918660
+		lineageTag: 6a53f86d-917e-4b87-8795-84cfa1137c72
 		summarizeBy: none
 		sourceColumn: Price
 
@@ -64,7 +64,7 @@ table dim_product
 	column MRP
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: 4f926c46-a989-4181-a042-9c9489e398cf
+		lineageTag: bc9089a9-7328-4784-a9ad-b6bd77ae6a10
 		summarizeBy: none
 		sourceColumn: MRP
 
@@ -74,7 +74,7 @@ table dim_product
 	column 'Margin Percentage'
 		dataType: decimal
 		formatString: 0.0
-		lineageTag: 14455f1b-201e-4a56-a7ec-d0c3b146338d
+		lineageTag: 272c3e60-5530-4954-b057-053a9738ea89
 		summarizeBy: none
 		sourceColumn: Margin Percentage
 
@@ -84,7 +84,7 @@ table dim_product
 	column 'Shelf Life Days'
 		dataType: int64
 		formatString: 0
-		lineageTag: a3f45283-74af-4bff-8f10-9cab48f4e863
+		lineageTag: 2ac77220-5cdd-4d2d-ab6d-c5a15da04729
 		summarizeBy: none
 		sourceColumn: Shelf Life Days
 
@@ -94,7 +94,7 @@ table dim_product
 	column 'Min Stock Level'
 		dataType: int64
 		formatString: 0
-		lineageTag: b8140afc-58f0-4f92-ac19-9802c6a5c8d5
+		lineageTag: 5c3fcf97-2650-44dc-8f50-3443bfc15bb8
 		summarizeBy: none
 		sourceColumn: Min Stock Level
 
@@ -104,7 +104,7 @@ table dim_product
 	column 'Max Stock Level'
 		dataType: int64
 		formatString: 0
-		lineageTag: de0ff488-989f-4c6d-99ea-97b482fb5aa8
+		lineageTag: d15b5c80-480d-4dac-8d2c-47cb6468d8eb
 		summarizeBy: none
 		sourceColumn: Max Stock Level
 

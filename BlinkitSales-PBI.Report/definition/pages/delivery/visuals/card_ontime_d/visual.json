@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Δ On-Time %",
               "nativeQueryRef": "Δ On-Time %",
-              "displayName": "On-time orders change"
+              "displayName": "On-time orders (target 75%) change"
             }
           ]
         }
@@ -236,7 +236,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'On-time orders change'"
+                  "Value": "'On-time orders (target 75%) change'"
                 }
               }
             }
