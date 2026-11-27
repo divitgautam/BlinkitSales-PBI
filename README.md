@@ -73,6 +73,19 @@ All ₹ sizings in the review are illustrative.
 
 Also: hidden drill-through pages (Category detail, Campaign detail), two tooltip pages, phone layouts, slicers synced across pages 1 to 4, and action titles that are DAX measures, so they change with the slicers. Blinkit green and yellow brand palette, ColorBrewer sequential and diverging scales for magnitudes and variances.
 
+## Analysis notebooks
+
+Six executed notebooks in `analysis/` (load and clean, audit, EDA, forecast, key questions, deep dives) turn the data into 29 charts, listed with their one-line findings in `docs/analysis_gallery.md`. Style and palette live in `analysis/viz_style.py`; run everything with `python analysis/_make_notebooks.py`. No personal field is ever loaded. Four results worth a look:
+
+| | |
+|---|---|
+| ![](docs/ds/rca_lateness_drivers.png) | ![](docs/ds/rca_poor_experience.png) |
+| Lateness is about 30.6% in every slice (distance, hour, weekday, category, payment, area): no driver, cross-validated AUC 0.48. | Poor experience is 24% late only, 15% low rating only and 6% both; the two problems are independent. |
+| ![](docs/ds/cohort_retention.png) | ![](docs/ds/rca_revenue_bridge.png) |
+| Cohort retention is flat at about 9% a month: no decay, no maturing cohort. | Apr to Oct 2024 is -4.5% on 2023, split between volume and AOV, with every interval including zero. |
+
+Also in the gallery: RFM segments (Champions 22% of customers, 37% of revenue, the same as random assignment), Pareto curve (top 20% hold 41%), discount depth, marketing funnel and inventory damage. Most "no effect" results describe the synthetic-looking source, not Blinkit.
+
 ## How it is built
 
 ```
@@ -112,7 +125,7 @@ Kaggle CSVs (data/raw, not in git)
 3. `python _build/prepare.py`, then `python _build/reconcile.py` and `python _build/forecast.py`.
 4. `python _build/make_semantic_model.py` and `python _build/build_report.py` (close Power BI Desktop first).
 5. Open `BlinkitSales-PBI.pbip` in Power BI Desktop, set the `ProjectFolder` and `SourceFolder` parameters if asked, then Home > Refresh and save.
-6. Optional: `python _build/bpa_check.py BlinkitSales-PBI.SemanticModel/definition`, `python _build/check_report.py`, `python _build/make_project_guide.py`.
+6. Optional: `python _build/bpa_check.py BlinkitSales-PBI.SemanticModel/definition`, `python _build/check_report.py`, `python analysis/_make_notebooks.py` (needs the packages below), `python _build/make_project_guide.py`.
 
 `docs/BlinkitSales-PBI_Project_Guide.pdf` walks through every step with diagrams and screenshots.
 

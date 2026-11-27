@@ -10,7 +10,7 @@ An expert would stop after the diagnostics, because most relationships a real bu
 | Diagnostic | Result | What real data looks like |
 |---|---|---|
 | Orders per customer, variance vs mean | var 1.56 vs mean 2.30 (under-dispersed; random assignment gives 2.30) | Over-dispersed, a heavy tail of heavy buyers |
-| Revenue Gini across customers | 0.366 vs 0.361 when orders are assigned to customers at random | 0.6 to 0.8 |
+| Revenue Gini across customers | 0.366 vs 0.347 when orders are reassigned at random (every customer keeps one order) | 0.6 to 0.8 |
 | Top 20% of customers' revenue share | 40.9% (top 10%: 24.0%) | 60 to 80% |
 | Cohort retention M+1 to M+6 | flat 8 to 10% | decays |
 | Hour of day uniform? | chi-square p = 0.19 (max/min 1.33) | evening and morning peaks |
@@ -39,7 +39,7 @@ So every "null" below is more likely a property of the generator than a fact abo
 
 **A5. RFM.** Tercile scores, simple labels: Champions (355 customers, 27.5% of revenue, 3.9 orders each), Loyal-but-lapsing (369, 27.0%), Middle (917, 34.3%), Lost-light (398, 8.4%), Recent-light (133, 2.8%). So what: behavioural RFM gives usable groups (54.5% of revenue from 33% of customers), but with random orders these groups are partly mechanical; re-test on real data.
 
-**A6. Concentration (Pareto).** Top 10% of customers = 24.0% of revenue, top 20% = 40.9%, Gini 0.366, equal to the random-assignment Gini 0.361. See `docs/ds/pareto.png`. Null.
+**A6. Concentration (Pareto).** Top 10% of customers = 24.0% of revenue, top 20% = 40.9%, Gini 0.366, close to the random-assignment Gini 0.347 (95% range 0.338 to 0.355; every customer keeps at least one order). See `docs/ds/pareto_customers.png`. Null.
 
 ### B. Basket and price
 
@@ -85,7 +85,7 @@ So every "null" below is more likely a property of the generator than a fact abo
 
 **G1. Trend and seasonality?** 19 full months. Linear trend -₹2,096/month (95% CI -4,693 to +501, p = 0.11; Kendall tau -0.32, p = 0.058; R² 0.15); at 5.6% coefficient of variation the series is stationary (ADF p = 0.001) and white-noise-like (Ljung-Box lag 6 p = 0.85). Seasonality: 7 month-pairs with YoY mean -4.2% (p = 0.14); lag-12 correlation 0.32 on 7 pairs; day-of-week p = 0.42. No detectable trend or seasonality; 19 points cannot rule out a modest decline.
 
-**G2. Forecast uncertainty.** One-step rolling backtest (origin from month 10): MAPE naive 4.0%, expanding mean 4.7% (differs from the 2.77% in `reconciliation.md`, which uses a different 6-month window; either is small). 95% prediction interval for any single month: mean model ±₹62k (±11% of ₹5.61 L), naive ±₹88k (±16%); rolling coverage of the mean-model interval 11 of 11. Forecast rule: flat line ₹5.4 to 5.6 L a month with a ±11% band, and never publish a point forecast without it. See `docs/ds/monthly_revenue.png`.
+**G2. Forecast uncertainty.** One-step rolling backtest (origin from month 10): MAPE naive 4.0%, expanding mean 4.7% (differs from the 2.77% in `reconciliation.md`, which uses a different 6-month window; either is small). 95% prediction interval for any single month: mean model ±₹62k (±11% of ₹5.61 L), naive ±₹88k (±16%); rolling coverage of the mean-model interval 11 of 11. Forecast rule: flat line ₹5.4 to 5.6 L a month with a ±11% band, and never publish a point forecast without it. See `docs/ds/forecast_band.png`.
 
 ## 2. What the nulls mean
 
@@ -139,4 +139,51 @@ All sample sizes: two-sided α = 0.05, power 0.8, equal arms, observed variance 
 
 ## 6. Reproduce
 
-`python analysis/ds_review.py` (about a minute, writes `docs/ds/results.json` and 5 PNGs: cohort retention, Pareto, ROAS CIs, spend vs revenue, monthly revenue with band).
+`python analysis/ds_review.py` (about a minute, writes `docs/ds/results.json`; its old plain charts are off by default, set `DS_LEGACY_CHARTS=1` to draw them). The charts in `docs/ds/` and `docs/eda/` come from the notebooks: `python analysis/_make_notebooks.py` (about one minute, six executed notebooks, see `docs/analysis_gallery.md`).
+
+## 7. Deep dives (notebook `analysis/05_deep_dives.ipynb`)
+
+Root-cause, cohort and RFM analyses added after the review above, with the same honesty rules: every result carries its uncertainty and the numbers that overlap `docs/reconciliation.md` are asserted against it (revenue, orders, AOV, on-time, rating, poor-experience rate, Revenue at Risk, YoY, ROAS, damage rate). Charts: `docs/ds/rca_*.png`, `cohort_*.png`, `rfm_segments.png`, `pareto_customers.png`; the full list is in `docs/analysis_gallery.md`.
+
+### 7.1 Root cause: lateness
+**Method.** Late rate (30.6%, status not On Time) by distance band, time of day, weekday, category and payment with Wilson 95% CIs; chi-square per factor; area (316 levels) as a funnel plot; a logistic model on all drivers (likelihood-ratio test) and a 5-fold cross-validated AUC as a predictability ceiling.
+
+**Result.** No driver: chi-square p = 0.89 (distance), 0.82 (time of day), 0.89 (weekday), 0.20 (category, the smallest), 0.56 (payment), 0.45 (area; 5% of areas fall outside the 95% funnel limits, 5% expected). Logistic LR test p = 0.72, pseudo-R2 0.003, cross-validated AUC 0.485 (late) and 0.502 (poor experience): the drivers predict nothing. Contribution view: by category the largest gap is +23 late orders (Snacks & Munchies, noise band +/-20), 1.5% of the 1,530 late orders; one of 11 levels sits outside its band against 0.6 expected.
+
+**So what.** Lateness is a flat 30% tax on every slice, so there is nothing to target by zone, hour or category. First checks on real data: rider supply by hour and an ETA promise that depends on distance (here it does not).
+
+### 7.2 Root cause: poor experience (late only, low rating only, both)
+**Method.** Exclusive groups from the 45.8% poor-experience orders; chi-square test of independence between late and 1-2 stars; group shares by payment, distance, time of day and category (72 cells, binomial test each).
+
+**Result.** Good 54.2% (2,711 orders), late only 24.2% (1,211 orders, ₹26.56 L), low rating only 15.2% (759, ₹16.71 L), both 6.4% (319, ₹7.15 L); the three poor groups sum to Revenue at Risk ₹50.42 L. Both = 319 against 330 expected if independent (chi-square p = 0.44). 3 of 72 cells flag at 5% (3.6 expected by chance); factor-level chi-square p between 0.18 and 0.94.
+
+**So what.** Poor experience is two unrelated problems. A delivery fix reaches the late-only group (24%, about ₹26.6 L) and leaves low ratings untouched; the low-rating causes (product, service) are not identified by the feedback tags (see D3).
+
+### 7.3 Revenue variance: volume, mix and AOV
+**Method.** Revenue = orders x AOV; change = volume (N1 - N0) x AOV0 + mix (category shares at base AOV) + AOV (within-category value), an exact identity (asserted in the notebook). 95% intervals: bootstrap of orders within each period for mix and AOV, Poisson noise on the order counts for volume.
+
+**Result.** Apr to Oct 2024 vs 2023: -₹1.81 L (-4.5%, equals the reconciliation): volume -0.85 L (95% interval -3.46 to +1.76), mix -0.02 L (-0.23 to +0.18), AOV -0.94 L (-2.43 to +0.60). Last month pairs: Jul to Aug -0.27 L (-4.7%), Aug to Sep -0.27 L (-5.0%), Sep to Oct +0.19 L (+3.7%); each split lies inside its interval. Monthly YoY runs from -12.4% to +6.7% with no consistent direction.
+
+**So what.** Month-on-month moves of 5% are what about 250 orders a month produce by chance. Track a rolling 3-month total and do not explain single months; the YoY decline is split between fewer orders and a lower AOV and is not statistically distinguishable from zero.
+
+### 7.4 Cohorts
+**Method.** Cohort = first-order month (the registration date is unusable). Retention = share of a cohort ordering in month k, masked beyond the data. Revenue per acquired customer cumulated by k. Kaplan-Meier for time to second order (customers without one are censored, not lost).
+
+**Result.** 21 cohorts of 5 to 233 customers. Mean retention M+1 to M+6: 8.5, 9.4, 8.2, 9.8, 9.0, 8.3% (customer-weighted 9.1 to 9.9%): flat, no decay. Each acquired customer brings ₹2,320 at first order and about ₹212 a month after (₹4,869 cumulative at M+12); curves are parallel across cohorts. Time to the second order: median 134 days among the 1,492 who reordered (P90 361), Kaplan-Meier median 213 days, 70% reordered within a year.
+
+**So what.** There is no cohort effect to manage, and the long reorder cycle makes "60-day reorder" a harsh KPI for groceries. A day-90 win-back nudge is the first test (section 4).
+
+### 7.5 RFM segmentation and Pareto
+**Method.** Recency, frequency (ties broken by revenue) and revenue scored in quintiles for the 2,172 ordering customers and grouped into six segments; the same procedure repeated 100 times after shuffling which customer owns each order. Lorenz curve and Gini with a bootstrap CI against 200 random reassignments.
+
+**Result.** Champions 481 customers (22.1%) and 36.8% of revenue (random assignment 36.8%, 95% range 35.0 to 38.7%); Loyal 450 (20.7%, 25.2%); At risk 372 (17.1%, 21.0%); Hibernating 497 (22.9%, 9.9%); New/recent 232 (10.7%, 4.5%); Needs attention 140 (6.4%, 2.7%). Pareto: top 10% = 24.0% and top 20% = 40.9% of revenue, Gini 0.366 (95% CI 0.355 to 0.376), below the 0.42 of random assignment because orders per customer are under-dispersed (variance 1.55 vs mean 2.30).
+
+**So what.** RFM groups are usable on paper (Champions and Loyal hold 62% of revenue from 43% of customers) but match what random assignment gives, so they are frequency arithmetic, not behaviour. Replace the null stored segment with RFM in CRM and treat segment gaps as hypotheses to test on real data.
+
+### 7.6 Basket, marketing funnel, inventory
+- **Basket and price.** Discount depth (15 to 40% off MRP) vs quantity Spearman +0.006 (p = 0.66), vs order value -0.015 (p = 0.29); stored margin % tracks depth at 0.98, so it is derived, not independent. Category mix is the same in every stored segment (chi-square p = 0.16, Cramer's V 0.05, largest gap 1.5 points).
+- **Funnel.** 29.49 M impressions, 2.97 M clicks (10.1%), 298 K conversions (10.0% of clicks), ₹54.8 per conversion, with overlapping CIs across channels; conversions vs attributed revenue Spearman -0.011 (p = 0.43); 59.6 conversions per order in the order data, so the funnel is not linked to real orders.
+- **Inventory.** Damage 3.85% overall, 3.10% (Pharmacy) to 4.65% (Household Care), chi-square p = 0.24; stock received 28,779 units vs 10,034 sold (2.9x; 2.1x in Baby Care to 3.2x in Grocery and Cold Drinks).
+
+### 7.7 Considered and rejected
+Market-basket affinity (one item per order), store and rider productivity (5,000 unique ids), geospatial lateness (no coordinates, 316 areas of about 16 orders), brand analysis (one brand per product), churn or lifetime-value prediction (no behavioural signal; cross-validated AUCs of about 0.5), sentiment and text mining (25 template sentences, sentiment is a function of rating), price elasticity and promotion lift (price does not vary over time, no promotion calendar), anomaly detection on daily revenue (CV 5.5%, white noise), STL seasonality (19 months; seasonal naive is the worst backtest model), campaign-to-order attribution (no key, 2.9x revenue).

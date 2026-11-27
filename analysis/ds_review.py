@@ -264,6 +264,9 @@ S["share_orders_repeat_cust"] = float((o.customer_id.map(cs.n) >= 2).mean())
 R["S"] = S
 json.dump(R, open(OUT/"results.json", "w"), indent=1, default=lambda x: x.item() if hasattr(x, "item") else str(x))
 
+import os
+if os.environ.get("DS_LEGACY_CHARTS") != "1":   # charts now come from the notebooks (04_data_science, 05_deep_dives); set DS_LEGACY_CHARTS=1 for the old plain versions
+    raise SystemExit(0)
 # ---------------- charts (5)
 fig, ax = plt.subplots(figsize=(6, 3.4)); p = ret_m.iloc[:, 1:7]; im = ax.imshow(p.values.astype(float), cmap="Greens", vmin=0, aspect="auto")
 ax.set_xticks(range(p.shape[1])); ax.set_xticklabels([f"M+{k}" for k in p.columns]); ax.set_yticks(range(len(p))); ax.set_yticklabels([str(x) for x in p.index], fontsize=6)

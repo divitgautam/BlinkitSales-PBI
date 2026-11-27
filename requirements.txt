@@ -3,3 +3,12 @@ pyarrow
 numpy
 matplotlib
 pillow
+# analysis notebooks (analysis/_make_notebooks.py)
+seaborn
+scipy
+statsmodels
+scikit-learn
+nbformat
+nbclient
+ipykernel
+jinja2
