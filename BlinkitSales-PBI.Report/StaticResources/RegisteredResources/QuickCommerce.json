@@ -11,7 +11,7 @@
     "#A9B4BC"
   ],
   "foreground": "#13241A",
-  "foregroundNeutralSecondary": "#58665F",
+  "foregroundNeutralSecondary": "#4A5750",
   "background": "#FFFFFF",
   "backgroundLight": "#F5F7F1",
   "tableAccent": "#0C831F",
@@ -27,7 +27,7 @@
     "label": {
       "fontFace": "'Segoe UI', sans-serif",
       "fontSize": 10,
-      "color": "#58665F"
+      "color": "#4A5750"
     },
     "callout": {
       "fontFace": "'Segoe UI Semibold', 'Segoe UI', sans-serif",

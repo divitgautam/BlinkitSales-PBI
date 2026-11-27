@@ -30,7 +30,7 @@ SPEC = {
         ("campaign_name", "Campaign Name", "string", None, False, "Campaign name (9 campaigns)."),
         ("date", "Campaign Date", "dateTime", "dd-mmm-yyyy", H, "Record date. Foreign key to the Date table."),
         ("channel", "Channel", "string", None, False, "App, Email, SMS or Social Media."),
-        ("target_audience", "Target Audience", "string", None, False, "All users (campaigns aimed at everyone, not a total), Inactive, New Users or Premium."),
+        ("target_audience", "Target Audience", "string", None, False, "Everyone (campaigns aimed at all users, not a total), Inactive, New Users or Premium."),
         ("impressions", "Impressions", "int64", "#,##0", H, "Impressions served. Source of Total Impressions."),
         ("clicks", "Clicks", "int64", "#,##0", H, "Clicks. Source of Total Clicks."),
         ("conversions", "Conversions", "int64", "#,##0", H, "Conversions. Source of Total Conversions."),

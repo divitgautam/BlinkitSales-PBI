@@ -147,3 +147,12 @@ NOT fixed: p5 matrix column header still reads "All" (subtitle says "All users";
 2. Fill empty panels: p3 "What this tells us" and p6 left panel (shrink panel height or add a small chart; page functions in `build_report.py`); use spare space under the p5 matrix.
 3. KPI context: p7 cards 2-4 and p4 repeat card (card helper in `pbir_kit.py`, `measures_spec.py`); add sparklines on p1/p3 cards.
 4. Reset-filters bookmark (not supported by the kit); verify alt text on every visual (`pbir_kit.py` visual helper) and caption contrast.
+
+## Round 5 changes (2026-11-27, not yet rendered; re-score after the next PDF export)
+- p5 matrix: audience value "All" renamed "Everyone" (prepare.py, data dictionary, subtitle "Everyone = campaigns aimed at all users", pivot_hints); header word wrap off; 11 pt headers and values, row padding 11, matrix 450 px wide so it fills the panel (channel chart 370 px).
+- p3 "What this tells us" and p6 findings: text raised to 11 pt / 13 pt with paragraph gaps so the panels fill (p3 row 2 shortened to 236 px).
+- KPI context lines now compare: p7 range card (last 12 months inside/above/below the 80% range), vs-LTM card (gap in rupees vs last 12 months), backtest (within the 5% target), exposure (share of 12-month revenue with the base); p4 repeat card shows points vs the 70% target, coloured green/red.
+- Caption contrast: MUTED #4A5750 (7.0:1 on the page background), context grey #46525F (7.4:1); old values already passed AA (5.6 and 5.1), now with margin.
+- Skipped: sparklines in cards (no confirmed PBIR property; no room for extra charts); "Clear all slicers" button (no ClearAllSlicers example on disk or in the schemas under D:\Wolf\PBI, so the property is unconfirmed).
+- check_report.py: new rules for AA contrast of theme muted text and GOOD/BAD/NEUTRAL, text boxes filling < 60% of the box, matrices filling < 60% of their panel.
+- Refresh needed: yes (fact_marketing audience value and 5 changed measures); open the .pbip, Home > Refresh, Ctrl+S, export the PDF once.

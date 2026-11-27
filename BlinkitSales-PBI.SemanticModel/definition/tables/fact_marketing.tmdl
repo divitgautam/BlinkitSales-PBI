@@ -1,11 +1,11 @@
 /// One row per campaign record (5,400). No key to orders: attributed revenue is a separate star and is not order revenue. Source: data/clean/fact_marketing.csv.
 table fact_marketing
-	lineageTag: 0451e6d3-1a0f-4d13-af42-abadf94531a8
+	lineageTag: bc6859f5-0391-4437-8c4a-1932147ac5b5
 
 	/// Campaign name (9 campaigns).
 	column 'Campaign Name'
 		dataType: string
-		lineageTag: 78e88f77-86de-49f3-9c68-7bda185a6208
+		lineageTag: c8d2299a-222a-4014-94da-41f4a5b87e77
 		summarizeBy: none
 		sourceColumn: Campaign Name
 
@@ -14,9 +14,9 @@ table fact_marketing
 	/// Record date. Foreign key to the Date table.
 	column 'Campaign Date'
 		dataType: dateTime
-		isHidden
 		formatString: dd-mmm-yyyy
-		lineageTag: a19712f8-30db-467f-a86b-1d467ba387a7
+		isHidden
+		lineageTag: 141a03e6-524f-45ae-b8ea-0818d99e3bb9
 		summarizeBy: none
 		sourceColumn: Campaign Date
 
@@ -25,16 +25,16 @@ table fact_marketing
 	/// App, Email, SMS or Social Media.
 	column Channel
 		dataType: string
-		lineageTag: 1cb075a5-8c85-4c2c-b0ba-a4371dfebc48
+		lineageTag: e3708fae-c205-40b8-a1fc-d9fefc7ee8d6
 		summarizeBy: none
 		sourceColumn: Channel
 
 		annotation SummarizationSetBy = User
 
-	/// All users (campaigns aimed at everyone, not a total), Inactive, New Users or Premium.
+	/// Everyone (campaigns aimed at all users, not a total), Inactive, New Users or Premium.
 	column 'Target Audience'
 		dataType: string
-		lineageTag: ba7031b1-4422-4914-86b3-e8ef0511b54f
+		lineageTag: fc0c4f1f-1221-4220-8e94-6575171c176b
 		summarizeBy: none
 		sourceColumn: Target Audience
 
@@ -43,10 +43,10 @@ table fact_marketing
 	/// Impressions served. Source of Total Impressions.
 	column Impressions
 		dataType: int64
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 821bc5e9-ad21-4df8-b1dc-348505b54796
+		lineageTag: 45da1a5d-9f49-4fd3-be77-20d1af156e96
 		summarizeBy: none
 		sourceColumn: Impressions
 
@@ -55,10 +55,10 @@ table fact_marketing
 	/// Clicks. Source of Total Clicks.
 	column Clicks
 		dataType: int64
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 5ad19f13-65e5-4b69-ac37-e5a30d689465
+		lineageTag: dd9acda7-3ff9-4c5c-ab95-3a31394d7428
 		summarizeBy: none
 		sourceColumn: Clicks
 
@@ -67,10 +67,10 @@ table fact_marketing
 	/// Conversions. Source of Total Conversions.
 	column Conversions
 		dataType: int64
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: 15ea40ee-0396-4927-9be7-bea1a6813cd8
+		lineageTag: be511387-139b-4057-8a8c-53109f98f8a5
 		summarizeBy: none
 		sourceColumn: Conversions
 
@@ -79,10 +79,10 @@ table fact_marketing
 	/// Campaign spend in assumed INR.
 	column Spend
 		dataType: decimal
-		isHidden
 		formatString: ₹#,##0.00
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: a3b3e7fe-fe6d-4c05-968c-7bb679e9e9ad
+		lineageTag: 4836b3ee-2055-42db-93e9-82b2e9472f81
 		summarizeBy: none
 		sourceColumn: Spend
 
@@ -91,10 +91,10 @@ table fact_marketing
 	/// Revenue attributed to the campaign by the source (not order revenue).
 	column 'Attributed Revenue'
 		dataType: decimal
-		isHidden
 		formatString: ₹#,##0.00
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: ee6863a0-97e1-45fb-be4d-018a7defb9cd
+		lineageTag: d0eff3f0-7abd-47c2-848e-b11864cede97
 		summarizeBy: none
 		sourceColumn: Attributed Revenue
 
@@ -115,4 +115,3 @@ table fact_marketing
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["FIRST_LETTER_OF_OBJECTS_MUST_BE_CAPITALIZED"]}
-

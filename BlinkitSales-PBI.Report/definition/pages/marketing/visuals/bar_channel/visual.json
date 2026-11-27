@@ -1,16 +1,17 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "bar_channel",
   "position": {
     "x": 16,
     "y": 190,
     "z": 18000,
     "height": 290,
-    "width": 380,
+    "width": 370,
     "tabOrder": 18000
   },
   "visual": {
     "visualType": "clusteredBarChart",
+    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
         "Category": {
@@ -29,6 +30,25 @@
               "queryRef": "fact_marketing.Channel",
               "nativeQueryRef": "Channel",
               "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "ROAS"
+                }
+              },
+              "queryRef": "_Measures.ROAS",
+              "nativeQueryRef": "ROAS",
+              "displayName": "ROAS"
             }
           ]
         },
@@ -80,25 +100,6 @@
               "displayName": "Conversion rate"
             }
           ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "ROAS"
-                }
-              },
-              "queryRef": "_Measures.ROAS",
-              "nativeQueryRef": "ROAS",
-              "displayName": "ROAS"
-            }
-          ]
         }
       },
       "sortDefinition": {
@@ -116,7 +117,8 @@
             },
             "direction": "Descending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "objects": {
@@ -264,7 +266,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Revenue per ₹1 spent, from zero; hover for CTR and spend'"
+                  "Value": "'Revenue per ₹1 spent; hover for CTR and spend'"
                 }
               }
             },
@@ -280,7 +282,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#58665F'"
+                      "Value": "'#4A5750'"
                     }
                   }
                 }
@@ -336,7 +338,6 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   }
 }

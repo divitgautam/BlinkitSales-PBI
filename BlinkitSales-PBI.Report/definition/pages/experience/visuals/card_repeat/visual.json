@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Card Repeat Rate",
               "nativeQueryRef": "Card Repeat Rate",
-              "displayName": "Repeat customers"
+              "displayName": "Repeat customers (target 70%)"
             }
           ]
         }
@@ -139,7 +139,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Repeat customers card'"
+                  "Value": "'Repeat customers (target 70%) card'"
                 }
               }
             }

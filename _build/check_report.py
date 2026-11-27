@@ -39,6 +39,24 @@ ROW_PX, CHROME_PX, SCROLLBAR_PX = 18, 62, 14   # px per category row, title + su
 PHINTS = json.loads((ROOT / "_build" / "pivot_hints.json").read_text(encoding="utf-8")) if (ROOT / "_build" / "pivot_hints.json").exists() else {}
 HINTS = json.loads((ROOT / "_build" / "row_hints.json").read_text(encoding="utf-8")) if (ROOT / "_build" / "row_hints.json").exists() else {}
 bad = []
+def _lum(h):
+    c = [int(h.lstrip("#")[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    c = [x / 12.92 if x <= .03928 else ((x + .055) / 1.055) ** 2.4 for x in c]
+    return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]
+def contrast(a, b):
+    x, y = sorted((_lum(a), _lum(b)), reverse=True)
+    return (x + .05) / (y + .05)
+# caption contrast (AA 4.5:1): theme muted text and the context-line colours on white and on the page background
+_th = next((ROOT / "BlinkitSales-PBI.Report" / "StaticResources" / "RegisteredResources").glob("QuickCommerce.json"), None)
+if _th:
+    tj = json.loads(_th.read_text(encoding="utf-8"))
+    for nm_, fg_ in (("foregroundNeutralSecondary", tj["foregroundNeutralSecondary"]),):
+        for bg_ in (tj["background"], tj["backgroundLight"]):
+            if contrast(fg_, bg_) < 4.5: bad.append(f"theme: {nm_} {fg_} on {bg_} is {contrast(fg_, bg_):.2f}:1, AA needs 4.5:1")
+    m_ = re.search(r'GOOD, BAD, NEUTRAL = "(#\w+)", "(#\w+)", "(#\w+)"', SPEC)
+    for nm_, fg_ in zip(("GOOD", "BAD", "NEUTRAL"), m_.groups()):
+        for bg_ in (tj["background"], tj["backgroundLight"]):
+            if contrast(fg_, bg_) < 4.5: bad.append(f"measures_spec: {nm_} {fg_} on {bg_} is {contrast(fg_, bg_):.2f}:1, AA needs 4.5:1")
 names = {}
 for d in PAGES.iterdir():
     if d.is_dir():
@@ -109,6 +127,18 @@ for pdir in sorted(d for d in PAGES.iterdir() if d.is_dir()):
                 rowhdr = max(len(r_) for r_ in ph["rows"]) * CW_REG * fs * 1.333 + PIV_CELL
                 tot = rowhdr + sum(cols) + 24
                 if tot > w: bad.append(f"{pg['name']}/{n_}: row header + {len(cols)} columns need ~{tot:.0f}px of {w} (headers {ph['cols']}; widest column {max(cols):.0f}px) - a header would truncate or scroll")
+        if vt == "textbox" and pg.get("type") != "Tooltip" and not n_.startswith("hdr_"):   # empty panel: estimated text height must fill >= 60% of the box
+            paras = v["visual"]["objects"]["general"][0]["properties"]["paragraphs"]
+            px = max(float(r_["textStyle"].get("fontSize", "10pt").rstrip("pt")) for q_ in paras for r_ in q_["textRuns"] if r_["value"]) * 1.333
+            per = max(1, int((w - 28) / (CW_REG * px)))
+            used = 20 + sum(-(-max(1, sum(len(r_["value"]) for r_ in q_["textRuns"])) // per) * (float(q_["textRuns"][0]["textStyle"].get("fontSize", "10pt").rstrip("pt")) * 1.333) * 1.35 for q_ in paras)
+            if used < 0.6 * h: bad.append(f"{pg['name']}/{n_}: text fills ~{used / h:.0%} of its {w}x{h} box (empty panel; raise the font or resize)")
+        if vt == "pivotTable" and hk and pg.get("type") != "Tooltip":   # a matrix that is short for its panel leaves an empty block
+            ob_ = v["visual"].get("objects", {})
+            fs_ = float(ob_.get("values", [{}])[0].get("properties", {}).get("fontSize", {}).get("expr", {}).get("Literal", {}).get("Value", "10D").rstrip("D"))
+            pad_ = float(ob_.get("grid", [{}])[0].get("properties", {}).get("rowPadding", {}).get("expr", {}).get("Literal", {}).get("Value", f"{PIV_PAD}D").rstrip("D"))
+            body = (fs_ * 1.333 + 2 * pad_ + PIV_ROW_EXTRA) * (hk + 1) + (PIV_CHROME if has_sub else PIV_CHROME_NOSUB)
+            if body < 0.6 * h: bad.append(f"{pg['name']}/{n_}: {hk} rows fill ~{body / h:.0%} of the {h}px panel (empty block; shrink the panel or add padding)")
         vco = v["visual"].get("visualContainerObjects", {})
         t = vco.get("title", [{}])[0].get("properties", {})
         st = vco.get("subTitle", [{}])[0].get("properties", {})

@@ -44,7 +44,7 @@ One row per campaign record (5,400). No key to orders. Rows: 5,400.
 | month_start | datetime64[us] | First day of month. |
 | is_full_month | bool | False for Mar 2023 and Nov 2024; exclude from trends and YoY. |
 | channel | str | App, Email, SMS or Social Media. |
-| target_audience | str | All users (campaigns aimed at everyone, not a total), Inactive, New Users or Premium. |
+| target_audience | str | Everyone (campaigns aimed at all users, not a total), Inactive, New Users or Premium. |
 | impressions | int64 | Impressions. |
 | clicks | int64 | Clicks. |
 | conversions | int64 | Conversions. |

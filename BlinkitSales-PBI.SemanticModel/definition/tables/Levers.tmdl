@@ -1,11 +1,11 @@
 /// Sized revenue levers (annual, basis: last 12 full months) with their assumptions. Disconnected by design. Source: data/clean/levers.csv written by _build/forecast.py.
 table Levers
-	lineageTag: d93313f0-3bca-49f1-9157-0cea379e2ff8
+	lineageTag: 466a7ab0-c0e2-4445-a749-dcf0228815f7
 
 	/// Lever name.
 	column Lever
 		dataType: string
-		lineageTag: 369328ee-2e28-4ff4-beb3-ad834dd6bb76
+		lineageTag: 74043ca0-57b7-42ef-8810-d541d12f0a68
 		summarizeBy: none
 		sourceColumn: Lever
 
@@ -14,7 +14,7 @@ table Levers
 	/// Lever with its value type, for chart labels.
 	column 'Lever Label'
 		dataType: string
-		lineageTag: 627a3c69-c4ab-418a-99b5-9f2540d7d652
+		lineageTag: 167c0e30-ce69-4fb8-9946-093ec9ec610a
 		summarizeBy: none
 		sourceColumn: Lever Label
 
@@ -23,7 +23,7 @@ table Levers
 	/// Exposure removed, attributed revenue gained or stock value saved: not additive across types.
 	column 'Lever Type'
 		dataType: string
-		lineageTag: 5ae8cb55-4470-44da-bd11-e506e9c395d5
+		lineageTag: 8e3f08cf-3867-4574-8fef-fcca8e22d17e
 		summarizeBy: none
 		sourceColumn: Lever Type
 
@@ -32,7 +32,7 @@ table Levers
 	/// What is assumed and how the value was sized.
 	column Assumption
 		dataType: string
-		lineageTag: 9868e9c2-d57c-4622-9714-98cc94d8c540
+		lineageTag: 9788e81c-9dfd-4a53-b8d5-4742d9523fae
 		summarizeBy: none
 		sourceColumn: Assumption
 
@@ -41,10 +41,10 @@ table Levers
 	/// Annual value in assumed INR. Source of Lever Value.
 	column 'Annual Value'
 		dataType: decimal
-		isHidden
 		formatString: #,##0
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: ddd9346e-b3b3-4d59-9026-ad0dacf3933d
+		lineageTag: cfcd5734-9ddd-4bea-be6a-0f6a3689b789
 		summarizeBy: none
 		sourceColumn: Annual Value
 
@@ -53,10 +53,10 @@ table Levers
 	/// Annual value as a share of the last 12 full months of revenue.
 	column 'Pct of Revenue'
 		dataType: decimal
-		isHidden
 		formatString: 0.0%
+		isHidden
 		isAvailableInMdx: false
-		lineageTag: c53cc595-629c-4c5d-b962-f85413e5be0d
+		lineageTag: 4752200a-8435-4544-95e3-d7d4676ee6bc
 		summarizeBy: none
 		sourceColumn: Pct of Revenue
 
@@ -65,7 +65,7 @@ table Levers
 	/// How far to trust the sizing.
 	column Confidence
 		dataType: string
-		lineageTag: 7628738a-2852-4cbd-ac63-be97c9e41f41
+		lineageTag: 56a80528-91d4-47c5-90e1-6e1bb36a02bd
 		summarizeBy: none
 		sourceColumn: Confidence
 
@@ -74,7 +74,7 @@ table Levers
 	/// Period the lever was sized on.
 	column Basis
 		dataType: string
-		lineageTag: e92e2dd5-64dc-493f-a8f9-64737f93582b
+		lineageTag: ffc19106-2ee0-4075-9687-5817ebd57d30
 		summarizeBy: none
 		sourceColumn: Basis
 
@@ -95,4 +95,3 @@ table Levers
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
-

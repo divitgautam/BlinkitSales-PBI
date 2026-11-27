@@ -1,16 +1,17 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "line_status",
   "position": {
     "x": 16,
     "y": 190,
     "z": 16000,
-    "height": 250,
+    "height": 236,
     "width": 618,
     "tabOrder": 16000
   },
   "visual": {
     "visualType": "lineChart",
+    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
         "Category": {
@@ -97,7 +98,8 @@
             },
             "direction": "Ascending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "objects": {
@@ -393,7 +395,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#58665F'"
+                      "Value": "'#4A5750'"
                     }
                   }
                 }
@@ -415,8 +417,7 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   },
   "filterConfig": {
     "filters": [
@@ -433,6 +434,7 @@
           }
         },
         "type": "Categorical",
+        "howCreated": "User",
         "filter": {
           "Version": 2,
           "From": [
@@ -471,8 +473,7 @@
               }
             }
           ]
-        },
-        "howCreated": "User"
+        }
       }
     ]
   }

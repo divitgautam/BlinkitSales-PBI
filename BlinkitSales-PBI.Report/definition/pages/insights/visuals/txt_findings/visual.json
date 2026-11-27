@@ -36,14 +36,14 @@
                     "value": "1. Sales are flat. ",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#0C831F"
                     }
                   },
                   {
                     "value": "₹1.10 Cr from 5,000 orders, about 255 a month; full months run ₹5.05 L to ₹6.23 L and Apr to Oct 2024 sits 4.5% below 2023.",
                     "textStyle": {
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#13241A"
                     }
                   }
@@ -65,14 +65,14 @@
                     "value": "2. Categories are evenly spread. ",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#0C831F"
                     }
                   },
                   {
                     "value": "Dairy & Breakfast leads with 12.9% of line value and the top 3 hold 36%; the smallest, Instant & Frozen Food, has 6.2%.",
                     "textStyle": {
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#13241A"
                     }
                   }
@@ -94,14 +94,14 @@
                     "value": "3. One delivery in three misses the promise. ",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#0C831F"
                     }
                   },
                   {
                     "value": "30.6% of orders are more than 5 minutes late, by 14.5 minutes on average; 69.4% arrive on time.",
                     "textStyle": {
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#13241A"
                     }
                   }
@@ -123,14 +123,14 @@
                     "value": "4. Late delivery does not move the rating. ",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#0C831F"
                     }
                   },
                   {
                     "value": "Late orders average 3.37 stars against 3.33 on time, yet ₹50.42 L (46% of revenue) sits in poor-experience orders: 53% late only, 33% low rating only, 14% both.",
                     "textStyle": {
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#13241A"
                     }
                   }
@@ -152,14 +152,14 @@
                     "value": "5. Channels return almost the same. ",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#0C831F"
                     }
                   },
                   {
                     "value": "Portfolio ROAS is 1.97x; Email 2.05x to App 1.92x, a gap of +0.05 to +0.21x (bootstrap 95%). Attributed revenue is 2.9x order revenue, so it cannot be tied to orders.",
                     "textStyle": {
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#13241A"
                     }
                   }
@@ -181,14 +181,14 @@
                     "value": "Do next. ",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#0C831F"
                     }
                   },
                   {
                     "value": "Cut late deliveries by 5 points first (₹2.64 L a year of revenue no longer exposed), then test the Email shift (page 7).",
                     "textStyle": {
-                      "fontSize": "11pt",
+                      "fontSize": "13pt",
                       "color": "#13241A"
                     }
                   }

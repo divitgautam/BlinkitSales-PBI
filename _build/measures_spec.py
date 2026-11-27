@@ -117,7 +117,7 @@ P = "7 Display"
 UP, DOWN, FLAT = "▲ ", "▼ ", "● "
 # a change that rounds to zero in the unit shown (under 0.05 pp / 0.05 % / 0.005) is "no change": flat marker, neutral grey, never green or red
 FLAT_PP, FLAT_REL, FLAT_ABS = "ABS ( c - p ) * 100 < 0.05", "ABS ( DIVIDE ( c - p, p ) ) * 100 < 0.05", "ABS ( c - p ) < 0.005"
-GOOD, BAD, NEUTRAL = "#1E7F4B", "#C0392B", "#5B6B7F"       # WCAG AA on white
+GOOD, BAD, NEUTRAL = "#1E7F4B", "#C0392B", "#46525F"       # WCAG AA on white
 add("Card Revenue", f"VAR v = [Revenue] RETURN {inr('v')}", None, P, "Revenue for cards, in crore or lakh.")
 add("Card Revenue at Risk", f"VAR v = [Revenue at Risk] RETURN {inr('v')}", None, P, "Revenue at Risk for cards, in crore or lakh.")
 add("Card Orders", fm("[Orders]", "#,##0"), None, P, "Orders for cards.")
@@ -167,7 +167,8 @@ for nm, cur in (("Revenue", "[Revenue]"), ("Orders", "[Orders]"), ("AOV", "[AOV]
         None, P, f"Card change line for {nm}: last full month in the selection vs the same month a year earlier; says so when there is no full prior-year month.")
     add(f"Δ {nm} Color", head + f'RETURN IF ( NOT ok || {FLAT_REL}, "{NEUTRAL}", IF ( c >= p, "{GOOD}", "{BAD}" ) )', None, P,
         f"Colour of the {nm} change line: green up, red down, grey when not comparable.")
-add("Δ Repeat Rate", f'{fm("[Repeat Customers]", "#,##0")} & " of " & {fm("[Customers Ordering]", "#,##0")} & " · target 70%"', None, P, "Card line: repeat customers over customers ordering.")
+add("Δ Repeat Rate", f'IF ( ABS ( [Repeat Rate] - 0.7 ) < 0.0005, "{FLAT}", IF ( [Repeat Rate] < 0.7, "{DOWN}", "{UP}" ) ) & {fm("ABS ( [Repeat Rate] - 0.7 ) * 100", "0.0", )} & " pp vs 70% target"', None, P, "Card line: repeat rate against the 70% target, in points.")
+add("Δ Repeat Rate Color", f'IF ( ABS ( [Repeat Rate] - 0.7 ) < 0.0005, "{NEUTRAL}", IF ( [Repeat Rate] < 0.7, "{BAD}", "{GOOD}" ) )', None, P, "Colour of the repeat-rate target line: green at or above target, red below.")
 # generic like-for-like change lines: last full month in the selection vs the same month a year earlier (arrow, size, both months named)
 def yoy(nm, cur, mode, good, unit=""):
     """mode rel: % change; pp: percentage points of a ratio; abs: absolute difference (unit appended). good: up, down or none (colour)."""
@@ -227,9 +228,9 @@ add("Card F25 Range", f"VAR lo = [F25 Low] VAR hi = [F25 High] RETURN {inr('lo')
 add("Card F25 vs LTM", f"{fm('ABS ( [F25 vs LTM %] )', '0.0%')} & IF ( [F25 vs LTM %] < 0, \" below\", \" above\" )", None, P, "2025 forecast vs the last 12 months, as text.")
 add("Card Backtest", f'"{FACTS.get("backtest_mape", 0):.1f}%"', None, P, "Backtest error (MAPE) of the forecast model, from _build/forecast.py.")
 add("Card Lever Exposure", f"VAR v = [Lever Exposure Removed] RETURN {inr('v')}", None, P, "Annual exposure removed by the two experience levers, for cards.")
-add("Δ F25 Range", f'"Each month ±{FACTS.get("band80", 0) * 100:.1f}%"', None, P, "Card line: width of the monthly band.")
-add("Δ F25 vs LTM", f'"Last 12 months: " & {inr("[LTM Revenue]")}', None, P, "Card line: the last-12-month revenue.")
-add("Δ Backtest", f'"{FACTS.get("backtest_best", "model")}"', None, P, "Card line: the winning model of the rolling-origin backtest.")
+add("Δ F25 Range", f'IF ( [LTM Revenue] >= [F25 Low] && [LTM Revenue] <= [F25 High], "Last 12 months inside range", IF ( [LTM Revenue] > [F25 High], "Last 12 months above range", "Last 12 months below range" ) )', None, P, "Card line: where the last-12-month revenue sits against the 2025 80% range.")
+add("Δ F25 vs LTM", f'VAR g = [F25 Revenue] - [LTM Revenue] RETURN IF ( g < 0, "-", "+" ) & {inr("ABS ( g )")} & " vs " & {inr("[LTM Revenue]")} & " (12 mo)"', None, P, "Card line: the gap between the 2025 forecast and the last 12 full months, in rupees.")
+add("Δ Backtest", f'"{"Within" if FACTS.get("backtest_mape", 99) <= 5 else "Above"} the 5% target · naive model"', None, P, "Card line: backtest error against a 5% target.")
 # 8 Titles: action titles that follow the slicers (every title stays within 70 characters, counting ₹ as one)
 TT = "8 Titles"
 add("Title Overview",
@@ -279,6 +280,6 @@ add("Line Value ₹ L Plain", "DIVIDE ( [Line Value], 100000 )", r"0.00 \L", P, 
 card("CTR", fm("[CTR]", "0.00%"), "Click-through rate for cards.")
 card("Conversion Rate", fm("[Conversion Rate]", "0.0%"), "Conversion rate for cards.")
 
-add("Δ Lever Exposure", f'{fm("DIVIDE ( [Lever Exposure Removed], [LTM Revenue] )", "0.0%")} & " of 12-month revenue"', None, P, "Card line: combined exposure removed as a share of last-12-month revenue.")
+add("Δ Lever Exposure", f'{fm("DIVIDE ( [Lever Exposure Removed], [LTM Revenue] )", "0.0%")} & " of 12-mo revenue " & {inr("[LTM Revenue]")}', None, P, "Card line: combined exposure removed as a share of last-12-month revenue.")
 add("Δ F25 Revenue", f'IF ( ABS ( [F25 vs LTM %] ) < 0.0005, "{FLAT}", IF ( [F25 vs LTM %] < 0, "{DOWN}", "{UP}" ) ) & {fm("ABS ( [F25 vs LTM %] )", "0.0%")} & " vs last 12 months"', None, P, "Card line: 2025 forecast vs the last 12 full months.")
 add("Δ F25 Revenue Color", f'IF ( ABS ( [F25 vs LTM %] ) < 0.0005, "{NEUTRAL}", IF ( [F25 vs LTM %] < 0, "{BAD}", "{GOOD}" ) )', None, P, "Colour of the forecast change line.")

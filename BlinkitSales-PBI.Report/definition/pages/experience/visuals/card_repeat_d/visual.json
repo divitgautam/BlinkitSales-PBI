@@ -29,7 +29,7 @@
               },
               "queryRef": "_Measures.Δ Repeat Rate",
               "nativeQueryRef": "Δ Repeat Rate",
-              "displayName": "Repeat customers change"
+              "displayName": "Repeat customers (target 70%) change"
             }
           ]
         }
@@ -117,7 +117,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Δ Neutral Color"
+                      "Property": "Δ Repeat Rate Color"
                     }
                   }
                 }
@@ -236,7 +236,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Repeat customers change'"
+                  "Value": "'Repeat customers (target 70%) change'"
                 }
               }
             }

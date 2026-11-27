@@ -80,7 +80,7 @@ fm = mkt.drop(columns=["roas"]).rename(columns={"revenue_generated": "attributed
 fm["month_start"] = month_start(fm.date)
 fm["is_full_month"] = ~fm.month_start.isin(PARTIAL)
 fm["roas"] = (fm.attributed_revenue / fm.spend).round(4)
-fm["target_audience"] = fm.target_audience.replace({"All": "All users"})   # "All" read as a total; "All users" is short enough for a matrix column header in the channel x audience matrix
+fm["target_audience"] = fm.target_audience.replace({"All": "Everyone"})   # "All" read as a total; "Everyone" is one word, short enough for a matrix column header in the channel x audience matrix
 fm = fm[["campaign_id", "campaign_name", "date", "month_start", "is_full_month", "channel", "target_audience",
          "impressions", "clicks", "conversions", "spend", "attributed_revenue", "roas"]].sort_values(
     ["date", "campaign_id"], ignore_index=True)
@@ -122,7 +122,7 @@ DICT = {
  "fact_marketing": ("One row per campaign record (5,400). No key to orders.", [
   ("campaign_id", "Row id (not a campaign key)."), ("campaign_name", "9 campaign names."), ("date", "Record date."),
   ("month_start", "First day of month."), ("channel", "App, Email, SMS or Social Media."),
-  ("target_audience", "All users (campaigns aimed at everyone, not a total), Inactive, New Users or Premium."), ("impressions", "Impressions."), ("clicks", "Clicks."), ("conversions", "Conversions."),
+  ("target_audience", "Everyone (campaigns aimed at all users, not a total), Inactive, New Users or Premium."), ("impressions", "Impressions."), ("clicks", "Clicks."), ("conversions", "Conversions."),
   ("spend", "Campaign spend, assumed INR."), ("attributed_revenue", "Source revenue_generated; attributed, not order revenue (2.9x orders total)."),
   ("roas", "Recomputed attributed_revenue / spend (stored roas dropped: it did not match). Aggregate in DAX as SUM/SUM.")]),
  "fact_inventory": ("Product x month (inventoryNew summed; daily 'inventory' file dropped, 54% damage rate).", [

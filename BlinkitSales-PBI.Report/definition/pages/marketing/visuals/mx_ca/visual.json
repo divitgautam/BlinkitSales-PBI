@@ -1,37 +1,19 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "mx_ca",
   "position": {
-    "x": 408,
+    "x": 398,
     "y": 190,
     "z": 19000,
     "height": 290,
-    "width": 440,
+    "width": 450,
     "tabOrder": 19000
   },
   "visual": {
     "visualType": "pivotTable",
+    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "fact_marketing"
-                    }
-                  },
-                  "Property": "Target Audience"
-                }
-              },
-              "queryRef": "fact_marketing.Target Audience",
-              "nativeQueryRef": "Target Audience",
-              "active": true
-            }
-          ]
-        },
         "Rows": {
           "projections": [
             {
@@ -47,6 +29,25 @@
               },
               "queryRef": "fact_marketing.Channel",
               "nativeQueryRef": "Channel",
+              "active": true
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_marketing"
+                    }
+                  },
+                  "Property": "Target Audience"
+                }
+              },
+              "queryRef": "fact_marketing.Target Audience",
+              "nativeQueryRef": "Target Audience",
               "active": true
             }
           ]
@@ -79,7 +80,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "11D"
                 }
               }
             }
@@ -108,6 +109,13 @@
                             "color": {
                               "Literal": {
                                 "Value": "'#FFFFCC'"
+                              }
+                            },
+                            "nullColoringStrategy": {
+                              "strategy": {
+                                "Literal": {
+                                  "Value": "'noColor'"
+                                }
                               }
                             }
                           },
@@ -144,7 +152,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "11D"
                 }
               }
             }
@@ -157,14 +165,14 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "11D"
                 }
               }
             },
             "wordWrap": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
@@ -173,7 +181,15 @@
       ],
       "total": [
         {
-          "properties": {}
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
         }
       ],
       "subTotals": [
@@ -190,6 +206,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
                 }
               }
             }
@@ -256,7 +285,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Darker = higher ROAS; All users = campaigns aimed at everyone'"
+                  "Value": "'Darker = higher ROAS; Everyone = campaigns aimed at all users'"
                 }
               }
             },
@@ -272,7 +301,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#58665F'"
+                      "Value": "'#4A5750'"
                     }
                   }
                 }
@@ -294,7 +323,6 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   }
 }

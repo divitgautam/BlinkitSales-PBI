@@ -65,14 +65,14 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "header_quick.svg",
-          "path": "header_quick.svg",
-          "type": "Image"
-        },
-        {
           "name": "QuickCommerce.json",
           "path": "QuickCommerce.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "header_quick.svg",
+          "path": "header_quick.svg",
+          "type": "Image"
         }
       ]
     }

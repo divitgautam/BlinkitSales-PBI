@@ -276,7 +276,7 @@ p.cards([
     ("card_min", mea("Card Avg Minutes Late"), "Minutes over the promise", D("Avg Minutes Late"), DC("Avg Minutes Late")),
 ])
 hw = (W - 2 * M - G) // 2
-r2h = 250
+r2h = 236
 r3y = row2_y + r2h + G
 OT, SL, SG = mea("On-Time %"), mea("Slightly Delayed %"), mea("Significantly Delayed %")
 p.add("line_status", "lineChart", M, row2_y, hw, r2h,
@@ -309,8 +309,8 @@ notes3 = [("Promise kept: ", f"{ontime:.1%} of orders arrive within 5 minutes; {
           ("No peak hour: ", f"the late share stays between {hr.min():.0%} and {hr.max():.0%} in every hour."),
           ("Reasons are empty: ", f"the only delay reason is 'Traffic', also set on {on_time_traffic:,} on-time orders."),
           ("Action: ", "size the 5-point late-share lever on page 7.")]
-fits(notes3, hw, row3_end - r3y, 10)
-p.textbox("txt_delivery", M + hw + G, r3y, hw, row3_end - r3y, "What this tells us (all orders)", notes3)
+fits(notes3, hw, row3_end - r3y, 11)
+p.textbox("txt_delivery", M + hw + G, r3y, hw, row3_end - r3y, "What this tells us (all orders)", notes3, size="11pt", gap=True)
 p.footer(FOOTER)
 fix_footer(p)
 pages.append(p)
@@ -328,7 +328,7 @@ p.cards([
     ("card_low", mea("Card Low Rating %"), "Rated 1-2 stars", D("Low Rating %"), DC("Low Rating %")),
     ("card_neg", mea("Card Negative Sentiment %"), "Negative sentiment", D("Negative Sentiment %"), DC("Negative Sentiment %")),
     ("card_poor", mea("Card Poor Experience Rate"), "Poor-experience orders", D("Poor Experience Rate"), DC("Poor Experience Rate")),
-    ("card_repeat", mea("Card Repeat Rate"), "Repeat customers", D("Repeat Rate"), NEU),
+    ("card_repeat", mea("Card Repeat Rate"), "Repeat customers (target 70%)", D("Repeat Rate"), DC("Repeat Rate")),
 ])
 r2h = 236
 r3y = row2_y + r2h + G
@@ -391,26 +391,27 @@ p.cards([
 ])
 r2h = 290
 r3y = row2_y + r2h + G
-c1, c2 = 380, 440   # c2: row header + four audience headers at 9 pt need ~350 px of the 416 px inside the matrix
+c1, c2 = 370, 450   # c2: row header + four audience headers at 9 pt need ~350 px of the 416 px inside the matrix
 c3w = W - 2 * M - c1 - c2 - 2 * G
 ROAS = mea("ROAS")
 p.add("bar_channel", "clusteredBarChart", M, row2_y, c1, r2h,
       roles={"Category": [CHAN], "Y": [(ROAS, "ROAS")], "Tooltips": [(mea("Marketing Spend ₹ L"), "Spend"), (mea("CTR"), "CTR"), (mea("Conversion Rate"), "Conversion rate")]},
-      title="ROAS by channel", subtitle="Revenue per ₹1 spent, from zero; hover for CTR and spend",
+      title="ROAS by channel", subtitle="Revenue per ₹1 spent; hover for CTR and spend",
       alt="Sorted bar chart of ROAS by marketing channel, Email highest at about 2.05 and App lowest at about 1.92",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
 p.add("mx_ca", "pivotTable", M + c1 + G, row2_y, c2, r2h,
       roles={"Rows": [CHAN], "Columns": [AUD], "Values": [(ROAS, "ROAS")]},
-      title="ROAS by channel and audience", subtitle="Darker = higher ROAS; All users = campaigns aimed at everyone",
+      title="ROAS by channel and audience", subtitle="Darker = higher ROAS; Everyone = campaigns aimed at all users",
       alt="Heat map of ROAS for each channel and target audience; all cells are between about 1.6 and 2.3",
-      objects={**COMPACT(9), "columnHeaders": [{"properties": {"fontSize": L(9), "wordWrap": L(True)}}], "values": [{"properties": {"fontSize": L(9)}}, gradient("ROAS", th.SEQ_MIN, th.SEQ_MAX)]})
+      objects={**COMPACT(11), "columnHeaders": [{"properties": {"fontSize": L(11), "wordWrap": L(False)}}], "grid": [{"properties": {"rowPadding": L(11)}}],
+               "values": [{"properties": {"fontSize": L(11)}}, gradient("ROAS", th.SEQ_MIN, th.SEQ_MAX)]})
 p.add("bar_campaign", "clusteredBarChart", M + c1 + c2 + 2 * G, row2_y, c3w, r2h,
       roles={"Category": [CAMP], "Y": [(ROAS, "ROAS")]},
       title="ROAS by campaign, right-click to drill through", subtitle=None,
       alt="Sorted bar chart of ROAS for the nine marketing campaigns",
       objects={**NO_AXIS_TITLES, **LABELS, **CAT_PAD(8), **HIDE_VALUE_AXIS, **ONE_COLOR(GREEN)}, sort=[(ROAS, "Descending")], tooltip_page="chan_tip")
 hint(p, "bar_campaign", 9)
-hint(p, "mx_ca", 4, cols=["All users", "Inactive", "New Users", "Premium"], row_labels=["Social Media", "Email", "SMS", "App"], values=["1.92"])
+hint(p, "mx_ca", 4, cols=["Everyone", "Inactive", "New Users", "Premium"], row_labels=["Social Media", "Email", "SMS", "App"], values=["1.92x"])
 hw = (W - 2 * M - G) // 2
 p.add("line_spend", "lineChart", M, r3y, hw, row3_end - r3y,
       roles={"Category": [MS], "Y": [(mea("Marketing Spend ₹ L"), "Spend")]},
@@ -457,9 +458,9 @@ notes = [
     ("Forecast. ", f"A naive level model chosen by rolling backtest (MAPE {FACTS['backtest_mape']:.1f}%), 80% band ±{FACTS['band80'] * 100:.1f}% a month: a baseline, not a prediction."),
 ]
 half = (W - 2 * M - G) // 2
-fits(finds, half, row3_end - 80, 11)
+fits(finds, half, row3_end - 80, 13)
 fits(notes, half, row3_end - 80, 11)
-p.textbox("txt_findings", M, 80, half, row3_end - 80, "Five findings and the next step", finds, accent=GREEN, size="11pt", gap=True)
+p.textbox("txt_findings", M, 80, half, row3_end - 80, "Five findings and the next step", finds, accent=GREEN, size="13pt", gap=True)
 p.textbox("txt_notes", M + half + G, 80, W - 2 * M - half - G, row3_end - 80, "Data notes and definitions", notes, accent=CORAL, size="11pt", gap=True)
 p.footer(FOOTER)
 fix_footer(p)

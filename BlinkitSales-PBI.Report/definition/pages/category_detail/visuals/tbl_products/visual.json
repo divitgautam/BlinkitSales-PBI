@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "tbl_products",
   "position": {
     "x": 16,
@@ -11,6 +11,7 @@
   },
   "visual": {
     "visualType": "pivotTable",
+    "drillFilterOtherVisuals": true,
     "query": {
       "queryState": {
         "Rows": {
@@ -112,7 +113,8 @@
             },
             "direction": "Descending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "objects": {
@@ -157,7 +159,15 @@
       ],
       "total": [
         {
-          "properties": {}
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
         }
       ],
       "subTotals": [
@@ -269,7 +279,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#58665F'"
+                      "Value": "'#4A5750'"
                     }
                   }
                 }
@@ -291,8 +301,7 @@
           }
         }
       ]
-    },
-    "drillFilterOtherVisuals": true
+    }
   },
   "filterConfig": {
     "filters": [
@@ -309,6 +318,7 @@
           }
         },
         "type": "TopN",
+        "howCreated": "User",
         "filter": {
           "Version": 2,
           "From": [
@@ -395,8 +405,7 @@
               }
             }
           ]
-        },
-        "howCreated": "User"
+        }
       }
     ]
   }

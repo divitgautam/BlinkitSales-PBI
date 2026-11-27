@@ -44,7 +44,7 @@
  },
  "marketing/mx_ca": {
   "cols": [
-   "All users",
+   "Everyone",
    "Inactive",
    "New Users",
    "Premium"
@@ -56,7 +56,7 @@
    "App"
   ],
   "values": [
-   "1.92"
+   "1.92x"
   ]
  },
  "category_detail/tbl_products": {
