@@ -5,6 +5,11 @@
   "displayOption": "FitToPage",
   "height": 300,
   "width": 400,
+  "pageBinding": {
+    "name": "chan_tip_binding",
+    "type": "Tooltip",
+    "parameters": []
+  },
   "objects": {
     "background": [
       {
@@ -48,10 +53,6 @@
       }
     ]
   },
-  "type": "Tooltip",
   "visibility": "HiddenInViewMode",
-  "pageBinding": {
-    "name": "chan_tip_binding",
-    "type": "Tooltip"
-  }
+  "type": "Tooltip"
 }

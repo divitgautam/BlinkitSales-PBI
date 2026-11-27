@@ -41,8 +41,8 @@ table Levers
 	/// Annual value in assumed INR. Source of Lever Value.
 	column 'Annual Value'
 		dataType: decimal
-		formatString: #,##0
 		isHidden
+		formatString: #,##0
 		isAvailableInMdx: false
 		lineageTag: ddd9346e-b3b3-4d59-9026-ad0dacf3933d
 		summarizeBy: none
@@ -53,8 +53,8 @@ table Levers
 	/// Annual value as a share of the last 12 full months of revenue.
 	column 'Pct of Revenue'
 		dataType: decimal
-		formatString: 0.0%
 		isHidden
+		formatString: 0.0%
 		isAvailableInMdx: false
 		lineageTag: c53cc595-629c-4c5d-b962-f85413e5be0d
 		summarizeBy: none
@@ -95,3 +95,4 @@ table Levers
 	annotation PBI_ResultType = Table
 
 	annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ENSURE_TABLES_HAVE_RELATIONSHIPS"]}
+

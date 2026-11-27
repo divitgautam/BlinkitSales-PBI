@@ -119,3 +119,31 @@ NEW: page 1 of the PDF is exported zoomed and clipped (4th card cut, right panel
 4. Change lines: a change under 0.05 pp / 0.05 % / 0.005 shows a flat marker and neutral grey (all yoy() lines, Revenue/Orders/AOV, F25 forecast line).
 5. check_report.py new rules: (a) pivot header text vs column width and total width (pivot_hints.json, written by build_report); (b) pivot rows x row height + header + chrome vs visual height; (c) title = subtitle, and titled visuals without an explicit subtitle setting. On the old geometry they failed: mx_ca needs ~433 px of 380; mx_heat needs ~310 px of 266; bar_campaign has no explicit subtitle setting. All pass now.
 Checks: prepare, make_semantic_model, reconcile (70 values), bpa 27/27, check_measures, build_report, check_report, pbi report validate all pass. Refresh needed (data and measures changed).
+
+## Round 4 score (2026-11-27, evidence: docs/BlinkitSales-PBI.pdf 08:42 export; PNGs docs/dashboard/01-07 re-rendered)
+BPA: 27 rules, 27 pass, 0 fail. Numbers read off all 7 pages match reconciliation.md and live_checks.md (1.10 Cr, 5,000, 2,201.86, 69.4%/30.6%, 14.5 min, 3.34/3.37/3.33, 45.8%/46%, 50.42 L, 68.7% = 1,492 of 2,172, ROAS 1.97/2.05/1.92, 29.49 M, 2.97 M, 5.12 L, 64.52 L, MAPE 2.8%).
+
+Confirmed fixed: p1 not clipped (6 cards, both panels, footer, nav; rating line "0.01 Oct 24 vs Oct 23" whole); p2 heat map shows all 11 rows incl. Snacks & Munchies with no scrollbar; p2 "0.0 pp" is a neutral grey dot; p5 campaign chart has no duplicate subtitle (9 bars); footer and nav whole on all pages.
+NOT fixed: p5 matrix column header still reads "All" (subtitle says "All users"; data/clean/fact_marketing.csv and TMDL hold "All users", so either the model was not refreshed or the 71 px column clips the label). Wrong header still invites reading it as a total (1.82x vs bar 1.92x).
+
+| # | Criterion | Score | Evidence |
+|---|---|---|---|
+| 1 | Purpose and message | 1.0 | DAX action titles with numbers on all pages. |
+| 2 | Data trust | 1.0 | Reconciles; footer with source, range, currency, refresh date on every page. |
+| 3 | KPI design | 0.75 | Like-for-like deltas, targets on p3-p5; no sparklines; p7 cards 2-4 and p4 repeat card context only. |
+| 4 | Chart choice and honesty | 0.75 | Honest axes, labelled non-zero lines; p5 matrix "All" header ambiguous. |
+| 5 | Layout and hierarchy | 0.75 | No clipping or scrollbars; empty lower halves on p3 text panel, p6 left panel, p5 matrix panel; p2 heat map leaves spare room. |
+| 6 | Colour and accessibility | 0.75 | Brand/RdBu/YlGn with arrows and labels; small grey captions; alt text not verifiable from PDF. |
+| 7 | Declutter, text, format | 0.75 | Units everywhere; p5 header "All" is the only wrong label. |
+| 8 | Interaction, navigation, devices | 0.75 | Slicers, both drill-throughs, tooltips, phone confirmed; no reset button (documented). |
+| 9 | Insight and action | 1.0 | p6 findings with Do next, p7 sized levers, MAPE and band. |
+| 10 | Model and engineering | 1.0 | BPA 27/27, reconciled, DAX titles. |
+| | Raw total | 8.5 | |
+| | Gates | none | No wrong numbers, misleading encoding, clipping or scrolling visual. |
+| | **Final** | **8.5 / 10** | |
+
+### Remaining fixes, ranked
+1. p5 matrix header: Refresh the model in Desktop (fact_marketing "All users"); if it still shows "All", widen the first value column or the visual in the p5 matrix builder (`_build/build_report.py`, mx_ca) and re-check `pivot_hints.json`.
+2. Fill empty panels: p3 "What this tells us" and p6 left panel (shrink panel height or add a small chart; page functions in `build_report.py`); use spare space under the p5 matrix.
+3. KPI context: p7 cards 2-4 and p4 repeat card (card helper in `pbir_kit.py`, `measures_spec.py`); add sparklines on p1/p3 cards.
+4. Reset-filters bookmark (not supported by the kit); verify alt text on every visual (`pbir_kit.py` visual helper) and caption contrast.
