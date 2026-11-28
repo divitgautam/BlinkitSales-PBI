@@ -1,6 +1,6 @@
 /// One row per customer in the customer file (2,500; 2,172 have orders). Name, email, phone and address are not loaded. Lifetime figures come from the orders table. Source: data/clean/dim_customer.csv.
 table dim_customer
-	lineageTag: 6ea7f6ca-3bd0-4cb3-a330-9e47c19cd409
+	lineageTag: cd4aa056-7372-488a-a420-12c31e938ffc
 
 	/// Customer key.
 	column 'Customer Id'
@@ -8,16 +8,18 @@ table dim_customer
 		isHidden
 		isKey
 		formatString: 0
-		lineageTag: cd2a943d-f504-4782-a2cf-52d5e8750001
+		lineageTag: d4974755-fa3b-4620-a22b-283182af69d9
 		summarizeBy: none
 		sourceColumn: Customer Id
 
 		annotation SummarizationSetBy = User
 
+		annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs": ["ISAVAILABLEINMDX_FALSE_NONATTRIBUTE_COLUMNS"]}
+
 	/// Customer area.
 	column Area
 		dataType: string
-		lineageTag: f65a4c85-6c14-4e31-9e64-e7cfa6dcd5d3
+		lineageTag: e023ffdc-059f-49f6-9c0f-f0cbc9afdac7
 		summarizeBy: none
 		sourceColumn: Area
 
@@ -26,7 +28,7 @@ table dim_customer
 	/// Postal code.
 	column Pincode
 		dataType: string
-		lineageTag: 4f71f68e-1d95-451d-9607-2f0d59815921
+		lineageTag: f7b53af0-a278-46ae-87b0-39ed6ff1ced6
 		dataCategory: PostalCode
 		summarizeBy: none
 		sourceColumn: Pincode
@@ -37,18 +39,16 @@ table dim_customer
 	column 'Registration Date'
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
-		lineageTag: 12f5e139-06fb-4eee-9be8-9f2a4b4b6697
+		lineageTag: a5cb38cc-de98-44f3-9481-f574b1aeee84
 		summarizeBy: none
 		sourceColumn: Registration Date
 
 		annotation SummarizationSetBy = User
 
-		annotation UnderlyingDateTimeDataType = Date
-
 	/// Stored segment: Regular, Premium, New or Inactive.
 	column Segment
 		dataType: string
-		lineageTag: af9c4910-f15a-48b9-8607-f06b69d27cde
+		lineageTag: 42a5704b-9976-4841-b03d-5fc7d6e1e27e
 		summarizeBy: none
 		sourceColumn: Segment
 
@@ -58,19 +58,17 @@ table dim_customer
 	column 'First Order Date'
 		dataType: dateTime
 		formatString: dd-mmm-yyyy
-		lineageTag: 47315df7-8b66-4790-aba0-20d9dc7eb196
+		lineageTag: 56a48845-84be-4846-a54b-4bec01f13853
 		summarizeBy: none
 		sourceColumn: First Order Date
 
 		annotation SummarizationSetBy = User
 
-		annotation UnderlyingDateTimeDataType = Date
-
 	/// Orders placed over the whole period (not affected by slicers).
 	column 'Lifetime Orders'
 		dataType: int64
 		formatString: 0
-		lineageTag: 4da829c4-ba82-4186-a0da-9644b1bb554c
+		lineageTag: b945c59d-75fe-4afd-ab09-932e7db2bc7b
 		summarizeBy: none
 		sourceColumn: Lifetime Orders
 
@@ -80,7 +78,7 @@ table dim_customer
 	column 'Lifetime Revenue'
 		dataType: decimal
 		formatString: ₹#,##0.00
-		lineageTag: d6f76f82-0b06-4c5c-80f9-dddf14938bfe
+		lineageTag: 48895bfd-5df2-4a8c-9517-f56e837033fb
 		summarizeBy: none
 		sourceColumn: Lifetime Revenue
 
@@ -89,7 +87,7 @@ table dim_customer
 	/// New (1 order), Repeat (2+ orders) or No orders.
 	column 'Customer Type'
 		dataType: string
-		lineageTag: 1c75f590-2cd9-493f-8319-00ec1e72330a
+		lineageTag: ac834438-94ff-4476-9b44-e41e3d4a24fa
 		summarizeBy: none
 		sourceColumn: Customer Type
 

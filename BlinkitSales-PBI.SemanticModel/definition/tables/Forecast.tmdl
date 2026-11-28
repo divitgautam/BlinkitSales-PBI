@@ -1,25 +1,23 @@
 /// Monthly revenue on full months (Apr 2023 to Oct 2024, Actual) and the forecast to Dec 2025 with an 80% band. Disconnected from Date by design. Source: data/clean/forecast.csv written by _build/forecast.py.
 table Forecast
-	lineageTag: 07045316-5d46-4a25-b4cd-424f09849456
+	lineageTag: fc853a6c-7897-41c9-b40b-622fc7283077
 
 	/// First day of the month.
 	column 'Month Start'
 		dataType: dateTime
 		formatString: mmm yyyy
-		lineageTag: b3f7c14d-1623-41a7-8bc4-9d58fe2beea5
+		lineageTag: c5275432-77e5-46a4-9f86-cef3bd922457
 		summarizeBy: none
 		sourceColumn: Month Start
 
 		annotation SummarizationSetBy = User
-
-		annotation UnderlyingDateTimeDataType = Date
 
 	/// Actual or Forecast row.
 	column Kind
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
-		lineageTag: 00c5f911-a7d1-4ab1-bbf9-7bae1cbf7d49
+		lineageTag: 0b9c59ee-1129-40e7-8299-2f52cad77f46
 		summarizeBy: none
 		sourceColumn: Kind
 
@@ -31,7 +29,7 @@ table Forecast
 		isHidden
 		formatString: #,##0
 		isAvailableInMdx: false
-		lineageTag: b4661bf6-f13a-4029-933d-9c1d571e0aa2
+		lineageTag: ef00ecdb-326f-44f6-9d85-5a372297b641
 		summarizeBy: none
 		sourceColumn: Actual
 
@@ -43,7 +41,7 @@ table Forecast
 		isHidden
 		formatString: #,##0
 		isAvailableInMdx: false
-		lineageTag: 85868a33-9066-46c6-b670-d33c1e8003ff
+		lineageTag: a3731c24-c7f6-485f-a97b-8e518a2e5073
 		summarizeBy: none
 		sourceColumn: Forecast
 
@@ -55,7 +53,7 @@ table Forecast
 		isHidden
 		formatString: #,##0
 		isAvailableInMdx: false
-		lineageTag: a4561f5e-21ce-46ee-bd36-dfb70b84af54
+		lineageTag: 29266544-2812-4724-8ea4-e7024721f675
 		summarizeBy: none
 		sourceColumn: Low 80
 
@@ -67,7 +65,7 @@ table Forecast
 		isHidden
 		formatString: #,##0
 		isAvailableInMdx: false
-		lineageTag: 72082c87-71dc-4f42-8a60-f5d3cde124b1
+		lineageTag: 84ad5f41-eba4-40d0-88f8-ef9f3446e60f
 		summarizeBy: none
 		sourceColumn: High 80
 
@@ -76,7 +74,7 @@ table Forecast
 	/// Month label, e.g. Nov 24.
 	column 'Month Label' = FORMAT ( Forecast[Month Start], "MMM yy", "en-US" )
 		dataType: string
-		lineageTag: 0c0ab0bb-bab5-40ca-ba44-67a01a5791d8
+		lineageTag: cc18aa51-fef5-4e6a-afac-812ba6a53a33
 		summarizeBy: none
 		sortByColumn: 'Month Start'
 
@@ -88,7 +86,7 @@ table Forecast
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
-		lineageTag: 38b7fad3-a594-4b9b-92b6-8d8b7931443f
+		lineageTag: d5c22278-03cd-4476-941b-46dbddd58683
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic

@@ -1,6 +1,6 @@
 /// Calendar of whole months from Mar 2023 to Nov 2024, shared by orders, marketing and inventory; marked as the date table.
 table Date
-	lineageTag: be69ea06-9828-4198-8562-0588f347d1bf
+	lineageTag: 753ad3d9-f293-491a-bacb-40a2da6b1e47
 	dataCategory: Time
 
 	/// Calendar date (key).
@@ -8,7 +8,7 @@ table Date
 		dataType: dateTime
 		isKey
 		formatString: dd-mmm-yyyy
-		lineageTag: 398d8a95-3760-40c1-abe5-c1c1f623a5bb
+		lineageTag: 25f8bf5a-2f5c-4532-8363-a159bc8031bb
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Date]
@@ -17,7 +17,7 @@ table Date
 	column Year
 		dataType: int64
 		formatString: 0
-		lineageTag: 60fbd16d-6336-4ef8-a774-4e90975d35f0
+		lineageTag: 0e7191d6-3424-4cfa-8999-2aac1cb086e5
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Year]
@@ -25,7 +25,7 @@ table Date
 	/// Calendar quarter, Q1-Q4.
 	column Quarter
 		dataType: string
-		lineageTag: 7defd9f0-8705-4e4a-9e2b-c98f58d9d6d9
+		lineageTag: 5c207552-1305-402f-8953-6cd8cd54c311
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Quarter]
@@ -34,7 +34,7 @@ table Date
 	column 'Month No'
 		dataType: int64
 		formatString: 0
-		lineageTag: 7ea88f9e-28cd-484c-934e-7c202b24d3a3
+		lineageTag: 98d1135d-4005-42a0-8ce5-0b84c5c66aeb
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Month No]
@@ -42,7 +42,7 @@ table Date
 	/// Month name, e.g. Jan.
 	column Month
 		dataType: string
-		lineageTag: dce4366f-07ce-40c2-9538-aba96cee687a
+		lineageTag: db7a4f09-6c85-48bd-b8dd-38b585dc41b4
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Month]
@@ -52,7 +52,7 @@ table Date
 	column 'Month Start'
 		dataType: dateTime
 		formatString: mmm yyyy
-		lineageTag: 370a966d-aee7-451e-b11b-8dba2016dbcd
+		lineageTag: 1bfcbe67-e695-421f-8552-5ff32052c733
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Month Start]
@@ -60,7 +60,7 @@ table Date
 	/// Month label, e.g. Mar 24.
 	column 'Year Month'
 		dataType: string
-		lineageTag: 0c10490b-2431-4944-9a1c-a5f5e549e6a6
+		lineageTag: eab2362b-c3ec-476b-b0fe-ad0d2cd4a7de
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Year Month]
@@ -70,7 +70,7 @@ table Date
 	column 'Year Month Key'
 		dataType: int64
 		formatString: 0
-		lineageTag: 458dab06-568b-4c7c-aca0-a4f5bb2d8cb6
+		lineageTag: a1bd314c-435e-4557-a31e-cf02590d68a2
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Year Month Key]
@@ -79,7 +79,7 @@ table Date
 	column 'Weekday No'
 		dataType: int64
 		formatString: 0
-		lineageTag: f321e37b-4a12-4b53-a900-e3a010a66dc3
+		lineageTag: ca7de749-617a-4546-abb4-02ef4063d092
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Weekday No]
@@ -87,7 +87,7 @@ table Date
 	/// Weekday name, e.g. Mon.
 	column Weekday
 		dataType: string
-		lineageTag: e91be739-53a7-4234-be3a-c8877ec4caf8
+		lineageTag: 40922051-6ef0-4696-b111-0b19b61dec2f
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Weekday]
@@ -96,7 +96,7 @@ table Date
 	/// FALSE for the first and last month of the order data (Mar 2023 and Nov 2024), which are partial; exclude them from trends and YoY.
 	column 'Is Full Month'
 		dataType: boolean
-		lineageTag: 5c80d86b-b2fb-49af-8c8a-24492abe438c
+		lineageTag: 602d709f-e751-443e-8302-6500977bcb66
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Is Full Month]

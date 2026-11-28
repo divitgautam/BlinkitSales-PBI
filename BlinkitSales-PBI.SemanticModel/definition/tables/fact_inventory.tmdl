@@ -1,13 +1,14 @@
 /// Stock received and damaged per product and month (5,571 rows, from the monthly inventoryNew file). Source: data/clean/fact_inventory.csv.
 table fact_inventory
-	lineageTag: 37a1d1bf-ae62-4185-adee-7fb81507cea0
+	lineageTag: 9e9b6a65-5aed-4c9e-98de-1642c5ff1221
 
 	/// Foreign key to dim_product.
 	column 'Product Id'
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: b20320eb-b7f9-400d-8403-399b16067d87
+		isAvailableInMdx: false
+		lineageTag: 0f5c8ee5-751c-4474-9538-88223c0a255e
 		summarizeBy: none
 		sourceColumn: Product Id
 
@@ -18,13 +19,12 @@ table fact_inventory
 		dataType: dateTime
 		isHidden
 		formatString: mmm yyyy
-		lineageTag: 6d64075b-5f18-4fc1-809b-20fc60999b19
+		isAvailableInMdx: false
+		lineageTag: 1fbc3e66-59a8-4e55-9e99-00f719012158
 		summarizeBy: none
 		sourceColumn: Month Start
 
 		annotation SummarizationSetBy = User
-
-		annotation UnderlyingDateTimeDataType = Date
 
 	/// Units received. Source of Stock Received.
 	column 'Units Received'
@@ -32,7 +32,7 @@ table fact_inventory
 		isHidden
 		formatString: #,##0
 		isAvailableInMdx: false
-		lineageTag: 6272060c-fdbe-4f5e-a20c-5bb253069b76
+		lineageTag: 8a75ca0d-775d-45b1-ba35-de562da9334f
 		summarizeBy: none
 		sourceColumn: Units Received
 
@@ -44,7 +44,7 @@ table fact_inventory
 		isHidden
 		formatString: #,##0
 		isAvailableInMdx: false
-		lineageTag: 71f332b3-40ca-4a52-ad3d-1ca2f291639b
+		lineageTag: a965e2ea-864b-4184-aec2-56565b49e01b
 		summarizeBy: none
 		sourceColumn: Units Damaged
 

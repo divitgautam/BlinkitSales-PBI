@@ -1,14 +1,14 @@
 /// When the model was last refreshed (calculated at refresh time), for the report footer.
 table 'Refresh Info'
 	isHidden
-	lineageTag: 3042f427-b7e2-4cf4-b4b0-dfa044ed2514
+	lineageTag: 4dfa2586-706c-4094-9efb-239784c012b8
 
 	column Refreshed
 		dataType: dateTime
 		isHidden
 		formatString: dd-mmm-yyyy
 		isAvailableInMdx: false
-		lineageTag: adcf7ad6-f975-415f-9fb4-355e219b5e28
+		lineageTag: 534dea79-cb03-451d-b137-d985edb22c75
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Refreshed]

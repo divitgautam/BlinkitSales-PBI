@@ -95,7 +95,7 @@ w(DEFN / "expressions.tmdl",
 MT = {"int64": "Int64.Type", "string": "type text", "dateTime": "type date", "decimal": "Currency.Type", "double": "type number", "boolean": "type logical"}
 
 
-def column(name, dtype, fmt, hidden, desc, key=False, category=None, mdx_off=False, sort_by=None):
+def column(name, dtype, fmt, hidden, desc, key=False, category=None, mdx_off=False, sort_by=None, ignore=None):
     s = f"{T}/// {desc}\n{T}column {q(name)}\n{T * 2}dataType: {dtype}\n"
     if fmt: s += f"{T * 2}formatString: {fmt}\n"
     if key: s += f"{T * 2}isKey\n"
@@ -103,8 +103,20 @@ def column(name, dtype, fmt, hidden, desc, key=False, category=None, mdx_off=Fal
     if mdx_off: s += f"{T * 2}isAvailableInMdx: false\n"
     if category: s += f"{T * 2}dataCategory: {category}\n"
     if sort_by: s += f"{T * 2}sortByColumn: {q(sort_by)}\n"
-    s += f"{T * 2}{lt()}\n{T * 2}summarizeBy: none\n{T * 2}sourceColumn: {name}\n\n{T * 2}annotation SummarizationSetBy = User\n\n"
-    return s
+    s += f"{T * 2}{lt()}\n{T * 2}summarizeBy: none\n{T * 2}sourceColumn: {name}\n\n{T * 2}annotation SummarizationSetBy = User\n"
+    if ignore: s += f"{T}{IGNORE(ignore)}"           # per-column BPA exception (Tabular Editor reads it per object)
+    return s + "\n"
+
+
+# per-measure BPA exceptions: the heat map needs the same value with a format string that has no unit text
+MEASURE_IGNORE = {"Line Value ₹ L Plain": ["AVOID_DUPLICATE_MEASURES"], "Line Value ₹ L": ["AVOID_DUPLICATE_MEASURES"]}
+
+# per-column BPA exceptions, with the reason
+COL_IGNORE = {
+    ("fact_orders", "Rating"): ["HIDE_FACT_TABLE_COLUMNS"],                     # 1-5 stars is also the category axis (Experience page)
+    ("dim_product", "Product Id"): ["ISAVAILABLEINMDX_FALSE_NONATTRIBUTE_COLUMNS"],   # dimension key (isKey): stays in MDX,
+    ("dim_customer", "Customer Id"): ["ISAVAILABLEINMDX_FALSE_NONATTRIBUTE_COLUMNS"],  # like the Airline airport keys
+}
 
 
 def calc_column(name, dtype, expr, fmt, hidden, sort_by, desc, mdx_off=False):
@@ -130,8 +142,11 @@ for t, (tdesc, cols) in SPEC.items():
          "in\n    Renamed")
     s = f"/// {tdesc}\ntable {t}\n{T}{lt()}\n\n"
     for src, nm, dt, fmt, hid, desc in cols:
-        mdx_off = hid and (t, nm) not in REL_FROM and (t, nm) not in KEYS and nm not in {v for (tt, _), v in SORT_BY.items() if tt == t}
-        s += column(nm, dt, fmt, hid, desc, key=(t, nm) in KEYS, category=CATEGORY.get((t, nm)), mdx_off=mdx_off, sort_by=SORT_BY.get((t, nm)))
+        # hidden, not a dimension key, not a sort-by target: off in MDX (fact-side relationship columns too, as in
+        # AirlineDataAnalysis-PBI, where Desktop accepts it; BPA ISAVAILABLEINMDX_FALSE_NONATTRIBUTE_COLUMNS)
+        mdx_off = hid and (t, nm) not in KEYS and nm not in {v for (tt, _), v in SORT_BY.items() if tt == t}
+        s += column(nm, dt, fmt, hid, desc, key=(t, nm) in KEYS, category=CATEGORY.get((t, nm)), mdx_off=mdx_off,
+                    sort_by=SORT_BY.get((t, nm)), ignore=COL_IGNORE.get((t, nm)))
     for nm, dt, expr, fmt, hid, sb, desc in CALC.get(t, []):
         s += calc_column(nm, dt, expr, fmt, hid, sb, desc, mdx_off=hid and nm not in {c[5] for c in CALC[t]} and nm not in SORT_BY.values())
     s += f"{T}partition {t} = m\n{T * 2}mode: import\n{T * 2}source =\n{ind(m, 4)}\n\n{T}annotation PBI_ResultType = Table\n"
@@ -173,10 +188,13 @@ ms = f"/// Central home for report measures (no data).\ntable _Measures\n{T}{lt(
 for n, e, fmt, folder, desc in MEASURES:
     ms += f"{T}/// {desc}\n{T}measure {q(n)} = {e}\n"
     if fmt: ms += f"{T * 2}formatString: {fmt}\n"
-    ms += f"{T * 2}displayFolder: {folder}\n{T * 2}{lt()}\n\n"
+    ms += f"{T * 2}displayFolder: {folder}\n{T * 2}{lt()}\n"
+    if n in MEASURE_IGNORE: ms += f"\n{T}{IGNORE(MEASURE_IGNORE[n])}"
+    ms += "\n"
 ms += (f"{T}column Hidden\n{T * 2}dataType: string\n{T * 2}isHidden\n{T * 2}isAvailableInMdx: false\n{T * 2}{lt()}\n{T * 2}summarizeBy: none\n{T * 2}isNameInferred\n{T * 2}sourceColumn: [Hidden]\n\n"
+       f"{T}{IGNORE(['UNNECESSARY_COLUMNS'])}\n"     # placeholder that makes _Measures a table (Microsoft's rule ID)
        f"{T}partition _Measures = calculated\n{T * 2}mode: import\n{T * 2}source = ROW ( \"Hidden\", BLANK () )\n\n"
-       + IGNORE(["ENSURE_TABLES_HAVE_RELATIONSHIPS", "REMOVE_UNNECESSARY_COLUMNS"]))
+       + IGNORE(["ENSURE_TABLES_HAVE_RELATIONSHIPS", "REMOVE_UNNECESSARY_COLUMNS"]))   # second ID: bpa_check.py's rule
 w(DEFN / "tables" / "_Measures.tmdl", ms)
 
 # ---------------------------------------------------------------- Refresh Info (one row, NOW() at refresh time, for the footer)
